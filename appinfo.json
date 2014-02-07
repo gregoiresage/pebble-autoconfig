@@ -1,0 +1,42 @@
+{
+  "uuid": "5a586ed0-0a6a-4dce-80e1-cabd67cf2a62",
+  "shortName": "pebble-autoconfig",
+  "longName": "pebble-autoconfig",
+  "companyName": "Gregoire Sage",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  },
+  "preferences": {
+    "items": [{
+        "name": "display-mode",
+        "type": "bool",
+        "title": "Display Mode",
+        "subtitle": "Enable for Black on White",
+        "default": false
+    },
+    {
+        "name": "favourite-number",
+        "type": "int",
+        "title": "Favourite Number",
+        "min": 0,
+        "max": 100,
+        "default": 17
+    },
+    {
+        "name": "slogan",
+        "type": "string",
+        "title": "Slogan",
+        "max-length": 16,
+        "default": ""
+    }
+  ]
+  }
+}

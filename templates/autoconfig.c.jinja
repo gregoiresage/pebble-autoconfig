@@ -1,0 +1,25 @@
+#include <pebble.h>
+#include "autoconfig.h"
+
+{% for item in items: -%}
+{% set itemName = item['name']|replace("-","_")|replace(" ","_")|replace("/","_")|replace(".","_") %}
+
+{{ item['type'] }} _{{ itemName }};
+
+{{ item['type'] }} get{{ itemName | capitalize }}(){
+	return _{{ itemName }};
+}
+void set{{ itemName | capitalize }}({{ item['type'] }} value){
+	
+}
+{% endfor %}
+
+void autoconfInit(){
+	{% for item in items: -%}
+	{% endfor %}
+}
+
+void autoconfDeinit(){
+	{% for item in items: -%}
+	{% endfor %}
+}

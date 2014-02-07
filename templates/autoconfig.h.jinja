@@ -1,0 +1,15 @@
+#ifndef autoconfig_h
+#define autoconfig_h
+
+{% for item in items: %}
+{% set itemName = item['name']|replace("-","_")|replace(" ","_")|replace("/","_")|replace(".","_") %}
+#define {{ itemName|upper }}_PKEY {{loop.index0 }}
+{{ item['type'] }} get{{ itemName|capitalize }}();
+void set{{ itemName|capitalize }}({{ item['type'] }} value);
+
+{% endfor %}
+
+void autoconfInit();
+void autoconfDeinit();
+
+#endif
