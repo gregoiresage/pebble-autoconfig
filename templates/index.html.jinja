@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{longName}}</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/git/jquery.mobile-git.min.css">
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://code.jquery.com/mobile/git/jquery.mobile-git.min.js"></script>
+</head>
+
+<body>
+	<div data-role="page" id="page1">
+  		<div data-role="header">
+    		<button id="b-cancel" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</button>
+    		<h1>{{longName}}</h1>
+    		<button id="b-submit" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-check">Save</button>
+  		</div>
+
+		{% for item in preferences['items']: -%}
+		{%- if item['type'] == 'choice' %}
+		<div data-role="fieldcontain">
+			<label for="{{ item['name'] }}" class="select">{{ item['title'] }}:</label>
+			<select name="{{ item['name'] }}" id="{{ item['name'] }}">
+			{%- for key, value in item['choices'].iteritems() %}
+				<option value="{{value}}">{{key}}</option>
+			{%- endfor %}
+			</select>
+		</div>
+		{%- endif %}
+		{% endfor %}
+
+	</div>
+
+    <script type="text/javascript">    
+    	$().ready(function() {
+			var dictionary;
+			try {
+
+				dictionary = JSON.parse(localStorage['{{shortName}}']);
+			}
+			catch(e) {
+				dictionary = {
+					{% for item in preferences['items']: -%}
+					"{{ item['name'] }}" : "{{ item['default'] }}",
+					{% endfor %}
+				};
+			}
+
+			for (option in dictionary) {
+				console.log(option +  " " +dictionary[option] );
+				if(dictionary[option]) {
+					$('#'+option).val(dictionary[option].toString()).selectmenu('refresh');
+		        }
+			};
+		});
+
+    	$('#b-submit').click(function() {
+    	  var dictionary = {};
+    	  {% for item in preferences['items']: -%}
+    	  {
+    	  	var field=document.getElementById('{{ item['name'] }}');
+    	  	dictionary['{{ item['name'] }}'] = parseInt(field.value);
+    	  }
+    	  {% endfor %}
+    	  localStorage['{{shortName}}'] = JSON.stringify(dictionary);
+
+    	  var location = "pebblejs://close#" + encodeURIComponent(localStorage['{{shortName}}']);
+    	  window.location.href = location;
+    	});
+	
+    	$('#b-cancel').click(function() {
+    	  var location = "pebblejs://close#CANCEL";
+    	  window.location.href = location;
+    	});
+	</script>
+</body>
+</html>

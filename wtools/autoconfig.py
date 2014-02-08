@@ -24,7 +24,7 @@ class autoconfig(Task.Task):
 		template = env.get_template(tpl)
 		
 		f = open(self.outputs[0].abspath(), 'w')
-		f.write(template.render(self.preferences))
+		f.write(template.render(self.appinfo))
 		f.close()
 
 def configure(conf):
@@ -44,12 +44,12 @@ def process_autoconfig(self, node):
 	out = Node.split_path(out.abspath())[-1]
 
 	appinfo_content=open('appinfo.json')
-	preferences_json=json.load(appinfo_content)['preferences']
+	appinfo_json=json.load(appinfo_content)
 
 	out = self.bld.path.find_or_declare([str(out)])
 
 	tsk = self.create_task('autoconfig', [node], [out])
-	tsk.preferences = preferences_json
+	tsk.appinfo = appinfo_json
 
 	if out.suffix() in ['.c']:
 		self.source.append(out)

@@ -1,25 +1,49 @@
 #include <pebble.h>
 #include "autoconfig.h"
 
-{% for item in items: -%}
-{% set itemName = item['name']|replace("-","_")|replace(" ","_")|replace("/","_")|replace(".","_") %}
+{% import 'autoconfig.jinja.utils' as autoconfig_utils %}
 
-{{ item['type'] }} _{{ itemName }};
-
-{{ item['type'] }} get{{ itemName | capitalize }}(){
-	return _{{ itemName }};
+{% for item in preferences['items']: -%}
+int32_t _{{ autoconfig_utils.cname(item) }};
+int32_t get{{ autoconfig_utils.cname(item)| capitalize }}(){
+	return _{{ autoconfig_utils.cname(item) }};
 }
-void set{{ itemName | capitalize }}({{ item['type'] }} value){
-	
+void set{{ autoconfig_utils.cname(item) | capitalize }}(int32_t value){
+	 _{{ autoconfig_utils.cname(item) }} = value;
+	 persist_write_int({{ autoconfig_utils.cname(item)|upper }}_PKEY, value);
 }
 {% endfor %}
 
-void autoconfInit(){
-	{% for item in items: -%}
+void autoconf_in_received_handler(DictionaryIterator *iter, void *context) {
+  Tuple *tuple = NULL;
+  {% for item in preferences['items']: -%}
+  tuple = dict_find(iter, {{ autoconfig_utils.cname(item)|upper }}_PKEY);
+  tuple ? set{{ autoconfig_utils.cname(item) | capitalize }}(tuple->value->uint8) : false;
+  {% endfor %}
+}
+
+void autoconf_init(){
+	app_message_register_inbox_received(autoconf_in_received_handler);
+	app_message_open(128, 0);
+
+	{% for item in preferences['items']: -%}
+	// Check if our time display property exists
+	if (persist_exists({{ autoconfig_utils.cname(item)|upper }}_PKEY)) {
+		// If so, read it in to a variable
+		set{{ autoconfig_utils.cname(item) | capitalize }}(persist_read_int({{ autoconfig_utils.cname(item)|upper }}_PKEY));
+	}
+	{% if item['default'] %}
+	else {
+		set{{ autoconfig_utils.cname(item) | capitalize }}({{item['default']}});
+	}
+	{% endif %}
 	{% endfor %}
 }
 
-void autoconfDeinit(){
-	{% for item in items: -%}
+void autoconf_deinit(){
+	{% for item in preferences['items']: -%}
+	persist_write_int({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }});
 	{% endfor %}
 }
+
+

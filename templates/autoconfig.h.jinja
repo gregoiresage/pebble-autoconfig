@@ -1,15 +1,18 @@
 #ifndef autoconfig_h
 #define autoconfig_h
 
-{% for item in items: %}
-{% set itemName = item['name']|replace("-","_")|replace(" ","_")|replace("/","_")|replace(".","_") %}
-#define {{ itemName|upper }}_PKEY {{loop.index0 }}
-{{ item['type'] }} get{{ itemName|capitalize }}();
-void set{{ itemName|capitalize }}({{ item['type'] }} value);
+#include <pebble.h>
 
+{% import 'autoconfig.jinja.utils' as autoconfig_utils %}
+
+{% for item in preferences['items']: %}
+#define {{ autoconfig_utils.cname(item)|upper }}_PKEY {{ appKeys[item['name']] }}
+int32_t get{{ autoconfig_utils.cname(item)|capitalize }}();
 {% endfor %}
 
-void autoconfInit();
-void autoconfDeinit();
+void autoconf_in_received_handler(DictionaryIterator *iter, void *context); 
+
+void autoconf_init();
+void autoconf_deinit();
 
 #endif
