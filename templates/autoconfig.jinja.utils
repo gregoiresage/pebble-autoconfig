@@ -5,3 +5,7 @@
 {%- macro cname(item) -%}
 {{item['name']|replace("-","_")|replace(" ","_")|replace("/","_")|replace(".","_")}}
 {%- endmacro %}
+
+{%- macro coolstring(str) -%}
+{{str|replace("-","_")|replace(" ","_")|replace("/","_")|replace(".","_")}}
+{%- endmacro %}

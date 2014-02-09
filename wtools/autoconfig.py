@@ -41,6 +41,7 @@ def configure(conf):
 @extension('.jinja')
 def process_autoconfig(self, node):	
 	out = node.change_ext('')
+
 	out = Node.split_path(out.abspath())[-1]
 
 	appinfo_content=open('appinfo.json')

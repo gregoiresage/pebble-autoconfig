@@ -7,7 +7,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   // call autoconf_in_received_handler
   autoconf_in_received_handler(iter, context);
 
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "in_received_handler display:%d favourite:%d", (int)getDisplay(), (int)getFavourite());
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "in_received_handler select:%d slider:%d switch:%d", getMyselect(), (int)getMyslider(), getMyswitch());
 }
 
 static void init(void) {
@@ -22,7 +22,7 @@ static void init(void) {
   const bool animated = true;
   window_stack_push(window, animated);
 
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init display:%d favourite:%d", (int)getDisplay(), (int)getFavourite());
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "init select:%d slider:%d switch:%d", (int)getMyselect(), (int)getMyslider(), (int)getMyswitch());
 }
 
 static void deinit(void) {

@@ -10,9 +10,9 @@
   },
   "capabilities": [ "configurable" ],
   "appKeys": {
-    "favourite": 0,
-    "display": 1,
-    "slogan": 2
+    "myslider": 0,
+    "myselect": 1,
+    "myswitch": 2
   },
   "resources": {
     "media": []
@@ -20,21 +20,25 @@
   "preferences": {
     "url" : "http://192.168.0.10:8080",
     "items": [{
-        "name":     "display",
-        "title":    "Display Mode",
-        "subtitle": "Enable for Black on White",
+        "name":     "myselect",
+        "title":    "My beautiful select",
         "type":     "choice",
-        "choices":  {"ON" : 0 ,"OFF" : 1},
+        "choices":  ["ONE","TWO", "THREE"],
         "default":  0
     },
     {
-        "name":   "favourite",
-        "title":  "Favourite Number",
+        "name":   "myslider",
+        "title":  "My beautiful Slider",
         "type":   "range",
-        "type":     "choice",
-        "choices":  {"ON" : 0 ,"OFF" : 1},
         "range": {"min":    0,"max":    100},
         "default": 17
+    },
+    {
+        "name":   "myswitch",
+        "title":  "My beautiful Switch",
+        "type":   "switch",
+        "switch":  ["OFF","ON"],
+        "default": 0
     }
   ]
   }

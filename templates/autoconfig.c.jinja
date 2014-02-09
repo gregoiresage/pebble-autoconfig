@@ -4,6 +4,16 @@
 {% import 'autoconfig.jinja.utils' as autoconfig_utils %}
 
 {% for item in preferences['items']: -%}
+{% if item['type'] == 'choice' or item['type'] == 'switch' %}
+{{ autoconfig_utils.cname(item)|capitalize }}Value _{{ autoconfig_utils.cname(item) }};
+{{ autoconfig_utils.cname(item)|capitalize }}Value get{{ autoconfig_utils.cname(item)| capitalize }}(){
+	return _{{ autoconfig_utils.cname(item) }};
+}
+void set{{ autoconfig_utils.cname(item) | capitalize }}({{ autoconfig_utils.cname(item)|capitalize }}Value value){
+	 _{{ autoconfig_utils.cname(item) }} = value;
+	 persist_write_int({{ autoconfig_utils.cname(item)|upper }}_PKEY, value);
+}
+{% else %}
 int32_t _{{ autoconfig_utils.cname(item) }};
 int32_t get{{ autoconfig_utils.cname(item)| capitalize }}(){
 	return _{{ autoconfig_utils.cname(item) }};
@@ -12,6 +22,10 @@ void set{{ autoconfig_utils.cname(item) | capitalize }}(int32_t value){
 	 _{{ autoconfig_utils.cname(item) }} = value;
 	 persist_write_int({{ autoconfig_utils.cname(item)|upper }}_PKEY, value);
 }
+{% endif %}
+
+
+
 {% endfor %}
 
 void autoconf_in_received_handler(DictionaryIterator *iter, void *context) {
