@@ -10,13 +10,13 @@
 {% if item['type'] == 'choice' %}
 typedef enum {
 {% for choice in item['choices']: -%}
-	{{ autoconfig_utils.coolstring(choice)|upper }},
+	{{ autoconfig_utils.cname(item)|upper }}_{{ autoconfig_utils.coolstring(choice)|upper }},
 {% endfor -%}
 } {{ autoconfig_utils.cname(item)|capitalize }}Value;
 {% elif item['type'] == 'switch' %}
 typedef enum {
 {% for opt in item['switch']: -%}
-	{{ autoconfig_utils.coolstring(opt)|upper }},
+	{{ autoconfig_utils.cname(item)|upper }}_{{ autoconfig_utils.coolstring(opt)|upper }},
 {% endfor -%}
 } {{ autoconfig_utils.cname(item)|capitalize }}Value;
 {% endif %}

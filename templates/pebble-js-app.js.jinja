@@ -1,16 +1,12 @@
-var config_url = "{{ preferences['url'] }}";
-
 Pebble.addEventListener("ready", function(e) {
     console.log("Ready");
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
-    Pebble.openURL(config_url);
+    Pebble.openURL("{{ preferences['url'] }}");
 });
 
 Pebble.addEventListener("webviewclosed", function(e) {
-    console.log(e.response);
-    var responseFromWebView = decodeURIComponent(e.response);
-    var settings = JSON.parse(responseFromWebView);
+    var settings = JSON.parse(decodeURIComponent(e.response));
     Pebble.sendAppMessage(settings);
 });

@@ -7,22 +7,25 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   // call autoconf_in_received_handler
   autoconf_in_received_handler(iter, context);
 
+  // here the new settings are available
   APP_LOG(APP_LOG_LEVEL_DEBUG, "in_received_handler select:%d slider:%d switch:%d", getMyselect(), (int)getMyslider(), getMyswitch());
+
+  //update display
 }
 
 static void init(void) {
-  // call autoconf init
+  // call autoconf init (load previous settings and register app message handlers)
   autoconf_init();
+
+  // here the previous settings are already loaded
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "init select:%d slider:%d switch:%d", getMyselect(), (int)getMyslider(), getMyswitch());
+
+  //override autoconfig in_received_handler (if something must be done when new settings arrive)
+  app_message_register_inbox_received(in_received_handler);
+  
   
   window = window_create();
-
-  //override autoconfig in_received_handler
-  app_message_register_inbox_received(in_received_handler);
-
-  const bool animated = true;
-  window_stack_push(window, animated);
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init select:%d slider:%d switch:%d", (int)getMyselect(), (int)getMyslider(), (int)getMyswitch());
+  window_stack_push(window, true);
 }
 
 static void deinit(void) {
