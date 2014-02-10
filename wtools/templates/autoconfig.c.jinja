@@ -13,7 +13,7 @@ void set{{ autoconfig_utils.cname(item) | capitalize }}({{ autoconfig_utils.cnam
 	 _{{ autoconfig_utils.cname(item) }} = value;
 }
 {% elif item['type'] == 'string' -%}
-char _{{ autoconfig_utils.cname(item) }}[{{item['max_length']}}];
+char _{{ autoconfig_utils.cname(item) }}[{{item['max-length']}}];
 char* get{{ autoconfig_utils.cname(item)| capitalize }}(){
 	return _{{ autoconfig_utils.cname(item) }};
 }
@@ -55,7 +55,7 @@ void autoconf_init(){
 	if (persist_exists({{ autoconfig_utils.cname(item)|upper }}_PKEY)) {
 		// If so, read it in to a variable
 		{% if item['type'] == 'string' %}
-		persist_read_string({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }}, {{item['max_length'] + 1}});
+		persist_read_string({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }}, {{item['max-length'] + 1}});
 		set{{ autoconfig_utils.cname(item) | capitalize }}(_{{ autoconfig_utils.cname(item) }});
 		{% else %}
 		set{{ autoconfig_utils.cname(item) | capitalize }}(persist_read_int({{ autoconfig_utils.cname(item)|upper }}_PKEY));

@@ -35,7 +35,7 @@
             {%- endfor %}
             </select>
             {%- elif item['type'] == 'string' %}
-            <input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max_length'] }}" data-clear-btn="true">
+            <input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
             {%- endif %}
         {% endfor %}
         </div>
