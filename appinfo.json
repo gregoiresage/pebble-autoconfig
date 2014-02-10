@@ -22,6 +22,7 @@
     "items": [{
         "name":     "myselect",
         "title":    "My beautiful select",
+        "subtitle": "something",
         "type":     "choice",
         "choices":  ["ONE","TWO", "THREE"],
         "default":  0
@@ -29,6 +30,7 @@
     {
         "name":   "myslider",
         "title":  "My beautiful Slider",
+        "subtitle": "something",
         "type":   "range",
         "range": {"min":    0,"max":    100},
         "default": 17
@@ -36,6 +38,7 @@
     {
         "name":   "myswitch",
         "title":  "My beautiful Switch",
+        "subtitle": "something",
         "type":   "switch",
         "switch":  ["OFF","ON"],
         "default": 0
