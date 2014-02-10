@@ -18,7 +18,8 @@
   		</div>
         <div data-role="content">
             {% for item in preferences['items']: -%}
-            <label for="{{ item['name'] }}">{{ item['title'] }}:</label>
+            <h2>{{ item['title'] }}</h2>
+            <label for="{{ item['name'] }}">{{ item['subtitle'] }}</label>
             {%- if item['type'] == 'choice' %}
             <select name="{{ item['name'] }}" id="{{ item['name'] }}">
             {%- for choice in item['choices'] %}
