@@ -1,5 +1,18 @@
 Pebble.addEventListener("ready", function(e) {
-    console.log("Ready");
+    var settings;
+	try {
+
+		settings = JSON.parse(localStorage['{{shortName}}']);
+	}
+	catch(e) {
+		settings = {
+			{% for item in preferences['items']: -%}
+			"{{ item['name'] }}" : "{{ item['default'] }}",
+			{% endfor %}
+		};
+		localStorage['{{shortName}}'] = JSON.stringify(settings);
+	}
+	Pebble.sendAppMessage(settings);
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
@@ -7,6 +20,7 @@ Pebble.addEventListener("showConfiguration", function (e) {
 });
 
 Pebble.addEventListener("webviewclosed", function(e) {
-    var settings = JSON.parse(decodeURIComponent(e.response));
+	localStorage['{{shortName}}'] = decodeURIComponent(e.response);
+    var settings = JSON.parse(localStorage['{{shortName}}']);
     Pebble.sendAppMessage(settings);
 });
