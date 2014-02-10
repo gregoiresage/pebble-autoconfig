@@ -26,6 +26,8 @@ typedef enum {
 {{ autoconfig_utils.cname(item)|capitalize }}Value get{{ autoconfig_utils.cname(item)|capitalize }}();
 {% elif item['type'] == 'switch' %}
 {{ autoconfig_utils.cname(item)|capitalize }}Value get{{ autoconfig_utils.cname(item)|capitalize }}();
+{% elif item['type'] == 'string' %}
+char* get{{ autoconfig_utils.cname(item)|capitalize }}();
 {% else %}
 int32_t get{{ autoconfig_utils.cname(item)|capitalize }}();
 {% endif %}

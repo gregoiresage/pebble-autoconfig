@@ -17,7 +17,7 @@
     		<button id="b-submit" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-check">Save</button>
   		</div>
         <div data-role="content">
-            {% for item in preferences['items']: -%}
+        {% for item in preferences['items']: -%}
             <h2>{{ item['title'] }}</h2>
             <label for="{{ item['name'] }}">{{ item['subtitle'] }}</label>
             {%- if item['type'] == 'choice' %}
@@ -34,8 +34,10 @@
                 <option value="{{loop.index0 }}">{{opt}}</option>
             {%- endfor %}
             </select>
+            {%- elif item['type'] == 'string' %}
+            <input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max_length'] }}" data-clear-btn="true">
             {%- endif %}
-            {% endfor %}
+        {% endfor %}
         </div>
 	</div>
 
@@ -43,7 +45,6 @@
     	$().ready(function() {
 			var dictionary;
 			try {
-
 				dictionary = JSON.parse(localStorage['{{shortName}}']);
 			}
 			catch(e) {
@@ -62,6 +63,8 @@
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
 			{%- elif item['type'] == 'switch' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
+			{%- elif item['type'] == 'string' %}
+				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).textinput('refresh');
 			{%- endif %}
 			}
 			{% endfor %}
@@ -72,7 +75,11 @@
     	  {% for item in preferences['items']: -%}
     	  {
     	  	var field=document.getElementById('{{ item['name'] }}');
+    	  	{% if item['type'] == 'string' %}
+    	  	dictionary['{{ item['name'] }}'] = field.value;
+    	  	{% else %}
     	  	dictionary['{{ item['name'] }}'] = parseInt(field.value);
+    	  	{% endif %}
     	  }
     	  {% endfor %}
     	  localStorage['{{shortName}}'] = JSON.stringify(dictionary);

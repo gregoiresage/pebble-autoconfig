@@ -8,7 +8,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   autoconf_in_received_handler(iter, context);
 
   // here the new settings are available
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "in_received_handler select:%d slider:%d switch:%d", getMyselect(), (int)getMyslider(), getMyswitch());
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "in_received_handler select:%d slider:%d switch:%d string:%s", getMyselect(), (int)getMyslider(), getMyswitch(), getMystringconfig());
 
   //update display
 }
@@ -18,7 +18,7 @@ static void init(void) {
   autoconf_init();
 
   // here the previous settings are already loaded
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init select:%d slider:%d switch:%d", getMyselect(), (int)getMyslider(), getMyswitch());
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "init select:%d slider:%d switch:%d string:%s", getMyselect(), (int)getMyslider(), getMyswitch(), getMystringconfig());
 
   //override autoconfig in_received_handler (if something must be done when new settings arrive)
   app_message_register_inbox_received(in_received_handler);

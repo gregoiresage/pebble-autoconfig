@@ -12,6 +12,14 @@
 void set{{ autoconfig_utils.cname(item) | capitalize }}({{ autoconfig_utils.cname(item)|capitalize }}Value value){
 	 _{{ autoconfig_utils.cname(item) }} = value;
 }
+{% elif item['type'] == 'string' -%}
+char _{{ autoconfig_utils.cname(item) }}[{{item['max_length']}}];
+char* get{{ autoconfig_utils.cname(item)| capitalize }}(){
+	return _{{ autoconfig_utils.cname(item) }};
+}
+void set{{ autoconfig_utils.cname(item) | capitalize }}(char* value){
+    strcpy(_{{ autoconfig_utils.cname(item) }}, value);
+}
 {% else %}
 int32_t _{{ autoconfig_utils.cname(item) }};
 int32_t get{{ autoconfig_utils.cname(item)| capitalize }}(){
@@ -30,7 +38,11 @@ void autoconf_in_received_handler(DictionaryIterator *iter, void *context) {
   Tuple *tuple = NULL;
   {% for item in preferences['items']: -%}
   tuple = dict_find(iter, {{ autoconfig_utils.cname(item)|upper }}_PKEY);
+  {% if item['type'] == 'string' %}
+  tuple ? set{{ autoconfig_utils.cname(item) | capitalize }}(tuple->value->cstring) : false;
+  {% else %}
   tuple ? set{{ autoconfig_utils.cname(item) | capitalize }}(tuple->value->uint8) : false;
+  {% endif %}
   {% endfor %}
 }
 
@@ -42,11 +54,20 @@ void autoconf_init(){
 	// Check if our time display property exists
 	if (persist_exists({{ autoconfig_utils.cname(item)|upper }}_PKEY)) {
 		// If so, read it in to a variable
+		{% if item['type'] == 'string' %}
+		persist_read_string({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }}, {{item['max_length'] + 1}});
+		set{{ autoconfig_utils.cname(item) | capitalize }}(_{{ autoconfig_utils.cname(item) }});
+		{% else %}
 		set{{ autoconfig_utils.cname(item) | capitalize }}(persist_read_int({{ autoconfig_utils.cname(item)|upper }}_PKEY));
+		{% endif %}
 	}
 	{% if item['default'] %}
 	else {
+	    {% if item['type'] == 'string' %}
+	    set{{ autoconfig_utils.cname(item) | capitalize }}("{{item['default']}}");
+	    {% else %}
 		set{{ autoconfig_utils.cname(item) | capitalize }}({{item['default']}});
+		{% endif %}
 	}
 	{% endif %}
 	{% endfor %}
@@ -54,7 +75,11 @@ void autoconf_init(){
 
 void autoconf_deinit(){
 	{% for item in preferences['items']: -%}
+	{% if item['type'] == 'string' %}
+	persist_write_string({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }});
+	{% else %}
 	persist_write_int({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }});
+	{% endif %}
 	{% endfor %}
 }
 
