@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>pebble-autoconfig</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/git/jquery.mobile-git.min.css">
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://code.jquery.com/mobile/git/jquery.mobile-git.min.js"></script>
+</head>
+
+<body>
+	<div data-role="page" id="page1">
+  		<div data-role="header">
+    		<button id="b-cancel" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</button>
+    		<h1>pebble-autoconfig</h1>
+    		<button id="b-submit" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-check">Save</button>
+  		</div>
+        <div data-role="content">
+        <h2>My beautiful select</h2>
+            <label for="myselect">something</label>
+            <select name="myselect" id="myselect">
+                <option value="0">ONE</option>
+                <option value="1">TWO</option>
+                <option value="2">THREE</option>
+            </select>
+        <h2>My beautiful Slider</h2>
+            <label for="myslider">something</label>
+            <input type="range" name="myslider" id="myslider" min="0" max="100">
+        <h2>My beautiful Switch</h2>
+            <label for="myswitch">something</label>
+            <select name="myswitch" id="myswitch" data-role="slider">
+                <option value="0">OFF</option>
+                <option value="1">ON</option>
+            </select>
+        <h2>IP address</h2>
+            <label for="mystringconfig">Enter the IP address</label>
+            <input type="text" name="mystringconfig" id="mystringconfig" value="" maxlength="15" data-clear-btn="true">
+        
+        </div>
+	</div>
+
+    <script type="text/javascript">    
+    	$().ready(function() {
+			var dictionary;
+			try {
+				dictionary = JSON.parse(localStorage['pebble-autoconfig']);
+			}
+			catch(e) {
+				dictionary = {
+					"myselect" : "0",
+					"myslider" : "17",
+					"myswitch" : "0",
+					"mystringconfig" : "127.0.0.1",
+					
+				};
+			}
+
+			if(dictionary['myselect']) {
+				$('#myselect').val(dictionary['myselect'].toString()).selectmenu('refresh');
+			}
+			if(dictionary['myslider']) {
+				$('#myslider').val(dictionary['myslider'].toString()).slider('refresh');
+			}
+			if(dictionary['myswitch']) {
+				$('#myswitch').val(dictionary['myswitch'].toString()).slider('refresh');
+			}
+			if(dictionary['mystringconfig']) {
+				$('#mystringconfig').val(dictionary['mystringconfig'].toString()).textinput('refresh');
+			}
+			
+		});
+
+    	$('#b-submit').click(function() {
+    	  var dictionary = {};
+    	  {
+    	  	var field=document.getElementById('myselect');
+    	  	
+    	  	dictionary['myselect'] = parseInt(field.value);
+    	  	
+    	  }
+    	  {
+    	  	var field=document.getElementById('myslider');
+    	  	
+    	  	dictionary['myslider'] = parseInt(field.value);
+    	  	
+    	  }
+    	  {
+    	  	var field=document.getElementById('myswitch');
+    	  	
+    	  	dictionary['myswitch'] = parseInt(field.value);
+    	  	
+    	  }
+    	  {
+    	  	var field=document.getElementById('mystringconfig');
+    	  	
+    	  	dictionary['mystringconfig'] = field.value;
+    	  	
+    	  }
+    	  
+    	  localStorage['pebble-autoconfig'] = JSON.stringify(dictionary);
+
+    	  var location = "pebblejs://close#" + encodeURIComponent(localStorage['pebble-autoconfig']);
+    	  window.location.href = location;
+    	});
+	
+    	$('#b-cancel').click(function() {
+    	  var location = "pebblejs://close#CANCEL";
+    	  window.location.href = location;
+    	});
+	</script>
+</body>
+</html>
