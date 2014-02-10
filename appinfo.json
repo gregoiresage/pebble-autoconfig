@@ -19,7 +19,7 @@
     "media": []
   },
   "preferences": {
-    "url" : "http://gotling-system.se/pebble/pebble-autoconfig",
+    "url" : "http://pebble-autoconfig.googlecode.com/git/html/index.html",
     "items": [{
         "name":     "myselect",
         "title":    "My beautiful select",
