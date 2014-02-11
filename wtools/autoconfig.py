@@ -5,7 +5,8 @@ import os
 import json
 
 from waflib import TaskGen, Task, Node
-from waflib.TaskGen import extension
+from waflib.TaskGen import extension, before_method,feature
+from waflib.Configure import conf
 
 class autoconfig(Task.Task):
 	color   = 'PINK'
@@ -30,14 +31,19 @@ class autoconfig(Task.Task):
 def configure(conf):
 	""" detect jinja installation """
 	#load jinja module
-	# conf.check_python_module('jinja2')
+	#conf.check_python_module('jinja2')
 	try:
 		from jinja2 import Environment
 		from jinja2 import FileSystemLoader
 	except Exception, e:
 		conf.fatal("Jinja template engine is not available! (" + e.message + ")")
 
-
+def build(bld):
+    for template in bld.path.ant_glob(['wtools/templates/*.jinja']):
+        bld.add_manual_dependency(
+            template,
+            bld.path.find_node('appinfo.json'))
+			
 @extension('.jinja')
 def process_autoconfig(self, node):	
 	out = node.change_ext('')
@@ -54,3 +60,15 @@ def process_autoconfig(self, node):
 
 	if out.suffix() in ['.c']:
 		self.source.append(out)
+
+@feature('autoconf')
+@before_method("process_source")
+def fprocess_autoconfig(self):	
+	for src in self.path.ant_glob(['wtools/**/*.jinja']):
+		self.process_autoconfig(src)
+
+
+@conf
+def pbl_autoconfprogram(self,*k,**kw):
+	kw['features']='c cprogram autoconf'
+	return self(*k,**kw)
