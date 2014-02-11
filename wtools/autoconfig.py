@@ -3,6 +3,7 @@
 
 import os
 import json
+import inspect
 
 from waflib import TaskGen, Task, Node
 from waflib.TaskGen import extension, before_method,feature
@@ -63,8 +64,10 @@ def process_autoconfig(self, node):
 
 @feature('autoconf')
 @before_method("process_source")
-def fprocess_autoconfig(self):	
-	for src in self.path.ant_glob(['wtools/**/*.jinja']):
+def fprocess_autoconfig(self):
+	jinjapath = os.path.dirname(inspect.getfile(inspect.currentframe()))
+	jinjapath = os.path.join(jinjapath, 'templates/*.jinja')
+	for src in self.path.ant_glob([jinjapath]):
 		self.process_autoconfig(src)
 
 
