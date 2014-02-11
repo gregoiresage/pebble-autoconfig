@@ -66,7 +66,7 @@
 				$('#myswitch').val(dictionary['myswitch'].toString()).slider('refresh');
 			}
 			if(dictionary['mystringconfig']) {
-				$('#mystringconfig').val(dictionary['mystringconfig'].toString()).textinput('refresh');
+				$('#mystringconfig').val(dictionary['mystringconfig']);
 			}
 			
 		});
@@ -105,7 +105,7 @@
     	});
 	
     	$('#b-cancel').click(function() {
-    	  var location = "pebblejs://close#CANCEL";
+    	  var location = "pebblejs://close#";
     	  window.location.href = location;
     	});
 	</script>

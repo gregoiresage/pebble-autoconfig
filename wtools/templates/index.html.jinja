@@ -65,7 +65,7 @@
 			{%- elif item['type'] == 'switch' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
 			{%- elif item['type'] == 'string' %}
-				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).textinput('refresh');
+				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
 			{%- endif %}
 			}
 			{% endfor %}
@@ -90,7 +90,7 @@
     	});
 	
     	$('#b-cancel').click(function() {
-    	  var location = "pebblejs://close#CANCEL";
+    	  var location = "pebblejs://close#";
     	  window.location.href = location;
     	});
 	</script>
