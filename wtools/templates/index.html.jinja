@@ -30,7 +30,7 @@
                 {%- elif item['type'] == 'range' %}
                 <input type="range" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['range']['min']}}" max="{{item['range']['max']}}">
                 {%- elif item['type'] == 'switch' %}
-                <select name="{{ item['name'] }}" id="{{ item['name'] }}" data-role="flipswitch">
+                <select name="{{ item['name'] }}" id="{{ item['name'] }}" data-role="slider">
                 {%- for opt in item['switch'] %}
                     <option value="{{loop.index0 }}">{{opt}}</option>
                 {%- endfor %}
