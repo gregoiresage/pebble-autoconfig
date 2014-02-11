@@ -12,7 +12,7 @@
 
 <body>
 	<div data-role="page" id="configuration">
-  		<div data-role="header">
+  		<div data-role="header" id="header">
     		<button id="b-cancel" data-icon="back" data-iconpos="left" data-inline="true" data-mini="true">Cancel</button>
     		<h1>{{longName}}</h1>
   		</div>
@@ -45,23 +45,8 @@
             </form>
         </div>
 	</div>
-    <script>
-        $("#configuration-form").validate({
-                rules: {
-                    {% for item in preferences['items']: -%}
-                    {%- if item['type'] == 'string' -%}
-                    {{ item['name'] }}: "required {{ item['name'] }}",
-                    {%- endif %}
-                    {% endfor %}
-                },
-                errorPlacement: function(error, element) {
-                    error.insertAfter( element.parent() );
-                }
-            });
-    </script>
-
-    <script type="text/javascript">    
-    	$().ready(function() {
+    <script type="text/javascript">  
+    	$().ready(function() {    
 			var dictionary;
 			try {
 				dictionary = JSON.parse(localStorage['{{shortName}}']);
@@ -92,6 +77,24 @@
 			}
 			{% endfor %}
 		});
+		
+		// Handle different UI on i-devices
+        if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
+            $("#header").remove();
+        }
+		
+		$("#configuration-form").validate({
+            rules: {
+                {%- for item in preferences['items']: -%}
+                {%- if item['type'] == 'string' -%}
+                {{ item['name'] }}: "required {{ item['name'] }}",
+                {%- endif %}
+                {% endfor %}
+            },
+            errorPlacement: function(error, element) {
+                error.insertAfter( element.parent() );
+            }
+        });
 
     	$('#b-submit').click(function() {
     	  var dictionary = {};
