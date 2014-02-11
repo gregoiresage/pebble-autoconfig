@@ -7,40 +7,58 @@
 	<link rel="stylesheet" href="http://code.jquery.com/mobile/git/jquery.mobile-git.min.css">
 	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script src="http://code.jquery.com/mobile/git/jquery.mobile-git.min.js"></script>
+	<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 </head>
 
 <body>
 	<div data-role="page" id="configuration">
   		<div data-role="header">
-    		<button id="b-cancel" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</button>
+    		<button id="b-cancel" data-icon="back" data-iconpos="left" data-inline="true" data-mini="true">Cancel</button>
     		<h1>{{longName}}</h1>
-    		<button id="b-submit" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-check">Save</button>
   		</div>
         <div data-role="content">
-            {% for item in preferences['items']: -%}
-            <div class="ui-field-contain">
-            <label for="{{ item['name'] }}">{{ item['title'] }}</label>
-            {%- if item['type'] == 'choice' %}
-            <select name="{{ item['name'] }}" id="{{ item['name'] }}">
-            {%- for choice in item['choices'] %}
-                <option value="{{loop.index0 }}">{{choice}}</option>
-            {%- endfor %}
-            </select>
-            {%- elif item['type'] == 'range' %}
-            <input type="range" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['range']['min']}}" max="{{item['range']['max']}}">
-            {%- elif item['type'] == 'switch' %}
-            <select name="{{ item['name'] }}" id="{{ item['name'] }}" data-role="slider">
-            {%- for opt in item['switch'] %}
-                <option value="{{loop.index0 }}">{{opt}}</option>
-            {%- endfor %}
-            </select>
-            {%- elif item['type'] == 'string' %}
-            <input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
-            {%- endif %}
-            </div>
-            {%- endfor %}
+            <form id="configuration-form">
+                {% for item in preferences['items']: -%}
+                <div class="ui-field-contain">
+                <label for="{{ item['name'] }}">{{ item['title'] }}</label>
+                {%- if item['type'] == 'choice' %}
+                <select name="{{ item['name'] }}" id="{{ item['name'] }}">
+                {%- for choice in item['choices'] %}
+                    <option value="{{loop.index0 }}">{{choice}}</option>
+                {%- endfor %}
+                </select>
+                {%- elif item['type'] == 'range' %}
+                <input type="range" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['range']['min']}}" max="{{item['range']['max']}}">
+                {%- elif item['type'] == 'switch' %}
+                <select name="{{ item['name'] }}" id="{{ item['name'] }}" data-role="flipswitch">
+                {%- for opt in item['switch'] %}
+                    <option value="{{loop.index0 }}">{{opt}}</option>
+                {%- endfor %}
+                </select>
+                {%- elif item['type'] == 'string' %}
+                <input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
+                {%- endif %}
+                </div>
+                {%- endfor %}
+                
+                <button id="b-submit" data-theme="b" data-icon="check" data-iconpos="right">Save</button>
+            </form>
         </div>
 	</div>
+    <script>
+        $("#configuration-form").validate({
+                rules: {
+                    {% for item in preferences['items']: -%}
+                    {%- if item['type'] == 'string' -%}
+                    {{ item['name'] }}: "required {{ item['name'] }}",
+                    {%- endif %}
+                    {% endfor %}
+                },
+                errorPlacement: function(error, element) {
+                    error.insertAfter( element.parent() );
+                }
+            });
+    </script>
 
     <script type="text/javascript">    
     	$().ready(function() {
@@ -66,6 +84,10 @@
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
 			{%- elif item['type'] == 'string' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
+				$.validator.addMethod("{{ item['name'] }}", function(value, element) {
+                    return this.optional(element) || /{{ item['pattern'] }}/i.test(value);
+                }, "Text field is invalid.");
+				
 			{%- endif %}
 			}
 			{% endfor %}
