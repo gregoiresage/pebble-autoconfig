@@ -10,33 +10,33 @@
 </head>
 
 <body>
-	<div data-role="page" id="page1">
+	<div data-role="page" id="configuration">
   		<div data-role="header">
     		<button id="b-cancel" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</button>
     		<h1>pebble-autoconfig</h1>
     		<button id="b-submit" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-check">Save</button>
   		</div>
         <div data-role="content">
-        <h2>My beautiful select</h2>
-            <label for="myselect">something</label>
+            <div class="ui-field-contain">
+            <label for="myselect">My beautiful select</label>
             <select name="myselect" id="myselect">
                 <option value="0">ONE</option>
                 <option value="1">TWO</option>
                 <option value="2">THREE</option>
             </select>
-        <h2>My beautiful Slider</h2>
-            <label for="myslider">something</label>
+            </div><div class="ui-field-contain">
+            <label for="myslider">My beautiful Slider</label>
             <input type="range" name="myslider" id="myslider" min="0" max="100">
-        <h2>My beautiful Switch</h2>
-            <label for="myswitch">something</label>
+            </div><div class="ui-field-contain">
+            <label for="myswitch">My beautiful Switch</label>
             <select name="myswitch" id="myswitch" data-role="slider">
                 <option value="0">OFF</option>
                 <option value="1">ON</option>
             </select>
-        <h2>IP address</h2>
-            <label for="mystringconfig">Enter the IP address</label>
+            </div><div class="ui-field-contain">
+            <label for="mystringconfig">IP address</label>
             <input type="text" name="mystringconfig" id="mystringconfig" value="" maxlength="15" data-clear-btn="true">
-        
+            </div>
         </div>
 	</div>
 
