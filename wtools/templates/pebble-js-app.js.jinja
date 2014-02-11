@@ -26,3 +26,26 @@ Pebble.addEventListener("webviewclosed", function(e) {
         Pebble.sendAppMessage(settings);
     }
 });
+
+function diff(obj1, obj2) {
+    var result = {};
+    for(var key in obj1)
+    {
+        if (!obj2.hasOwnProperty(key) || obj2[key] !== obj1[key]) {
+            result[key] = obj1[key];
+        }
+    }
+    return result;
+}
+
+Pebble.addEventListener("webviewclosed", function(e) {
+    if ((typeof e.response === 'string') && (e.response.length > 0)) {
+        var newSettings = decodeURIComponent(e.response);
+        var newSettingsDictionary = JSON.parse(newSettings);
+
+        var diffSettings = diff(newSettingsDictionary, JSON.parse(localStorage['{{shortName}}']));
+        
+        localStorage['{{shortName}}'] = newSettings;
+        Pebble.sendAppMessage(diffSettings);
+    }
+});
