@@ -19,14 +19,6 @@ Pebble.addEventListener("showConfiguration", function (e) {
     Pebble.openURL("{{ preferences['url'] }}");
 });
 
-Pebble.addEventListener("webviewclosed", function(e) {
-    if ((typeof e.response === 'string') && (e.response.length > 0)) {
-        localStorage['{{shortName}}'] = decodeURIComponent(e.response);
-        var settings = JSON.parse(localStorage['{{shortName}}']);
-        Pebble.sendAppMessage(settings);
-    }
-});
-
 function diff(obj1, obj2) {
     var result = {};
     for(var key in obj1)
