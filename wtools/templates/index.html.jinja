@@ -82,6 +82,10 @@
         if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
             $("#header").remove();
         }
+        
+        $("form :input").on("keypress", function(e) {
+            return e.keyCode != 13;
+        });
 		
 		$("#configuration-form").validate({
             rules: {
@@ -97,6 +101,9 @@
         });
 
     	$('#b-submit').click(function() {
+            if (!$("#configuration-form").valid()) {
+                return false;
+            }
     	  var dictionary = {};
     	  {% for item in preferences['items']: -%}
     	  {
