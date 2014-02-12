@@ -20,14 +20,14 @@ void set{{ autoconfig_utils.cname(item) | capitalize}}(int32_t value){_{{ autoco
 
 void autoconf_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tuple = NULL;
-	{%- for item in preferences['items']: -%}
+	{% for item in preferences['items']: -%}
 	tuple = dict_find(iter, {{ autoconfig_utils.cname(item)|upper }}_PKEY);
 	{%- if item['type'] == 'string' %}
 	tuple ? set{{ autoconfig_utils.cname(item) | capitalize }}(tuple->value->cstring) : false;
 	{%- else %}
 	tuple ? set{{ autoconfig_utils.cname(item) | capitalize }}(tuple->value->uint8) : false;
 	{%- endif %}
-	{%- endfor %}
+	{% endfor %}
 }
 
 void autoconf_init(){
@@ -35,9 +35,7 @@ void autoconf_init(){
 	app_message_open(128, 0);
 
 	{% for item in preferences['items']: -%}
-	// Check if our time display property exists
 	if (persist_exists({{ autoconfig_utils.cname(item)|upper }}_PKEY)) {
-		// If so, read it in to a variable
 		{%- if item['type'] == 'string' %}
 		persist_read_string({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }}, {{item['max-length'] + 1}});
 		set{{ autoconfig_utils.cname(item) | capitalize }}(_{{ autoconfig_utils.cname(item) }});
