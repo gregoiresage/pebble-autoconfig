@@ -41,3 +41,27 @@ Pebble.addEventListener("webviewclosed", function(e) {
         Pebble.sendAppMessage(diffSettings);
     }
 });
+
+/* Convenient function to automatically retry messages. */
+/* from http://forums.getpebble.com/discussion/comment/83060/#Comment_83060 */
+Pebble.sendAppMessageWithRetry = function(message, retryCount, successCb, failedCb) {
+  var retry = 0;
+  var success = function(e) {
+    if (typeof successCb == "function") {
+      successCb(e);
+    }
+  };
+  var failed = function(e) {
+    console.log("Failed sending message: " + JSON.stringify(message) + " - Error: " + JSON.stringify(e) + " - Retrying...");
+    retry++;
+    if (retry < retryCount) {
+      Pebble.sendAppMessage(message, success, failed);
+    }
+    else {
+      if (typeof failedCb == "function") {
+        failedCb(e);
+      }
+    }
+  };
+  Pebble.sendAppMessage(message, success, failed);
+};
