@@ -12,41 +12,41 @@
 
 <body>
 	<div data-role="page" id="configuration">
-  		<div data-role="header" id="header">
-    		<button id="b-cancel" data-icon="back" data-iconpos="left" data-inline="true" data-mini="true">Cancel</button>
-    		<h1>{{longName}}</h1>
-  		</div>
-        <div data-role="content">
-            <form id="configuration-form">
-                {% for item in preferences['items']: -%}
-                <div class="ui-field-contain">
-                <label for="{{ item['name'] }}">{{ item['title'] }}</label>
-                {%- if item['type'] == 'choice' %}
-                <select name="{{ item['name'] }}" id="{{ item['name'] }}">
-                {%- for choice in item['choices'] %}
-                    <option value="{{loop.index0 }}">{{choice}}</option>
-                {%- endfor %}
-                </select>
-                {%- elif item['type'] == 'range' %}
-                <input type="range" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['range']['min']}}" max="{{item['range']['max']}}">
-                {%- elif item['type'] == 'switch' %}
-                <select name="{{ item['name'] }}" id="{{ item['name'] }}" data-role="slider">
-                {%- for opt in item['switch'] %}
-                    <option value="{{loop.index0 }}">{{opt}}</option>
-                {%- endfor %}
-                </select>
-                {%- elif item['type'] == 'string' %}
-                <input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
-                {%- endif %}
-                </div>
-                {%- endfor %}
-                
-                <button id="b-submit" data-theme="b" data-icon="check" data-iconpos="right">Save</button>
-            </form>
-        </div>
+		<div data-role="header" id="header">
+			<button id="b-cancel" data-icon="back" data-iconpos="left" data-inline="true" data-mini="true">Cancel</button>
+			<h1>{{longName}}</h1>
+		</div>
+		<div data-role="content">
+			<form id="configuration-form">
+				{% for item in preferences['items']: -%}
+				<div class="ui-field-contain">
+				<label for="{{ item['name'] }}">{{ item['title'] }}</label>
+				{%- if item['type'] == 'choice' %}
+				<select name="{{ item['name'] }}" id="{{ item['name'] }}">
+				{%- for choice in item['choices'] %}
+					<option value="{{loop.index0 }}">{{choice}}</option>
+				{%- endfor %}
+				</select>
+				{%- elif item['type'] == 'range' %}
+				<input type="range" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['range']['min']}}" max="{{item['range']['max']}}">
+				{%- elif item['type'] == 'switch' %}
+				<select name="{{ item['name'] }}" id="{{ item['name'] }}" data-role="slider">
+				{%- for opt in item['switch'] %}
+					<option value="{{loop.index0 }}">{{opt}}</option>
+				{%- endfor %}
+				</select>
+				{%- elif item['type'] == 'string' %}
+				<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
+				{%- endif %}
+				</div>
+				{%- endfor %}
+				
+				<button id="b-submit" data-theme="b" data-icon="check" data-iconpos="right">Save</button>
+			</form>
+		</div>
 	</div>
-    <script type="text/javascript">  
-    	$().ready(function() {    
+	<script type="text/javascript">	 
+		$().ready(function() {	  
 			var dictionary;
 			try {
 				dictionary = JSON.parse(localStorage['{{shortName}}']);
@@ -70,8 +70,8 @@
 			{%- elif item['type'] == 'string' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
 				$.validator.addMethod("{{ item['name'] }}", function(value, element) {
-                    return this.optional(element) || /{{ item['pattern'] }}/i.test(value);
-                }, "Text field is invalid.");
+					return this.optional(element) || /{{ item['pattern'] }}/i.test(value);
+				}, "Text field is invalid.");
 				
 			{%- endif %}
 			}
@@ -79,52 +79,52 @@
 		});
 		
 		// Handle different UI on i-devices
-        if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
-            $("#header").remove();
-        }
-        
-        $("form :input").on("keypress", function(e) {
-            return e.keyCode != 13;
-        });
+		if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
+			$("#header").remove();
+		}
+		
+		$("form :input").on("keypress", function(e) {
+			return e.keyCode != 13;
+		});
 		
 		$("#configuration-form").validate({
-            rules: {
-                {%- for item in preferences['items']: -%}
-                {%- if item['type'] == 'string' -%}
-                {{ item['name'] }}: "required {{ item['name'] }}",
-                {%- endif %}
-                {% endfor %}
-            },
-            errorPlacement: function(error, element) {
-                error.insertAfter( element.parent() );
-            }
-        });
+			rules: {
+				{%- for item in preferences['items']: -%}
+				{%- if item['type'] == 'string' -%}
+				{{ item['name'] }}: "required {{ item['name'] }}",
+				{%- endif %}
+				{% endfor %}
+			},
+			errorPlacement: function(error, element) {
+				error.insertAfter( element.parent() );
+			}
+		});
 
-    	$('#b-submit').click(function() {
-            if (!$("#configuration-form").valid()) {
-                return false;
-            }
-    	  var dictionary = {};
-    	  {% for item in preferences['items']: -%}
-    	  {
-    	  	var field=document.getElementById('{{ item['name'] }}');
-    	  	{% if item['type'] == 'string' %}
-    	  	dictionary['{{ item['name'] }}'] = field.value;
-    	  	{% else %}
-    	  	dictionary['{{ item['name'] }}'] = parseInt(field.value);
-    	  	{% endif %}
-    	  }
-    	  {% endfor %}
-    	  localStorage['{{shortName}}'] = JSON.stringify(dictionary);
+		$('#b-submit').click(function() {
+			if (!$("#configuration-form").valid()) {
+				return false;
+			}
+			var dictionary = {};
+			{% for item in preferences['items']: -%}
+			{
+			var field=document.getElementById('{{ item['name'] }}');
+			{% if item['type'] == 'string' %}
+			dictionary['{{ item['name'] }}'] = field.value;
+			{% else %}
+			dictionary['{{ item['name'] }}'] = parseInt(field.value);
+			{% endif %}
+			}
+			{% endfor %}
+			localStorage['{{shortName}}'] = JSON.stringify(dictionary);
 
-    	  var location = "pebblejs://close#" + encodeURIComponent(localStorage['{{shortName}}']);
-    	  window.location.href = location;
-    	});
+			var location = "pebblejs://close#" + encodeURIComponent(localStorage['{{shortName}}']);
+			window.location.href = location;
+		});
 	
-    	$('#b-cancel').click(function() {
-    	  var location = "pebblejs://close#";
-    	  window.location.href = location;
-    	});
+		$('#b-cancel').click(function() {
+			var location = "pebblejs://close#";
+			window.location.href = location;
+		});
 	</script>
 </body>
 </html>
