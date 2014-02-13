@@ -58,7 +58,7 @@
 				};
 			}
 			{% for item in preferences['items']: %}
-			if(dictionary['{{ item['name'] }}']) {
+			if('{{ item['name'] }}' in dictionary) {
 				{%- if item['type'] == 'choice' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).selectmenu('refresh');
 				{%- elif item['type'] == 'range' %}
