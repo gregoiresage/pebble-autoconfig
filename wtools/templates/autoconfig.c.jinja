@@ -65,6 +65,8 @@ void autoconf_init(){
 		{%- if item['type'] == 'string' %}
 		persist_read_string({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }}, {{item['max-length'] + 1}});
 		set{{ autoconfig_utils.cname(item) | capitalize }}(_{{ autoconfig_utils.cname(item) }});
+		{%- elif item['type'] == 'switch' %}
+		set{{ autoconfig_utils.cname(item) | capitalize }}(persist_read_bool({{ autoconfig_utils.cname(item)|upper }}_PKEY));
 		{%- else %}
 		set{{ autoconfig_utils.cname(item) | capitalize }}(persist_read_int({{ autoconfig_utils.cname(item)|upper }}_PKEY));
 		{%- endif %}
@@ -74,7 +76,7 @@ void autoconf_init(){
 		{%- if item['type'] == 'string' %}
 		set{{ autoconfig_utils.cname(item) | capitalize }}("{{item['default']}}");
 		{%- else %}
-		set{{ autoconfig_utils.cname(item) | capitalize }}({{item['default']}});
+		set{{ autoconfig_utils.cname(item) | capitalize }}({{item['default']|lower}});
 		{%- endif %}
 	}
 	{%- endif %}
@@ -86,6 +88,8 @@ void autoconf_deinit(){
 	{%- for item in preferences['items']: -%}
 	{%- if item['type'] == 'string' %}
 	persist_write_string({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }});
+	{%- elif item['type'] == 'switch' %}
+	persist_write_bool({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }});
 	{%- else %}
 	persist_write_int({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }});
 	{%- endif %}

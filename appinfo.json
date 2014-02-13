@@ -41,9 +41,9 @@
         "title":  "My beautiful Switch",
         "subtitle": "something",
         "type":   "switch",
-        "text-off": "OFF",
-        "text-on": "ON",
-        "default": 0
+        "off-text": "OFF",
+        "on-text": "ON",
+        "default": false
     },
     {
         "name":   "mystringconfig",

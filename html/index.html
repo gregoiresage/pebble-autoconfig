@@ -12,53 +12,48 @@
 
 <body>
 	<div data-role="page" id="configuration">
-  		<div data-role="header" id="header">
-    		<button id="b-cancel" data-icon="back" data-iconpos="left" data-inline="true" data-mini="true">Cancel</button>
-    		<h1>pebble-autoconfig</h1>
-  		</div>
-        <div data-role="content">
-            <form id="configuration-form">
-                <div class="ui-field-contain">
-                <label for="myselect">My beautiful select</label>
-                <select name="myselect" id="myselect">
-                    <option value="0">ONE</option>
-                    <option value="1">TWO</option>
-                    <option value="2">THREE</option>
-                </select>
-                </div><div class="ui-field-contain">
-                <label for="myslider">My beautiful Slider</label>
-                <input type="range" name="myslider" id="myslider" min="0" max="100">
-                </div><div class="ui-field-contain">
-                <label for="myswitch">My beautiful Switch</label>
-                <select name="myswitch" id="myswitch" data-role="slider">
-                    <option value="0">OFF</option>
-                    <option value="1">ON</option>
-                </select>
-                </div><div class="ui-field-contain">
-                <label for="mystringconfig">IP address</label>
-                <input type="text" name="mystringconfig" id="mystringconfig" value="" maxlength="15" data-clear-btn="true">
-                </div>
-                
-                <button id="b-submit" data-theme="b" data-icon="check" data-iconpos="right">Save</button>
-            </form>
-        </div>
+		<div data-role="header" id="header">
+			<button id="b-cancel" data-icon="back" data-iconpos="left" data-inline="true" data-mini="true">Cancel</button>
+			<h1>pebble-autoconfig</h1>
+		</div>
+		<div data-role="content">
+			<form id="configuration-form">
+				<div class="ui-field-contain">
+				<label for="myselect">My beautiful select</label>
+				<select name="myselect" id="myselect">
+					<option value="0">ONE</option>
+					<option value="1">TWO</option>
+					<option value="2">THREE</option>
+				</select>
+				</div><div class="ui-field-contain">
+				<label for="myslider">My beautiful Slider</label>
+				<input type="range" name="myslider" id="myslider" min="0" max="100">
+				</div><div class="ui-field-contain">
+				<label for="myswitch">My beautiful Switch</label>
+				<input type="checkbox" data-role="flipswitch" name="myswitch" id="myswitch" data-on-text="ON" data-off-text="OFF" data-wrapper-class="custom-label-flipswitch">
+				</div><div class="ui-field-contain">
+				<label for="mystringconfig">IP address</label>
+				<input type="text" name="mystringconfig" id="mystringconfig" value="" maxlength="15" data-clear-btn="true">
+				</div>
+				
+				<button id="b-submit" data-theme="b" data-icon="check" data-iconpos="right">Save</button>
+			</form>
+		</div>
 	</div>
-    <script type="text/javascript">  
-    	$().ready(function() {    
+	<script type="text/javascript">	 
+		$().ready(function() {	  
 			var dictionary;
 			try {
 				dictionary = JSON.parse(localStorage['pebble-autoconfig']);
-			}
-			catch(e) {
+			} catch(e) {
 				dictionary = {
 					"myselect" : "0",
 					"myslider" : "17",
-					"myswitch" : "0",
+					"myswitch" : false,
 					"mystringconfig" : "127.0.0.1",
-					
 				};
 			}
-
+			
 			if(dictionary['myselect']) {
 				$('#myselect').val(dictionary['myselect'].toString()).selectmenu('refresh');
 			}
@@ -66,78 +61,56 @@
 				$('#myslider').val(dictionary['myslider'].toString()).slider('refresh');
 			}
 			if(dictionary['myswitch']) {
-				$('#myswitch').val(dictionary['myswitch'].toString()).slider('refresh');
+				console.log("Switch: %s", dictionary['myswitch']);
+				$('#myswitch').prop('checked', (dictionary['myswitch'])).flipswitch( "refresh" );
 			}
 			if(dictionary['mystringconfig']) {
 				$('#mystringconfig').val(dictionary['mystringconfig']);
 				$.validator.addMethod("mystringconfig", function(value, element) {
-                    return this.optional(element) || /^[0-9]{1,3}(\.[0-9]{1,3}){3}$/i.test(value);
-                }, "Text field is invalid.");
+					return this.optional(element) || /^[0-9]{1,3}(\.[0-9]{1,3}){3}$/i.test(value);
+				}, "Text field is invalid.");
 			}
-			
 		});
 		
 		// Handle different UI on i-devices
-        if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
-            $("#header").remove();
-        }
-        
-        $("form :input").on("keypress", function(e) {
-            return e.keyCode != 13;
-        });
+		if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
+			$("#header").remove();
+		}
+		
+		$("form :input").on("keypress", function(e) {
+			return e.keyCode != 13;
+		});
 		
 		$("#configuration-form").validate({
-            rules: {
-                
-                
-                mystringconfig: "required mystringconfig",
-                
-            },
-            errorPlacement: function(error, element) {
-                error.insertAfter( element.parent() );
-            }
-        });
+			rules: {
+				mystringconfig: "required mystringconfig",
+				
+			},
+			errorPlacement: function(error, element) {
+				error.insertAfter( element.parent() );
+			}
+		});
 
-    	$('#b-submit').click(function() {
-            if (!$("#configuration-form").valid()) {
-                return false;
-            }
-    	  var dictionary = {};
-    	  {
-    	  	var field=document.getElementById('myselect');
-    	  	
-    	  	dictionary['myselect'] = parseInt(field.value);
-    	  	
-    	  }
-    	  {
-    	  	var field=document.getElementById('myslider');
-    	  	
-    	  	dictionary['myslider'] = parseInt(field.value);
-    	  	
-    	  }
-    	  {
-    	  	var field=document.getElementById('myswitch');
-    	  	
-    	  	dictionary['myswitch'] = parseInt(field.value);
-    	  	
-    	  }
-    	  {
-    	  	var field=document.getElementById('mystringconfig');
-    	  	
-    	  	dictionary['mystringconfig'] = field.value;
-    	  	
-    	  }
-    	  
-    	  localStorage['pebble-autoconfig'] = JSON.stringify(dictionary);
+		$('#b-submit').click(function() {
+			if (!$("#configuration-form").valid()) {
+				return false;
+			}
+			
+			var dictionary = {};
+			dictionary['myselect'] = parseInt($('#myselect').val());
+			dictionary['myslider'] = parseInt($('#myslider').val());
+			dictionary['myswitch'] = ($('#myswitch').prop('checked') ? 1 : 0);
+			dictionary['mystringconfig'] = $('#mystringconfig').val();
+			localStorage['pebble-autoconfig'] = JSON.stringify(dictionary);
 
-    	  var location = "pebblejs://close#" + encodeURIComponent(localStorage['pebble-autoconfig']);
-    	  window.location.href = location;
-    	});
+			var location = "pebblejs://close#" + encodeURIComponent(localStorage['pebble-autoconfig']);
+			window.location.href = location;
+		});
 	
-    	$('#b-cancel').click(function() {
-    	  var location = "pebblejs://close#";
-    	  window.location.href = location;
-    	});
+		$('#b-cancel').click(function() {
+			var location = "pebblejs://close#";
+			window.location.href = location;
+		});
 	</script>
 </body>
 </html>

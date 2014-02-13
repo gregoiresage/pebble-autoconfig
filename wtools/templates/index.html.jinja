@@ -49,7 +49,11 @@
 			} catch(e) {
 				dictionary = {
 					{%- for item in preferences['items']: %}
+					{%- if item['type'] == 'switch' %}
+					"{{ item['name'] }}" : {{ item['default']|lower }},
+					{%- else %}
 					"{{ item['name'] }}" : "{{ item['default'] }}",
+					{%- endif %}
 					{%- endfor %}
 				};
 			}
@@ -60,7 +64,8 @@
 				{%- elif item['type'] == 'range' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
 				{%- elif item['type'] == 'switch' %}
-				$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'] == "1" ? true : false)).flipswitch( "refresh" );
+				console.log("Switch: %s", dictionary['{{ item['name'] }}']);
+				$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'])).flipswitch( "refresh" );
 				{%- elif item['type'] == 'string' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
 				$.validator.addMethod("{{ item['name'] }}", function(value, element) {
@@ -103,7 +108,7 @@
 			{%- if item['type'] == 'string' %}
 			dictionary['{{ item['name'] }}'] = $('#{{ item['name'] }}').val();
 			{%- elif item['type'] == 'switch' %}
-			dictionary['{{ item['name'] }}'] = ($('#{{ item['name'] }}').prop('checked') ? "1" : "0");
+			dictionary['{{ item['name'] }}'] = ($('#{{ item['name'] }}').prop('checked') ? 1 : 0);
 			{%- else %}
 			dictionary['{{ item['name'] }}'] = parseInt($('#{{ item['name'] }}').val());
 			{%- endif %}
