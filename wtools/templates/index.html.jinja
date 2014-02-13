@@ -46,35 +46,29 @@
 			var dictionary;
 			try {
 				dictionary = JSON.parse(localStorage['{{shortName}}']);
-			}
-			catch(e) {
+			} catch(e) {
 				dictionary = {
-					{% for item in preferences['items']: -%}
+					{%- for item in preferences['items']: %}
 					"{{ item['name'] }}" : "{{ item['default'] }}",
-					{% endfor %}
+					{%- endfor %}
 				};
 			}
-
-			{% for item in preferences['items']: -%}
+			{% for item in preferences['items']: %}
 			if(dictionary['{{ item['name'] }}']) {
-			{%- if item['type'] == 'choice' %}
+				{%- if item['type'] == 'choice' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).selectmenu('refresh');
-			{%- elif item['type'] == 'range' %}
+				{%- elif item['type'] == 'range' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
-			{%- elif item['type'] == 'switch' %}
+				{%- elif item['type'] == 'switch' %}
 				$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'] == "1" ? true : false)).flipswitch( "refresh" );
-				//$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).checkboxradio('refresh');
-			{%- elif item['type'] == 'string' %}
+				{%- elif item['type'] == 'string' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
 				$.validator.addMethod("{{ item['name'] }}", function(value, element) {
 					return this.optional(element) || /{{ item['pattern'] }}/i.test(value);
 				}, "Text field is invalid.");
-				
 			{%- endif %}
 			}
-			{% endfor %}
-			
-			$("#configuration-form").trigger("create");
+			{%- endfor %}
 		});
 		
 		// Handle different UI on i-devices
@@ -89,10 +83,10 @@
 		$("#configuration-form").validate({
 			rules: {
 				{%- for item in preferences['items']: -%}
-				{%- if item['type'] == 'string' -%}
+				{% if item['type'] == 'string' %}
 				{{ item['name'] }}: "required {{ item['name'] }}",
-				{%- endif %}
-				{% endfor %}
+				{% endif %}
+				{%- endfor %}
 			},
 			errorPlacement: function(error, element) {
 				error.insertAfter( element.parent() );
@@ -103,19 +97,20 @@
 			if (!$("#configuration-form").valid()) {
 				return false;
 			}
+			
 			var dictionary = {};
-			{% for item in preferences['items']: -%}
+			{%- for item in preferences['items']: %}
 			{
-			var field=document.getElementById('{{ item['name'] }}');
-			{% if item['type'] == 'string' %}
-			dictionary['{{ item['name'] }}'] = field.value;
-			{% elif item['type'] == 'switch' %}
-			dictionary['{{ item['name'] }}'] = (field.checked ? "1" : "0");
-			{% else %}
-			dictionary['{{ item['name'] }}'] = parseInt(field.value);
-			{% endif %}
+				var field=document.getElementById('{{ item['name'] }}');
+				{%- if item['type'] == 'string' %}
+				dictionary['{{ item['name'] }}'] = field.value;
+				{%- elif item['type'] == 'switch' %}
+				dictionary['{{ item['name'] }}'] = (field.checked ? "1" : "0");
+				{%- else %}
+				dictionary['{{ item['name'] }}'] = parseInt(field.value);
+				{%- endif %}
 			}
-			{% endfor %}
+			{%- endfor %}
 			localStorage['{{shortName}}'] = JSON.stringify(dictionary);
 
 			var location = "pebblejs://close#" + encodeURIComponent(localStorage['{{shortName}}']);
