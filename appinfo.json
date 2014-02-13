@@ -25,7 +25,7 @@
         "title":    "My beautiful select",
         "subtitle": "something",
         "type":     "choice",
-        "choices":  ["ONE","TWO", "THREE"],
+        "choices":  [{"ONE":"Just 1"}, {"TWO":"Too much"}, {"THREE": "Three is the new two"}],
         "default":  0
     },
     {

@@ -18,22 +18,22 @@
 		</div>
 		<div data-role="content">
 			<form id="configuration-form">
-				{% for item in preferences['items']: -%}
+				{%- for item in preferences['items']: %}
 				<div class="ui-field-contain">
-				<label for="{{ item['name'] }}">{{ item['title'] }}</label>
-				{%- if item['type'] == 'choice' %}
-				<select name="{{ item['name'] }}" id="{{ item['name'] }}">
-				{%- for choice in item['choices'] %}
-					<option value="{{loop.index0 }}">{{choice}}</option>
-				{%- endfor %}
-				</select>
-				{%- elif item['type'] == 'range' %}
-				<input type="range" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}">
-				{%- elif item['type'] == 'switch' %}
-				<input type="checkbox" data-role="flipswitch" name="{{ item['name'] }}" id="{{ item['name'] }}" data-on-text="{{ item['on-text'] }}" data-off-text="{{ item['off-text'] }}" data-wrapper-class="custom-label-flipswitch">
-				{%- elif item['type'] == 'string' %}
-				<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
-				{%- endif %}
+					<label for="{{ item['name'] }}">{{ item['title'] }}</label>
+					{%- if item['type'] == 'choice' %}
+					<select name="{{ item['name'] }}" id="{{ item['name'] }}">
+					{%- for choice in item['choices'] %}
+						<option value="{{loop.index0 }}">{{choice.values()[0]}}</option>
+					{%- endfor %}
+					</select>
+					{%- elif item['type'] == 'range' %}
+					<input type="range" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}">
+					{%- elif item['type'] == 'switch' %}
+					<input type="checkbox" data-role="flipswitch" name="{{ item['name'] }}" id="{{ item['name'] }}" data-on-text="{{ item['on-text'] }}" data-off-text="{{ item['off-text'] }}" data-wrapper-class="custom-label-flipswitch">
+					{%- elif item['type'] == 'string' %}
+					<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
+					{%- endif %}
 				</div>
 				{%- endfor %}
 				

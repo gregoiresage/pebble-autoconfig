@@ -10,7 +10,7 @@
 {%- if item['type'] == 'choice' %}
 typedef enum {
 {%- for choice in item['choices']: %}
-	{{ autoconfig_utils.cname(item)|upper }}_{{ autoconfig_utils.coolstring(choice)|upper }},
+	{{ autoconfig_utils.coolstring(choice.keys()[0]) }},
 {%- endfor %}
 } {{ autoconfig_utils.cname(item)|capitalize }}Value;
 {% endif %}
