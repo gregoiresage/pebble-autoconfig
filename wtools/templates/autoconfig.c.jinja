@@ -22,6 +22,28 @@ void set{{ autoconfig_utils.cname(item) | capitalize}}(int32_t value){_{{ autoco
 {% endif -%}
 {% endfor %}
 
+static int32_t get_tuple_value(Tuple *tuple) {
+	if (tuple->type ==  TUPLE_INT){
+		if (tuple->length == 1) {
+			return tuple->value->int8;
+		}
+		if (tuple->length == 2) {
+			return tuple->value->int16;
+		}
+		return tuple->value->int32;
+	}
+	if (tuple->type ==  TUPLE_UINT){
+		if (tuple->length == 1) {
+			return tuple->value->uint8;
+		}
+		if (tuple->length == 2) {
+			return tuple->value->uint16;
+		}
+		return tuple->value->uint32;
+	}
+	return 0;
+}
+
 void autoconf_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tuple = NULL;
 	{% for item in preferences['items']: -%}
@@ -29,14 +51,14 @@ void autoconf_in_received_handler(DictionaryIterator *iter, void *context) {
 	{%- if item['type'] == 'string' %}
 	tuple ? set{{ autoconfig_utils.cname(item) | capitalize }}(tuple->value->cstring) : false;
 	{%- else %}
-	tuple ? set{{ autoconfig_utils.cname(item) | capitalize }}(tuple->value->uint8) : false;
+	tuple ? set{{ autoconfig_utils.cname(item) | capitalize }}(get_tuple_value(tuple)) : false;
 	{%- endif %}
 	{% endfor %}
 }
 
 void autoconf_init(){
 	app_message_register_inbox_received(autoconf_in_received_handler);
-	app_message_open(128, 0);
+	app_message_open(app_message_inbox_size_maximum(), 0);
 
 	{% for item in preferences['items']: -%}
 	if (persist_exists({{ autoconfig_utils.cname(item)|upper }}_PKEY)) {
