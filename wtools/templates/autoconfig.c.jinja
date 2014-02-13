@@ -2,27 +2,36 @@
 #include "autoconfig.h"
 
 {%- import 'autoconfig.jinja.utils' as autoconfig_utils %}
-{% for item in preferences['items']: -%}
+{% set persitantDataSize = 0 %}
+{% for item in preferences['items'] -%}
 {% if item['type'] == 'switch' %}
 bool _{{ autoconfig_utils.cname(item) }};
 bool get{{ autoconfig_utils.cname(item)| capitalize }}(){return _{{ autoconfig_utils.cname(item) }};}
 void set{{ autoconfig_utils.cname(item) | capitalize }}(bool value){_{{ autoconfig_utils.cname(item) }} = value;}
+{% set persitantDataSize = persitantDataSize + 4 + 2 %}
 {% elif item['type'] == 'choice' %}
 {{ autoconfig_utils.cname(item)|capitalize }}Value _{{ autoconfig_utils.cname(item) }};
 {{ autoconfig_utils.cname(item)|capitalize }}Value get{{ autoconfig_utils.cname(item)| capitalize }}(){return _{{ autoconfig_utils.cname(item) }};}
 void set{{ autoconfig_utils.cname(item) | capitalize }}({{ autoconfig_utils.cname(item)|capitalize }}Value value){_{{ autoconfig_utils.cname(item) }} = value;}
+{% set persitantDataSize = persitantDataSize + 4 + 4 %}
 {% elif item['type'] == 'string' %}
 char _{{ autoconfig_utils.cname(item) }}[{{item['max-length']}}]; 
 {%- if (item['max-length']|int) > (124 - 1 - 7) %}
-// Generated error
+// Generated error for string size overflow
 #error : The length of strings cannot exceed {{ 124 - 1 - 7}} bytes but your string '{{item['name']}}' is {{ item['max-length'] }} bytes long
 {% endif -%}
 char* get{{ autoconfig_utils.cname(item)| capitalize }}(){return _{{ autoconfig_utils.cname(item) }};}
 void set{{ autoconfig_utils.cname(item) | capitalize }}(char* value){strncpy(_{{ autoconfig_utils.cname(item) }}, value, {{ item['max-length'] }});}
+{% set persitantDataSize = persitantDataSize + 4 + 1 * (item['max-length']|int) %}
 {% else %}
 int32_t _{{ autoconfig_utils.cname(item) }};
 int32_t get{{ autoconfig_utils.cname(item)| capitalize }}(){return _{{ autoconfig_utils.cname(item) }};}
 void set{{ autoconfig_utils.cname(item) | capitalize}}(int32_t value){_{{ autoconfig_utils.cname(item) }} = value;}
+{% set persitantDataSize = persitantDataSize + 4 + 4 %}
+{% endif -%}
+{%- if persitantDataSize > 4000 %}
+// Generated error for persistant data size overflow
+#error : The size of all persisted values cannot exceed 4KB but your parameters require {{ persitantDataSize }}B
 {% endif -%}
 {% endfor %}
 
