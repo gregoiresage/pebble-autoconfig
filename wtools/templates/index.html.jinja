@@ -62,7 +62,8 @@
 			{%- elif item['type'] == 'range' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
 			{%- elif item['type'] == 'switch' %}
-				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).checkboxradio('refresh');
+				$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'] == "1" ? true : false)).flipswitch( "refresh" );
+				//$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).checkboxradio('refresh');
 			{%- elif item['type'] == 'string' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
 				$.validator.addMethod("{{ item['name'] }}", function(value, element) {
@@ -72,6 +73,8 @@
 			{%- endif %}
 			}
 			{% endfor %}
+			
+			$("#configuration-form").trigger("create");
 		});
 		
 		// Handle different UI on i-devices
@@ -106,6 +109,8 @@
 			var field=document.getElementById('{{ item['name'] }}');
 			{% if item['type'] == 'string' %}
 			dictionary['{{ item['name'] }}'] = field.value;
+			{% elif item['type'] == 'switch' %}
+			dictionary['{{ item['name'] }}'] = (field.checked ? "1" : "0");
 			{% else %}
 			dictionary['{{ item['name'] }}'] = parseInt(field.value);
 			{% endif %}
