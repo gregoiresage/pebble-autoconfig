@@ -100,16 +100,13 @@
 			
 			var dictionary = {};
 			{%- for item in preferences['items']: %}
-			{
-				var field=document.getElementById('{{ item['name'] }}');
-				{%- if item['type'] == 'string' %}
-				dictionary['{{ item['name'] }}'] = field.value;
-				{%- elif item['type'] == 'switch' %}
-				dictionary['{{ item['name'] }}'] = (field.checked ? "1" : "0");
-				{%- else %}
-				dictionary['{{ item['name'] }}'] = parseInt(field.value);
-				{%- endif %}
-			}
+			{%- if item['type'] == 'string' %}
+			dictionary['{{ item['name'] }}'] = $('#{{ item['name'] }}').val();
+			{%- elif item['type'] == 'switch' %}
+			dictionary['{{ item['name'] }}'] = ($('#{{ item['name'] }}').prop('checked') ? "1" : "0");
+			{%- else %}
+			dictionary['{{ item['name'] }}'] = parseInt($('#{{ item['name'] }}').val());
+			{%- endif %}
 			{%- endfor %}
 			localStorage['{{shortName}}'] = JSON.stringify(dictionary);
 
