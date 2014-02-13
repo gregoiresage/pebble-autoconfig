@@ -44,7 +44,7 @@ static int32_t get_tuple_value(Tuple *tuple) {
 	return 0;
 }
 
-void autoconf_in_received_handler(DictionaryIterator *iter, void *context) {
+void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tuple = NULL;
 	{% for item in preferences['items']: -%}
 	tuple = dict_find(iter, {{ autoconfig_utils.cname(item)|upper }}_PKEY);
@@ -56,8 +56,8 @@ void autoconf_in_received_handler(DictionaryIterator *iter, void *context) {
 	{% endfor %}
 }
 
-void autoconf_init(){
-	app_message_register_inbox_received(autoconf_in_received_handler);
+void autoconfig_init(){
+	app_message_register_inbox_received(autoconfig_in_received_handler);
 	app_message_open(app_message_inbox_size_maximum(), 0);
 
 	{% for item in preferences['items']: -%}
@@ -84,7 +84,7 @@ void autoconf_init(){
 	{% endfor %}
 }
 
-void autoconf_deinit(){
+void autoconfig_deinit(){
 	{%- for item in preferences['items']: -%}
 	{%- if item['type'] == 'string' %}
 	persist_write_string({{ autoconfig_utils.cname(item)|upper }}_PKEY, _{{ autoconfig_utils.cname(item) }});

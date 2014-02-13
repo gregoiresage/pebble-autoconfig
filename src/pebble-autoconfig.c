@@ -14,7 +14,7 @@ static char string_string[40]="";
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
   // call autoconf_in_received_handler
-  autoconf_in_received_handler(iter, context);
+  autoconfig_in_received_handler(iter, context);
 
   // here the new settings are available
   APP_LOG(APP_LOG_LEVEL_DEBUG, "in_received_handler select:%d slider:%d switch:%d string:%s", getMyselect(), (int)getMyslider(), getMyswitch(), getMystringconfig());
@@ -31,8 +31,8 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
 }
 
 static void init(void) {
-  // call autoconf init (load previous settings and register app message handlers)
-  autoconf_init();
+  // call autoconfig init (load previous settings and register app message handlers)
+  autoconfig_init();
 
   // here the previous settings are already loaded
   APP_LOG(APP_LOG_LEVEL_DEBUG, "init select:%d slider:%d switch:%d string:%s", getMyselect(), (int)getMyslider(), getMyswitch(), getMystringconfig());
@@ -75,8 +75,8 @@ static void deinit(void) {
   text_layer_destroy(string_layer);
   window_destroy(window);
 
-  // call autoconf deinit
-  autoconf_deinit();
+  // call autoconfig deinit
+  autoconfig_deinit();
 }
 
 int main(void) {

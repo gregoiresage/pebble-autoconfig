@@ -26,9 +26,10 @@ int32_t get{{ autoconfig_utils.cname(item)|capitalize }}();
 {%- endif %}
 {% endfor %}
 
-void autoconf_in_received_handler(DictionaryIterator *iter, void *context); 
+void autoconfig_in_received_handler(DictionaryIterator *iter, void *context); 
 
-void autoconf_init();
-void autoconf_deinit();
+void autoconfig_init();
+
+void autoconfig_deinit();
 
 #endif
