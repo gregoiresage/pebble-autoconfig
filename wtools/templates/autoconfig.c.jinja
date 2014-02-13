@@ -14,7 +14,7 @@ void set{{ autoconfig_utils.cname(item) | capitalize }}({{ autoconfig_utils.cnam
 {% elif item['type'] == 'string' %}
 char _{{ autoconfig_utils.cname(item) }}[{{item['max-length']}}];
 char* get{{ autoconfig_utils.cname(item)| capitalize }}(){return _{{ autoconfig_utils.cname(item) }};}
-void set{{ autoconfig_utils.cname(item) | capitalize }}(char* value){strcpy(_{{ autoconfig_utils.cname(item) }}, value);}
+void set{{ autoconfig_utils.cname(item) | capitalize }}(char* value){strncpy(_{{ autoconfig_utils.cname(item) }}, value, {{ item['max-length'] }});}
 {% else %}
 int32_t _{{ autoconfig_utils.cname(item) }};
 int32_t get{{ autoconfig_utils.cname(item)| capitalize }}(){return _{{ autoconfig_utils.cname(item) }};}
