@@ -12,7 +12,11 @@ void set{{ autoconfig_utils.cname(item) | capitalize }}(bool value){_{{ autoconf
 {{ autoconfig_utils.cname(item)|capitalize }}Value get{{ autoconfig_utils.cname(item)| capitalize }}(){return _{{ autoconfig_utils.cname(item) }};}
 void set{{ autoconfig_utils.cname(item) | capitalize }}({{ autoconfig_utils.cname(item)|capitalize }}Value value){_{{ autoconfig_utils.cname(item) }} = value;}
 {% elif item['type'] == 'string' %}
-char _{{ autoconfig_utils.cname(item) }}[{{item['max-length']}}];
+char _{{ autoconfig_utils.cname(item) }}[{{item['max-length']}}]; 
+{%- if (item['max-length']|int) > (124 - 1 - 7) %}
+// Generated error
+#error : The length of strings cannot exceed {{ 124 - 1 - 7}} bytes but your string '{{item['name']}}' is {{ item['max-length'] }} bytes long
+{% endif -%}
 char* get{{ autoconfig_utils.cname(item)| capitalize }}(){return _{{ autoconfig_utils.cname(item) }};}
 void set{{ autoconfig_utils.cname(item) | capitalize }}(char* value){strncpy(_{{ autoconfig_utils.cname(item) }}, value, {{ item['max-length'] }});}
 {% else %}
