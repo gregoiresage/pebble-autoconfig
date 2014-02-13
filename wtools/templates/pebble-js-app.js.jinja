@@ -1,34 +1,24 @@
 Pebble.addEventListener("ready", function(e) {
     var settings;
-	try {
-
-		settings = JSON.parse(localStorage['{{shortName}}']);
-	}
-	catch(e) {
-		settings = {
-			{% for item in preferences['items']: -%}
-			"{{ item['name'] }}" : "{{ item['default'] }}",
-			{% endfor %}
-		};
-		localStorage['{{shortName}}'] = JSON.stringify(settings);
-	}
-	Pebble.sendAppMessage(settings);
+  try {
+    settings = JSON.parse(localStorage['{{shortName}}']);
+  }
+  catch(e) {
+    settings = {
+      {% for item in preferences['items']: -%}
+      "{{ item['name'] }}" : "{{ item['default'] }}",
+      {% endfor %}
+    };
+    localStorage['{{shortName}}'] = JSON.stringify(settings);
+  }
+  Pebble.sendAppMessageWithSizeCheck(settings);
 });
 
 Pebble.addEventListener("showConfiguration", function (e) {
     Pebble.openURL("{{ preferences['url'] }}");
 });
 
-function diff(obj1, obj2) {
-    var result = {};
-    for(var key in obj1)
-    {
-        if (!obj2.hasOwnProperty(key) || obj2[key] !== obj1[key]) {
-            result[key] = obj1[key];
-        }
-    }
-    return result;
-}
+
 
 Pebble.addEventListener("webviewclosed", function(e) {
     if ((typeof e.response === 'string') && (e.response.length > 0)) {
@@ -38,9 +28,38 @@ Pebble.addEventListener("webviewclosed", function(e) {
         var diffSettings = diff(newSettingsDictionary, JSON.parse(localStorage['{{shortName}}']));
         
         localStorage['{{shortName}}'] = newSettings;
-        Pebble.sendAppMessage(diffSettings);
+        Pebble.sendAppMessageWithSizeCheck(diffSettings);
     }
 });
+
+
+Pebble.sendAppMessageWithSizeCheck = function(message) {
+  if( Object.keys(message).length > 0){
+    var size = 1;
+    var partialDict = {};
+    for(var key in message)
+    {
+      if (size + 7 + sizeOfObject(message[key]) < 124) {
+        partialDict[key] = message[key];
+        size += 7 + sizeOfObject(message[key]);
+        delete message[key];
+      }
+      else {
+        // send the partial dictionary
+        if( Object.keys(partialDict).length > 0){
+          Pebble.sendAppMessageWithRetry(partialDict, 5, 
+            function(e) {
+              //send the remaining values in the initial dictionnary
+              Pebble.sendAppMessageWithSizeCheck(message);
+            }, 
+            0);
+        }
+        return;
+      }
+    }
+    Pebble.sendAppMessageWithRetry(partialDict, 5, 0, 0);
+  }
+};
 
 /* Convenient function to automatically retry messages. */
 /* from http://forums.getpebble.com/discussion/comment/83060/#Comment_83060 */
@@ -65,3 +84,27 @@ Pebble.sendAppMessageWithRetry = function(message, retryCount, successCb, failed
   };
   Pebble.sendAppMessage(message, success, failed);
 };
+
+function sizeOfObject( value ) {
+    var bytes = 0;
+
+    if ( typeof value === 'string' ) {
+        bytes = value.length;
+    }
+    else if ( typeof value === 'number' ) {
+        bytes = 4;
+    }
+    
+    return bytes;
+}
+
+function diff(obj1, obj2) {
+    var result = {};
+    for(var key in obj1)
+    {
+        if (!obj2.hasOwnProperty(key) || obj2[key] !== obj1[key]) {
+            result[key] = obj1[key];
+        }
+    }
+    return result;
+}
