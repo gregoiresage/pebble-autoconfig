@@ -13,18 +13,12 @@ typedef enum {
 	{{ autoconfig_utils.cname(item)|upper }}_{{ autoconfig_utils.coolstring(choice)|upper }},
 {%- endfor %}
 } {{ autoconfig_utils.cname(item)|capitalize }}Value;
-{%- elif item['type'] == 'switch' %}
-typedef enum {
-{%- for opt in item['switch']: %}
-	{{ autoconfig_utils.cname(item)|upper }}_{{ autoconfig_utils.coolstring(opt)|upper }},
-{%- endfor %}
-} {{ autoconfig_utils.cname(item)|capitalize }}Value;
 {% endif %}
 #define {{ autoconfig_utils.cname(item)|upper }}_PKEY {{ appKeys[item['name']] }}
 {%- if item['type'] == 'choice' %}
 {{ autoconfig_utils.cname(item)|capitalize }}Value get{{ autoconfig_utils.cname(item)|capitalize }}();
 {%- elif item['type'] == 'switch' %}
-{{ autoconfig_utils.cname(item)|capitalize }}Value get{{ autoconfig_utils.cname(item)|capitalize }}();
+bool get{{ autoconfig_utils.cname(item)|capitalize }}();
 {%- elif item['type'] == 'string' %}
 char* get{{ autoconfig_utils.cname(item)|capitalize }}();
 {%- else %}

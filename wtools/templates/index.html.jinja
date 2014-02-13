@@ -30,11 +30,7 @@
 				{%- elif item['type'] == 'range' %}
 				<input type="range" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['range']['min']}}" max="{{item['range']['max']}}">
 				{%- elif item['type'] == 'switch' %}
-				<select name="{{ item['name'] }}" id="{{ item['name'] }}" data-role="slider">
-				{%- for opt in item['switch'] %}
-					<option value="{{loop.index0 }}">{{opt}}</option>
-				{%- endfor %}
-				</select>
+				<input type="checkbox" data-role="flipswitch" name="{{ item['name'] }}" id="{{ item['name'] }}" data-on-text="{{ item['on-text'] }}" data-off-text="{{ item['off-text'] }}" data-wrapper-class="custom-label-flipswitch">
 				{%- elif item['type'] == 'string' %}
 				<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
 				{%- endif %}
@@ -66,7 +62,7 @@
 			{%- elif item['type'] == 'range' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
 			{%- elif item['type'] == 'switch' %}
-				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
+				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).checkboxradio('refresh');
 			{%- elif item['type'] == 'string' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
 				$.validator.addMethod("{{ item['name'] }}", function(value, element) {
