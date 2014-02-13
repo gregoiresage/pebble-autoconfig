@@ -64,7 +64,6 @@
 				{%- elif item['type'] == 'range' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
 				{%- elif item['type'] == 'switch' %}
-				console.log("Switch: %s", dictionary['{{ item['name'] }}']);
 				$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'])).flipswitch( "refresh" );
 				{%- elif item['type'] == 'string' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
