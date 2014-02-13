@@ -33,7 +33,8 @@
         "title":  "My beautiful Slider",
         "subtitle": "something",
         "type":   "range",
-        "range": {"min":    0,"max":    100},
+        "min":    0,
+        "max":    100,
         "default": 17
     },
     {
