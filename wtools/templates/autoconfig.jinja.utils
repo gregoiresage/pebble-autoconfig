@@ -9,3 +9,11 @@
 {%- macro coolstring(str) -%}
 {{str|replace("-","_")|replace(" ","_")|replace("/","_")|replace(".","_")}}
 {%- endmacro %}
+
+{%- macro flipswitch_width(item) -%}
+{% if item['on-text']|length > item['off-text']|length %}
+{{ item['on-text']|length + 2 }}
+{% else %} 
+{{ item['off-text']|length + 2 }}
+{% endif %}
+{%- endmacro %}
