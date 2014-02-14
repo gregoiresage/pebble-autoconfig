@@ -3,11 +3,8 @@
 
 #include <pebble.h>
 
-{%- import 'autoconfig.jinja.utils' as autoconfig_utils -%}
-
 {% for item in preferences['items']: %}
-
-{%- if item['type'] == 'choice' %}
+{%- if item['type'] == 'enum' %}
 typedef enum {
 {%- for choice in item['choices']: %}
 	{{ item['name']|cvarname|upper }}_{{ choice.keys()[0]|cvarname }},
@@ -15,9 +12,9 @@ typedef enum {
 } {{ item['name']|cvarname|capitalize }}Value;
 {% endif %}
 #define {{ item['name']|cvarname|upper }}_PKEY {{ appKeys[item['name']] }}
-{%- if item['type'] == 'choice' %}
+{%- if item['type'] == 'enum' %}
 {{ item['name']|cvarname|capitalize }}Value get{{ item['name']|cvarname|capitalize }}();
-{%- elif item['type'] == 'switch' %}
+{%- elif item['type'] == 'boolean' %}
 bool get{{ item['name']|cvarname|capitalize }}();
 {%- elif item['type'] == 'string' %}
 char* get{{ item['name']|cvarname|capitalize }}();

@@ -11,8 +11,8 @@
 	<style type="text/css">
 	{%- import 'autoconfig.jinja.utils' as autoconfig_utils -%}
 	{%- for item in preferences['items']: %}
-	{%- if item['type'] == 'switch' %}
-	{%- set width = autoconfig_utils.flipswitch_width(item)|int %}
+	{%- if item['type'] == 'boolean' %}
+	{%- set width = item['on-text']|length|maxi(item['off-text']|length) %}
 	{%- if width > 5 %}
 	.{{ item['name'] }}-size-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
 		text-indent: -{{ width - 2.475 }}em;
@@ -55,15 +55,15 @@
 				{%- for item in preferences['items']: %}
 				<div class="ui-field-contain">
 					<label for="{{ item['name'] }}">{{ item['title'] }}</label>
-					{%- if item['type'] == 'choice' %}
+					{%- if item['type'] == 'enum' %}
 					<select name="{{ item['name'] }}" id="{{ item['name'] }}">
 					{%- for choice in item['choices'] %}
 						<option value="{{loop.index0 }}">{{choice.values()[0]}}</option>
 					{%- endfor %}
 					</select>
-					{%- elif item['type'] == 'range' %}
+					{%- elif item['type'] == 'integer' %}
 					<input type="range" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}">
-					{%- elif item['type'] == 'switch' %}
+					{%- elif item['type'] == 'boolean' %}
 					<input type="checkbox" data-role="flipswitch" name="{{ item['name'] }}" id="{{ item['name'] }}" data-on-text="{{ item['on-text'] }}" data-off-text="{{ item['off-text'] }}" data-wrapper-class="{{ item['name'] }}-size-flipswitch">
 					{%- elif item['type'] == 'string' %}
 					<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
@@ -83,7 +83,7 @@
 			} catch(e) {
 				dictionary = {
 					{%- for item in preferences['items']: %}
-					{%- if item['type'] == 'switch' %}
+					{%- if item['type'] == 'boolean' %}
 					"{{ item['name'] }}" : {{ item['default']|lower }},
 					{%- else %}
 					"{{ item['name'] }}" : "{{ item['default'] }}",
@@ -93,11 +93,11 @@
 			}
 			{% for item in preferences['items']: %}
 			if('{{ item['name'] }}' in dictionary) {
-				{%- if item['type'] == 'choice' %}
+				{%- if item['type'] == 'enum' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).selectmenu('refresh');
-				{%- elif item['type'] == 'range' %}
+				{%- elif item['type'] == 'integer' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
-				{%- elif item['type'] == 'switch' %}
+				{%- elif item['type'] == 'boolean' %}
 				$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'])).flipswitch( "refresh" );
 				{%- elif item['type'] == 'string' %}
 				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
@@ -140,7 +140,7 @@
 			{%- for item in preferences['items']: %}
 			{%- if item['type'] == 'string' %}
 			dictionary['{{ item['name'] }}'] = $('#{{ item['name'] }}').val();
-			{%- elif item['type'] == 'switch' %}
+			{%- elif item['type'] == 'boolean' %}
 			dictionary['{{ item['name'] }}'] = ($('#{{ item['name'] }}').prop('checked') ? 1 : 0);
 			{%- else %}
 			dictionary['{{ item['name'] }}'] = parseInt($('#{{ item['name'] }}').val());

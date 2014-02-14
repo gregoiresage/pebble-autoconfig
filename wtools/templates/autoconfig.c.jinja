@@ -4,12 +4,12 @@
 {%- import 'autoconfig.jinja.utils' as autoconfig_utils %}
 {% set persitantDataSize = 0 %}
 {% for item in preferences['items'] -%}
-{% if item['type'] == 'switch' %}
+{% if item['type'] == 'boolean' %}
 bool _{{ item['name']|cvarname }};
 bool get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
 void set{{ item['name']|cvarname | capitalize }}(bool value){_{{ item['name']|cvarname }} = value;}
 {% set persitantDataSize = persitantDataSize + 4 + 2 %}
-{% elif item['type'] == 'choice' %}
+{% elif item['type'] == 'enum' %}
 {{ item['name']|cvarname|capitalize }}Value _{{ item['name']|cvarname }};
 {{ item['name']|cvarname|capitalize }}Value get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
 void set{{ item['name']|cvarname | capitalize }}({{ item['name']|cvarname|capitalize }}Value value){_{{ item['name']|cvarname }} = value;}
@@ -78,7 +78,7 @@ void autoconfig_init(){
 		{%- if item['type'] == 'string' %}
 		persist_read_string({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}, {{item['max-length'] + 1}});
 		set{{ item['name']|cvarname | capitalize }}(_{{ item['name']|cvarname }});
-		{%- elif item['type'] == 'switch' %}
+		{%- elif item['type'] == 'boolean' %}
 		set{{ item['name']|cvarname | capitalize }}(persist_read_bool({{ item['name']|cvarname|upper }}_PKEY));
 		{%- else %}
 		set{{ item['name']|cvarname | capitalize }}(persist_read_int({{ item['name']|cvarname|upper }}_PKEY));
@@ -101,7 +101,7 @@ void autoconfig_deinit(){
 	{%- for item in preferences['items']: -%}
 	{%- if item['type'] == 'string' %}
 	persist_write_string({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
-	{%- elif item['type'] == 'switch' %}
+	{%- elif item['type'] == 'boolean' %}
 	persist_write_bool({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
 	{%- else %}
 	persist_write_int({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
