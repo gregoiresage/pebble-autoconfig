@@ -10,19 +10,19 @@
 {%- if item['type'] == 'choice' %}
 typedef enum {
 {%- for choice in item['choices']: %}
-	{{ autoconfig_utils.cname(item)|upper }}_{{ autoconfig_utils.coolstring(choice.keys()[0]) }},
+	{{ item['name']|cvarname|upper }}_{{ choice.keys()[0]|cvarname }},
 {%- endfor %}
-} {{ autoconfig_utils.cname(item)|capitalize }}Value;
+} {{ item['name']|cvarname|capitalize }}Value;
 {% endif %}
-#define {{ autoconfig_utils.cname(item)|upper }}_PKEY {{ appKeys[item['name']] }}
+#define {{ item['name']|cvarname|upper }}_PKEY {{ appKeys[item['name']] }}
 {%- if item['type'] == 'choice' %}
-{{ autoconfig_utils.cname(item)|capitalize }}Value get{{ autoconfig_utils.cname(item)|capitalize }}();
+{{ item['name']|cvarname|capitalize }}Value get{{ item['name']|cvarname|capitalize }}();
 {%- elif item['type'] == 'switch' %}
-bool get{{ autoconfig_utils.cname(item)|capitalize }}();
+bool get{{ item['name']|cvarname|capitalize }}();
 {%- elif item['type'] == 'string' %}
-char* get{{ autoconfig_utils.cname(item)|capitalize }}();
+char* get{{ item['name']|cvarname|capitalize }}();
 {%- else %}
-int32_t get{{ autoconfig_utils.cname(item)|capitalize }}();
+int32_t get{{ item['name']|cvarname|capitalize }}();
 {%- endif %}
 {% endfor %}
 
