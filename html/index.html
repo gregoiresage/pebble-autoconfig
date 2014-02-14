@@ -9,6 +9,30 @@
 	<script src="http://code.jquery.com/mobile/1.4.1/jquery.mobile-1.4.1.min.js"></script>
 	<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 	<style type="text/css">
+	.myswitch-size-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
+		text-indent: -4.525em;
+	}
+	.myswitch-size-flipswitch.ui-flipswitch .ui-flipswitch-off {
+		text-indent: 0.5em;
+	}
+	.myswitch-size-flipswitch.ui-flipswitch {
+		width: 7em;
+	}
+	.myswitch-size-flipswitch.ui-flipswitch.ui-flipswitch-active {
+		padding-left: 5.125em;
+		width: 1.875em;
+	}
+	
+	@media (min-width: 28em) {
+		.ui-field-contain .myswitch-size-flipswitch.ui-flipswitch {
+			width: 7em;
+		}
+				
+		.ui-field-contain .myswitch-size-flipswitch.ui-flipswitch.ui-flipswitch-active {
+			padding-left: 5.125em;
+ 			width: 1.875em;
+ 		}
+	}
 	</style>
 </head>
 
@@ -34,7 +58,7 @@
 				</div>
 				<div class="ui-field-contain">
 					<label for="myswitch">My beautiful Switch</label>
-					<input type="checkbox" data-role="flipswitch" name="myswitch" id="myswitch" data-on-text="ON" data-off-text="OFF" data-wrapper-class="myswitch-size-flipswitch">
+					<input type="checkbox" data-role="flipswitch" name="myswitch" id="myswitch" data-on-text="White" data-off-text="Black" data-wrapper-class="myswitch-size-flipswitch">
 				</div>
 				<div class="ui-field-contain">
 					<label for="mystringconfig">IP address</label>

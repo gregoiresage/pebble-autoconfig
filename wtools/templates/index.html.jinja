@@ -27,11 +27,16 @@
 		padding-left: {{ width - 1.875 }}em;
 		width: 1.875em;
 	}
+	
 	@media (min-width: 28em) {
-		// Repeated from rule .ui-flipswitch above
-		.ui-field-contain > label + .{{ item['name'] }}-size-flipswitch.ui-flipswitch {
-			width: 1.875em;
+		.ui-field-contain .{{ item['name'] }}-size-flipswitch.ui-flipswitch {
+			width: {{ width }}em;
 		}
+				
+		.ui-field-contain .{{ item['name'] }}-size-flipswitch.ui-flipswitch.ui-flipswitch-active {
+			padding-left: {{ width - 1.875 }}em;
+ 			width: 1.875em;
+ 		}
 	}
 	{%- endif %}
 	{%- endif %}
@@ -48,9 +53,7 @@
 		<div data-role="content">
 			<form id="configuration-form">
 				{%- for item in preferences['items']: %}
-				{%- if item['type'] != 'switch' or autoconfig_utils.flipswitch_width(item)|int <= 5 %}
 				<div class="ui-field-contain">
-				{%- endif %}
 					<label for="{{ item['name'] }}">{{ item['title'] }}</label>
 					{%- if item['type'] == 'choice' %}
 					<select name="{{ item['name'] }}" id="{{ item['name'] }}">
@@ -65,9 +68,7 @@
 					{%- elif item['type'] == 'string' %}
 					<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" data-clear-btn="true">
 					{%- endif %}
-				{%- if item['type'] != 'switch' or autoconfig_utils.flipswitch_width(item)|int <= 5  %}
 				</div>
-				{%- endif %}
 				{%- endfor %}
 				
 				<button id="b-submit" data-theme="b" data-icon="check" data-iconpos="right">Save</button>

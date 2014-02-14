@@ -42,8 +42,8 @@
         "title":  "My beautiful Switch",
         "subtitle": "something",
         "type":   "switch",
-        "off-text": "OFF",
-        "on-text": "ON",
+        "off-text": "Black",
+        "on-text": "White",
         "default": false
     },
     {
