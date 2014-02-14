@@ -6,8 +6,8 @@
 {% for item in preferences['items']: %}
 {%- if item['type'] == 'enum' %}
 typedef enum {
-{%- for choice in item['choices']: %}
-	{{ item['name']|cvarname|upper }}_{{ choice.keys()[0]|cvarname }},
+{%- for key, choice in item['choices'].iteritems(): %}
+	{{ item['name']|cvarname|upper }}_{{ key|cvarname }},
 {%- endfor %}
 } {{ item['name']|cvarname|capitalize }}Value;
 {% endif %}

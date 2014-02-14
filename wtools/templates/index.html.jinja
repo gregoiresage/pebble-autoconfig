@@ -57,8 +57,8 @@
 					<label for="{{ item['name'] }}">{{ item['title'] }}</label>
 					{%- if item['type'] == 'enum' %}
 					<select name="{{ item['name'] }}" id="{{ item['name'] }}">
-					{%- for choice in item['choices'] %}
-						<option value="{{loop.index0 }}">{{choice.values()[0]}}</option>
+					{%- for key, choice in item['choices'].iteritems() %}
+						<option value="{{loop.index0 }}">{{ key }}</option>
 					{%- endfor %}
 					</select>
 					{%- elif item['type'] == 'integer' %}

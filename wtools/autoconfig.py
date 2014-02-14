@@ -4,6 +4,7 @@
 import os
 import json
 import inspect
+import collections
 
 from waflib import TaskGen, Task, Node
 from waflib.TaskGen import extension, before_method,feature
@@ -66,7 +67,7 @@ def process_autoconfig(self, node):
 	out = Node.split_path(out.abspath())[-1]
 
 	appinfo_content=open('appinfo.json')
-	appinfo_json=json.load(appinfo_content)
+	appinfo_json=json.load(appinfo_content,object_pairs_hook=collections.OrderedDict)
 
 	out = self.bld.path.find_or_declare([str(out)])
 
