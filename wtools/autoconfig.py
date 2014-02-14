@@ -9,6 +9,11 @@ from waflib import TaskGen, Task, Node
 from waflib.TaskGen import extension, before_method,feature
 from waflib.Configure import conf
 
+# jinja2 filter
+def maxi(a,b):
+	return max(a,b)
+filters = {'maxi' : maxi}
+
 class autoconfig(Task.Task):
 	color   = 'PINK'
 
@@ -22,6 +27,10 @@ class autoconfig(Task.Task):
 		tpl = os.path.basename(self.inputs[0].abspath())
 		
 		env = Environment(loader = FileSystemLoader([rootdir, tpldir]), trim_blocks=False)
+
+		#add custom filter
+		for filterName, filterFun in filters.iteritems():
+			env.filters[filterName] = filterFun
 	
 		template = env.get_template(tpl)
 		
