@@ -9,7 +9,6 @@
 	<script src="http://code.jquery.com/mobile/1.4.1/jquery.mobile-1.4.1.min.js"></script>
 	<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 	<style type="text/css">
-	{%- import 'autoconfig.jinja.utils' as autoconfig_utils -%}
 	{%- for item in preferences['items']: %}
 	{%- if item['type'] == 'boolean' %}
 	{%- set width = item['on-text']|length|maxi(item['off-text']|length) %}
