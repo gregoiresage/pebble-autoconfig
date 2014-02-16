@@ -54,10 +54,12 @@ def configure(conf):
 		conf.fatal("Jinja template engine is not available! (" + e.message + ")")
 
 def build(bld):
-    for template in bld.path.ant_glob(['wtools/templates/*.jinja']):
-        bld.add_manual_dependency(
-            template,
-            bld.path.find_node('appinfo.json'))
+	jinjapath = os.path.dirname(inspect.getfile(inspect.currentframe()))
+	jinjapath = os.path.join(jinjapath, 'templates/*.jinja')
+	for template in bld.path.ant_glob([jinjapath]):
+		bld.add_manual_dependency(
+			template,
+			bld.path.find_node('appinfo.json'))
 			
 @extension('.jinja')
 def process_autoconfig(self, node):	
