@@ -11,14 +11,11 @@ from waflib.TaskGen import extension, before_method,feature
 from waflib.Configure import conf
 
 # jinja2 filter
-def maxi(a,b):
-	"""Compute the maximum between 2 numbers."""
-	return max(a,b)
 import re
 def cvarname(name):
 	"""Convert a string to a valid c variable name (remove space,commas,slashes/...)."""
 	return re.sub(r'[^\w\s]', '_', name)
-filters = {'maxi' : maxi, 'cvarname' : cvarname}
+filters = {'max' : max, 'cvarname' : cvarname}
 
 class autoconfig(Task.Task):
 	color   = 'PINK'
