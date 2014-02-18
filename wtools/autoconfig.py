@@ -4,20 +4,18 @@
 import os
 import json
 import inspect
+import collections
 
 from waflib import TaskGen, Task, Node
 from waflib.TaskGen import extension, before_method,feature
 from waflib.Configure import conf
 
 # jinja2 filter
-def maxi(a,b):
-	"""Compute the maximum between 2 numbers."""
-	return max(a,b)
 import re
 def cvarname(name):
 	"""Convert a string to a valid c variable name (remove space,commas,slashes/...)."""
 	return re.sub(r'[^\w\s]', '_', name)
-filters = {'maxi' : maxi, 'cvarname' : cvarname}
+filters = {'max' : max, 'cvarname' : cvarname}
 
 class autoconfig(Task.Task):
 	color   = 'PINK'
@@ -68,7 +66,7 @@ def process_autoconfig(self, node):
 	out = Node.split_path(out.abspath())[-1]
 
 	appinfo_content=open('appinfo.json')
-	appinfo_json=json.load(appinfo_content)
+	appinfo_json=json.load(appinfo_content,object_pairs_hook=collections.OrderedDict)
 
 	out = self.bld.path.find_or_declare([str(out)])
 
