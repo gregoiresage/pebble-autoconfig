@@ -9,6 +9,7 @@
 	<script src="http://code.jquery.com/mobile/1.4.1/jquery.mobile-1.4.1.min.js"></script>
 	<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 	<style type="text/css">
+	{% if 'items' in preferences %}
 	{%- for item in preferences['items']: %}
 	{%- if item['type'] == 'boolean' %}
 	{%- set width = item['on-text']|length|max(item['off-text']|length) %}
@@ -40,6 +41,7 @@
 	{%- endif %}
 	{%- endif %}
 	{%- endfor %}
+	{%- endif %}
 	</style>
 </head>
 
@@ -51,6 +53,7 @@
 		</div>
 		<div data-role="content">
 			<form id="configuration-form">
+				{% if 'items' in preferences %}
 				{%- for item in preferences['items']: %}
 				<div class="ui-field-contain">
 					<label for="{{ item['name'] }}">{{ item['title'] }}</label>
@@ -69,6 +72,7 @@
 					{%- endif %}
 				</div>
 				{%- endfor %}
+				{%- endif %}
 				
 				<button id="b-submit" data-theme="b" data-icon="check" data-iconpos="right">Save</button>
 			</form>
@@ -81,6 +85,7 @@
 				dictionary = JSON.parse(localStorage['{{shortName}}']);
 			} catch(e) {
 				dictionary = {
+					{% if 'items' in preferences %}
 					{%- for item in preferences['items']: %}
 					{%- if item['type'] == 'boolean' %}
 					"{{ item['name'] }}" : {{ item['default']|lower }},
@@ -88,8 +93,10 @@
 					"{{ item['name'] }}" : "{{ item['default'] }}",
 					{%- endif %}
 					{%- endfor %}
+					{%- endif %}
 				};
 			}
+			{% if 'items' in preferences %}
 			{% for item in preferences['items']: %}
 			if('{{ item['name'] }}' in dictionary) {
 				{%- if item['type'] == 'enum' %}
@@ -106,6 +113,7 @@
 			{%- endif %}
 			}
 			{%- endfor %}
+			{%- endif %}
 		});
 		
 		// Handle different UI on i-devices
@@ -119,11 +127,13 @@
 		
 		$("#configuration-form").validate({
 			rules: {
+				{% if 'items' in preferences %}
 				{%- for item in preferences['items']: -%}
 				{% if item['type'] == 'string' %}
 				{{ item['name'] }}: "required {{ item['name'] }}",
 				{% endif %}
 				{%- endfor %}
+				{% endif %}
 			},
 			errorPlacement: function(error, element) {
 				error.insertAfter( element.parent() );
@@ -136,6 +146,7 @@
 			}
 			
 			var dictionary = {};
+			{% if 'items' in preferences %}
 			{%- for item in preferences['items']: %}
 			{%- if item['type'] == 'string' %}
 			dictionary['{{ item['name'] }}'] = $('#{{ item['name'] }}').val();
@@ -145,6 +156,7 @@
 			dictionary['{{ item['name'] }}'] = parseInt($('#{{ item['name'] }}').val());
 			{%- endif %}
 			{%- endfor %}
+			{% endif %}
 			localStorage['{{shortName}}'] = JSON.stringify(dictionary);
 
 			var location = "pebblejs://close#" + encodeURIComponent(localStorage['{{shortName}}']);

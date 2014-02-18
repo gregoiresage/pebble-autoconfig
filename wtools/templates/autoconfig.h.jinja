@@ -3,6 +3,7 @@
 
 #include <pebble.h>
 
+{% if 'items' in preferences %}
 {% for item in preferences['items']: %}
 {%- if item['type'] == 'enum' %}
 typedef enum {
@@ -22,6 +23,7 @@ char* get{{ item['name']|cvarname|capitalize }}();
 int32_t get{{ item['name']|cvarname|capitalize }}();
 {%- endif %}
 {% endfor %}
+{%- endif %}
 
 void autoconfig_in_received_handler(DictionaryIterator *iter, void *context); 
 

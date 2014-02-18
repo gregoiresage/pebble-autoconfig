@@ -1,8 +1,8 @@
 #include <pebble.h>
 #include "autoconfig.h"
 
-{%- import 'autoconfig.jinja.utils' as autoconfig_utils %}
 {% set persitantDataSize = 0 %}
+{% if 'items' in preferences %}
 {% for item in preferences['items'] -%}
 {% if item['type'] == 'boolean' %}
 bool _{{ item['name']|cvarname }};
@@ -34,6 +34,7 @@ void set{{ item['name']|cvarname | capitalize}}(int32_t value){_{{ item['name']|
 #error : The size of all persisted values cannot exceed 4KB but your parameters require {{ persitantDataSize }}B
 {% endif -%}
 {% endfor %}
+{% endif -%}
 
 static int32_t get_tuple_value(Tuple *tuple) {
 	if (tuple->type ==  TUPLE_INT){
@@ -59,6 +60,7 @@ static int32_t get_tuple_value(Tuple *tuple) {
 
 void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tuple = NULL;
+	{% if 'items' in preferences %}
 	{% for item in preferences['items']: -%}
 	tuple = dict_find(iter, {{ item['name']|cvarname|upper }}_PKEY);
 	{%- if item['type'] == 'string' %}
@@ -67,12 +69,14 @@ void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 	tuple ? set{{ item['name']|cvarname | capitalize }}(tuple->value->int32) : false;
 	{%- endif %}
 	{% endfor %}
+	{%- endif %}
 }
 
 void autoconfig_init(){
 	app_message_register_inbox_received(autoconfig_in_received_handler);
 	app_message_open(app_message_inbox_size_maximum(), 0);
 
+	{% if 'items' in preferences %}
 	{% for item in preferences['items']: -%}
 	if (persist_exists({{ item['name']|cvarname|upper }}_PKEY)) {
 		{%- if item['type'] == 'string' %}
@@ -95,9 +99,11 @@ void autoconfig_init(){
 	{%- endif %}
 
 	{% endfor %}
+	{%- endif %}
 }
 
 void autoconfig_deinit(){
+	{% if 'items' in preferences %}
 	{%- for item in preferences['items']: -%}
 	{%- if item['type'] == 'string' %}
 	persist_write_string({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
@@ -107,4 +113,5 @@ void autoconfig_deinit(){
 	persist_write_int({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
 	{%- endif %}
 	{%- endfor %}
+	{%- endif %}
 }
