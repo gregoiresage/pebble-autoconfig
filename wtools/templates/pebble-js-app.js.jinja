@@ -1,11 +1,13 @@
 Pebble.addEventListener("ready", function(e) {
-    var settings;
+  var settings;
   try {
     settings = JSON.parse(localStorage['{{shortName}}']);
     Pebble.sendAppMessageWithSizeCheck(settings);
   }
   catch(e) {
     // the dicitonary was never stored, the watchapp uses its default values
+    settings = {};
+    localStorage['{{shortName}}'] = JSON.stringify(settings);
   }
 });
 
