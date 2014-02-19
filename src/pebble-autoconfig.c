@@ -1,4 +1,5 @@
 #include <pebble.h>
+// Include Pebble Autoconfig
 #include "autoconfig.h"
 
 #define SETTING_COUNT 4
