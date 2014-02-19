@@ -23,9 +23,9 @@ static void updateDisplay() {
   text_layer_set_text(ipaddress_layer, ipaddress_string);
 }
 
-static void doLog() {
- APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration updated. Background: %d Direction: %d Length: %d IP Address: %s", 
-    getBackground(), getDirection(), (int)getLength(), getIpaddress()); 
+static void doLog(char *text) {
+ APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration %s. Background: %d Direction: %d Length: %d IP Address: %s", 
+    text, getBackground(), getDirection(), (int)getLength(), getIpaddress()); 
 }
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
@@ -33,7 +33,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
   autoconfig_in_received_handler(iter, context);
 
   // here the new settings are available
-  doLog();
+  doLog("updated");
 
   //update display
   updateDisplay();
@@ -44,7 +44,7 @@ static void init(void) {
   autoconfig_init();
 
   // here the previous settings are already loaded
-  doLog();
+  doLog("restored");
 
   //override autoconfig in_received_handler (if something must be done when new settings arrive)
   app_message_register_inbox_received(in_received_handler);
