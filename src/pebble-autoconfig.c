@@ -2,32 +2,41 @@
 #include "autoconfig.h"
 
 static Window *window;
-static TextLayer *select_layer;
-static TextLayer *slider_layer;
-static TextLayer *switch_layer;
-static TextLayer *string_layer;
+static TextLayer *background_layer;
+static TextLayer *direction_layer;
+static TextLayer *length_layer;
+static TextLayer *ipaddress_layer;
 
-static char select_string[20]="";
-static char slider_string[20]="";
-static char switch_string[20]="";
-static char string_string[40]="";
+static char background_string[20]="";
+static char direction_string[20]="";
+static char length_string[20]="";
+static char ipaddress_string[40]="";
+
+static void updateDisplay() {
+  snprintf(background_string, sizeof(background_string), "Background: %d", (int)getBackground());
+  text_layer_set_text(background_layer, background_string);
+  snprintf(direction_string, sizeof(direction_string), "Direction: %d", (int)getDirection());
+  text_layer_set_text(direction_layer, direction_string);
+  snprintf(length_string, sizeof(length_string), "Length: %d", (int)getLength());
+  text_layer_set_text(length_layer, length_string);
+  snprintf(ipaddress_string, sizeof(ipaddress_string), "IP Address: %s", getIpaddress());
+  text_layer_set_text(ipaddress_layer, ipaddress_string);
+}
+
+static void doLog() {
+ APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration updated. Background: %d Direction: %d Length: %d IP Address: %s", 
+    getBackground(), getDirection(), (int)getLength(), getIpaddress()); 
+}
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
   // call autoconf_in_received_handler
   autoconfig_in_received_handler(iter, context);
 
   // here the new settings are available
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "in_received_handler select:%d slider:%d switch:%d string:%s", getMyselect(), (int)getMyslider(), getMyswitch(), getMystringconfig());
+  doLog();
 
   //update display
-  snprintf(select_string, sizeof(select_string), "select: %d", (int)getMyselect());
-  text_layer_set_text(select_layer,select_string);
-  snprintf(slider_string, sizeof(slider_string), "slider: %d", (int)getMyslider());
-  text_layer_set_text(slider_layer,slider_string);
-  snprintf(switch_string, sizeof(switch_string), "switch: %d", (int)getMyswitch());
-  text_layer_set_text(switch_layer,switch_string);
-  snprintf(string_string, sizeof(string_string), "string: %s", getMystringconfig());
-  text_layer_set_text(string_layer,string_string);
+  updateDisplay();
 }
 
 static void init(void) {
@@ -35,7 +44,7 @@ static void init(void) {
   autoconfig_init();
 
   // here the previous settings are already loaded
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init select:%d slider:%d switch:%d string:%s", getMyselect(), (int)getMyslider(), getMyswitch(), getMystringconfig());
+  doLog();
 
   //override autoconfig in_received_handler (if something must be done when new settings arrive)
   app_message_register_inbox_received(in_received_handler);
@@ -46,33 +55,26 @@ static void init(void) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
 
-  select_layer = text_layer_create(GRect(0, 10, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(select_layer));
+  background_layer = text_layer_create(GRect(0, 10, bounds.size.w /* width */, 28 /* height */));
+  layer_add_child(window_layer, text_layer_get_layer(background_layer));
 
-  slider_layer = text_layer_create(GRect(0, 50, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(slider_layer));
+  direction_layer = text_layer_create(GRect(0, 50, bounds.size.w /* width */, 28 /* height */));
+  layer_add_child(window_layer, text_layer_get_layer(direction_layer));
 
-  switch_layer = text_layer_create(GRect(0, 90, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(switch_layer));
+  length_layer = text_layer_create(GRect(0, 90, bounds.size.w /* width */, 28 /* height */));
+  layer_add_child(window_layer, text_layer_get_layer(length_layer));
 
-  string_layer = text_layer_create(GRect(0, 130, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(string_layer));
+  ipaddress_layer = text_layer_create(GRect(0, 130, bounds.size.w /* width */, 28 /* height */));
+  layer_add_child(window_layer, text_layer_get_layer(ipaddress_layer));
 
-  snprintf(select_string, sizeof(select_string), "select: %d", (int)getMyselect());
-  text_layer_set_text(select_layer,select_string);
-  snprintf(slider_string, sizeof(slider_string), "slider: %d", (int)getMyslider());
-  text_layer_set_text(slider_layer,slider_string);
-  snprintf(switch_string, sizeof(switch_string), "switch: %d", (int)getMyswitch());
-  text_layer_set_text(switch_layer,switch_string);
-  snprintf(string_string, sizeof(string_string), "string: %s", getMystringconfig());
-  text_layer_set_text(string_layer,string_string);
+  updateDisplay();
 }
 
 static void deinit(void) {
-  text_layer_destroy(select_layer);
-  text_layer_destroy(slider_layer);
-  text_layer_destroy(switch_layer);
-  text_layer_destroy(string_layer);
+  text_layer_destroy(background_layer);
+  text_layer_destroy(direction_layer);
+  text_layer_destroy(length_layer);
+  text_layer_destroy(ipaddress_layer);
   window_destroy(window);
 
   // call autoconfig deinit
