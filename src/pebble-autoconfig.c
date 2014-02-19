@@ -12,51 +12,51 @@ static void updateDisplay() {
 	snprintf(text[0], sizeof(text[0]), "Background: %s", getBackground() ? "true" : "false");
 	snprintf(text[1], sizeof(text[1]), "Direction: %d", getDirection());
 	snprintf(text[2], sizeof(text[2]), "Length: %d", (int)getLength());
-	snprintf(text[3], sizeof(text[3]), "IP Address: %s", getIpaddress());
+	snprintf(text[3], sizeof(text[3]), "IP address: %s", getIpaddress());
 
 	for (int i = 0; i < SETTING_COUNT; ++i) {
 		text_layer_set_text(layer[i], text[i]);
 	}
 }
 
-static void doLog(char *text) {
- APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration %s. Background: %d Direction: %d Length: %d IP Address: %s", 
-		text, getBackground(), getDirection(), (int)getLength(), getIpaddress()); 
+static void logSettings(char *action) {
+ APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration %s. Background: %d Direction: %d Length: %d IP address: %s", 
+		action, getBackground(), getDirection(), (int)getLength(), getIpaddress()); 
 }
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
-	// call autoconf_in_received_handler
+	// Let Pebble Autoconfig handle received settings
 	autoconfig_in_received_handler(iter, context);
 
-	// here the new settings are available
-	doLog("updated");
+	// Here the updated settings are available
+	logSettings("updated");
 
-	//update display
+	// Update display with new values
 	updateDisplay();
 }
 
 static void init(void) {
-	// call autoconfig init (load previous settings and register app message handlers)
+	// Initialize Pebble Autoconfig to register App Message handlers and restores settings
 	autoconfig_init();
 
-	// here the previous settings are already loaded
-	doLog("restored");
+	// Here the restored or defaulted settings are available
+	logSettings("restored");
 
-	//override autoconfig in_received_handler (if something must be done when new settings arrive)
+	// Register our custom receive handler which in turn will call Pebble Autoconfigs receive handler
 	app_message_register_inbox_received(in_received_handler);
 	
 	window = window_create();
-	window_stack_push(window, true);
-
 	Layer *window_layer = window_get_root_layer(window);
 	GRect bounds = layer_get_frame(window_layer);
 
 	for (int i = 0; i < SETTING_COUNT; ++i) {
-		layer[i] = text_layer_create(GRect(0, 10 + i*40, bounds.size.w, 28));
+		layer[i] = text_layer_create(GRect(10, 10 + i*35, bounds.size.w - 10, 28));
 		layer_add_child(window_layer, text_layer_get_layer(layer[i]));
 	}
 
 	updateDisplay();
+
+	window_stack_push(window, true);
 }
 
 static void deinit(void) {
@@ -66,7 +66,7 @@ static void deinit(void) {
 
 	window_destroy(window);
 
-	// call autoconfig deinit
+	// Let Pebble Autoconfig write settings to Pebbles persistant memory
 	autoconfig_deinit();
 }
 
