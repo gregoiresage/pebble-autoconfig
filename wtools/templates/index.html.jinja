@@ -12,7 +12,7 @@
 	{% if 'items' in preferences %}
 	{%- for item in preferences['items']: %}
 	{%- if item['type'] == 'boolean' %}
-	{%- set width = item['on-text']|length|max(item['off-text']|length) %}
+	{%- set width = item['on-text']|length|max(item['off-text']|length) + 2 %}
 	{%- if width > 5 %}
 	.{{ item['name'] }}-size-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
 		text-indent: -{{ width - 2.475 }}em;

@@ -1,11 +1,3 @@
 {%- macro ctype(item) -%}
 {%- if item['type'] == 'int' %}int{% elif item['type'] == 'boolean' %}bool{% elif item['type'] == 'string' %}char*{%-endif -%}
 {%- endmacro -%}
-
-{%- macro flipswitch_width(item) -%}
-{% if item['on-text']|length > item['off-text']|length %}
-{{ item['on-text']|length + 2 }}
-{% else %} 
-{{ item['off-text']|length + 2 }}
-{% endif %}
-{%- endmacro %}
