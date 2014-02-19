@@ -1,26 +1,22 @@
 #include <pebble.h>
 #include "autoconfig.h"
 
-static Window *window;
-static TextLayer *background_layer;
-static TextLayer *direction_layer;
-static TextLayer *length_layer;
-static TextLayer *ipaddress_layer;
+#define SETTING_COUNT 4
 
-static char background_string[20]="";
-static char direction_string[20]="";
-static char length_string[20]="";
-static char ipaddress_string[40]="";
+static Window *window;
+
+static TextLayer *layer[SETTING_COUNT];
+static char text[SETTING_COUNT][40];
 
 static void updateDisplay() {
-  snprintf(background_string, sizeof(background_string), "Background: %d", (int)getBackground());
-  text_layer_set_text(background_layer, background_string);
-  snprintf(direction_string, sizeof(direction_string), "Direction: %d", (int)getDirection());
-  text_layer_set_text(direction_layer, direction_string);
-  snprintf(length_string, sizeof(length_string), "Length: %d", (int)getLength());
-  text_layer_set_text(length_layer, length_string);
-  snprintf(ipaddress_string, sizeof(ipaddress_string), "IP Address: %s", getIpaddress());
-  text_layer_set_text(ipaddress_layer, ipaddress_string);
+  snprintf(text[0], sizeof(text[0]), "Background: %s", getBackground() ? "true" : "false");
+  snprintf(text[1], sizeof(text[1]), "Direction: %d", getDirection());
+  snprintf(text[2], sizeof(text[2]), "Length: %d", (int)getLength());
+  snprintf(text[3], sizeof(text[3]), "IP Address: %s", getIpaddress());
+
+  for (int i = 0; i < SETTING_COUNT; ++i) {
+    text_layer_set_text(layer[i], text[i]);
+  }
 }
 
 static void doLog(char *text) {
@@ -55,26 +51,19 @@ static void init(void) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
 
-  background_layer = text_layer_create(GRect(0, 10, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(background_layer));
-
-  direction_layer = text_layer_create(GRect(0, 50, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(direction_layer));
-
-  length_layer = text_layer_create(GRect(0, 90, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(length_layer));
-
-  ipaddress_layer = text_layer_create(GRect(0, 130, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(ipaddress_layer));
+  for (int i = 0; i < SETTING_COUNT; ++i) {
+    layer[i] = text_layer_create(GRect(0, 10 + i*40, bounds.size.w, 28));
+    layer_add_child(window_layer, text_layer_get_layer(layer[i]));
+  }
 
   updateDisplay();
 }
 
 static void deinit(void) {
-  text_layer_destroy(background_layer);
-  text_layer_destroy(direction_layer);
-  text_layer_destroy(length_layer);
-  text_layer_destroy(ipaddress_layer);
+  for (int i = 0; i < SETTING_COUNT; ++i) {
+    text_layer_destroy(layer[i]);
+  }
+
   window_destroy(window);
 
   // call autoconfig deinit
