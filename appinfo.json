@@ -1,60 +1,68 @@
 {
-  "uuid": "5a586ed0-0a6a-4dce-80e1-cabd67cf2a62",
-  "shortName": "pebble-autoconfig",
-  "longName": "pebble-autoconfig",
-  "companyName": "Gregoire Sage",
-  "versionCode": 1,
-  "versionLabel": "1.0.0",
-  "watchapp": {
-    "watchface": false
-  },
-  "capabilities": [ "configurable" ],
-  "appKeys": {
-    "myslider": 0,
-    "myselect": 1,
-    "myswitch": 2,
-    "mystringconfig": 3
-  },
-  "resources": {
-    "media": []
-  },
-  "preferences": {
-    "url" : "http://pebble-autoconfig.googlecode.com/git/html/index.html",
-    "items": [{
-        "name":     "myselect",
-        "title":    "My beautiful select",
-        "subtitle": "something",
-        "type":     "enum",
-        "choices":  {"FOUR":"Four much", "ONE":"Just 1", "TWO":"Too much", "THREE": "Three is the new two"},
-        "default":  0
-    },
-    {
-        "name":   "myslider",
-        "title":  "My beautiful Slider",
-        "subtitle": "something",
-        "type":   "integer",
-        "min":    0,
-        "max":    100,
-        "default": 17
-    },
-    {
-        "name":   "myswitch",
-        "title":  "My beautiful Switch",
-        "subtitle": "something",
-        "type":   "boolean",
-        "off-text": "Black",
-        "on-text": "White",
-        "default": false
-    },
-    {
-        "name":   "mystringconfig",
-        "title":  "IP address",
-        "subtitle": "Enter the IP address",
-        "type":   "string",
-        "pattern":  "^[0-9]{1,3}(\\.[0-9]{1,3}){3}$",
-        "max-length": 15,
-        "default": "127.0.0.1"
-    }
-  ]
-  }
+		"uuid": "5a586ed0-0a6a-4dce-80e1-cabd67cf2a62",
+		"shortName": "pebble-autoconfig",
+		"longName": "pebble-autoconfig",
+		"companyName": "Gregoire Sage",
+		"versionCode": 1,
+		"versionLabel": "1.0.0",
+		"watchapp": {
+				"watchface": false
+		},
+		"capabilities": [
+				"configurable"
+		],
+		"appKeys": {
+				"myslider": 0,
+				"myselect": 1,
+				"myswitch": 2,
+				"mystringconfig": 3
+		},
+		"resources": {
+				"media": []
+		},
+		"preferences": {
+				"url": "http://pebble-autoconfig.googlecode.com/git/html/index.html",
+				"items": [
+						{
+								"name": "myselect",
+								"title": "My beautiful select",
+								"subtitle": "something",
+								"type": "enum",
+								"choices": {
+										"FOUR": "Four much",
+										"ONE": "Just 1",
+										"TWO": "Too much",
+										"THREE": "Three is the new two"
+								},
+								"default": 0
+						},
+						{
+								"name": "myslider",
+								"title": "My beautiful Slider",
+								"subtitle": "something",
+								"type": "integer",
+								"min": 0,
+								"max": 100,
+								"default": 17
+						},
+						{
+								"name": "myswitch",
+								"title": "My beautiful Switch",
+								"subtitle": "something",
+								"type": "boolean",
+								"off-text": "Black",
+								"on-text": "White",
+								"default": false
+						},
+						{
+								"name": "mystringconfig",
+								"title": "IP address",
+								"subtitle": "Enter the IP address",
+								"type": "string",
+								"pattern": "^[0-9]{1,3}(\\.[0-9]{1,3}){3}$",
+								"max-length": 15,
+								"default": "127.0.0.1"
+						}
+				]
+		}
 }
