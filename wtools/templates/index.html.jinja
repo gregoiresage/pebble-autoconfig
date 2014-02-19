@@ -35,8 +35,8 @@
 				
 		.ui-field-contain .{{ item['name'] }}-size-flipswitch.ui-flipswitch.ui-flipswitch-active {
 			padding-left: {{ width - 1.875 }}em;
- 			width: 1.875em;
- 		}
+			width: 1.875em;
+		}
 	}
 	{%- endif %}
 	{%- endif %}
@@ -84,34 +84,29 @@
 			try {
 				dictionary = JSON.parse(localStorage['{{shortName}}']);
 			} catch(e) {
-				dictionary = {
-					{% if 'items' in preferences %}
-					{%- for item in preferences['items']: %}
-					{%- if item['type'] == 'boolean' %}
-					"{{ item['name'] }}" : {{ item['default']|lower }},
-					{%- else %}
-					"{{ item['name'] }}" : "{{ item['default'] }}",
-					{%- endif %}
-					{%- endfor %}
-					{%- endif %}
-				};
+				dictionary = {};
 			}
 			{% if 'items' in preferences %}
 			{% for item in preferences['items']: %}
-			if('{{ item['name'] }}' in dictionary) {
-				{%- if item['type'] == 'enum' %}
-				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).selectmenu('refresh');
-				{%- elif item['type'] == 'integer' %}
-				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
-				{%- elif item['type'] == 'boolean' %}
-				$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'])).flipswitch( "refresh" );
-				{%- elif item['type'] == 'string' %}
-				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
-				$.validator.addMethod("{{ item['name'] }}", function(value, element) {
-					return this.optional(element) || /{{ item['pattern'] }}/i.test(value);
-				}, "Text field is invalid.");
-			{%- endif %}
+			if(!dictionary.hasOwnProperty('{{ item['name'] }}')) {
+				{%- if item['type'] == 'boolean' %}
+				dictionary['{{ item['name'] }}'] = {{ item['default']|lower }};
+				{%- else %}
+				dictionary['{{ item['name'] }}'] = '{{ item['default'] }}';
+				{%- endif %}
 			}
+			{%- if item['type'] == 'enum' %}
+			$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).selectmenu('refresh');
+			{%- elif item['type'] == 'integer' %}
+			$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
+			{%- elif item['type'] == 'boolean' %}
+			$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'])).flipswitch( "refresh" );
+			{%- elif item['type'] == 'string' %}
+			$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
+			$.validator.addMethod("{{ item['name'] }}", function(value, element) {
+				return this.optional(element) || /{{ item['pattern'] }}/i.test(value);
+			}, "Text field is invalid.");
+			{%- endif %}
 			{%- endfor %}
 			{%- endif %}
 		});
