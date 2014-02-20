@@ -1,86 +1,78 @@
 #include <pebble.h>
+// Include Pebble Autoconfig
 #include "autoconfig.h"
 
-static Window *window;
-static TextLayer *select_layer;
-static TextLayer *slider_layer;
-static TextLayer *switch_layer;
-static TextLayer *string_layer;
+#define SETTING_COUNT 4
 
-static char select_string[20]="";
-static char slider_string[20]="";
-static char switch_string[20]="";
-static char string_string[40]="";
+static Window *window;
+
+static TextLayer *layer[SETTING_COUNT];
+static char text[SETTING_COUNT][40];
+
+static void updateDisplay() {
+	snprintf(text[0], sizeof(text[0]), "Background: %s", getBackground() ? "true" : "false");
+	snprintf(text[1], sizeof(text[1]), "Direction: %d", getDirection());
+	snprintf(text[2], sizeof(text[2]), "Length: %d", (int)getLength());
+	snprintf(text[3], sizeof(text[3]), "IP address: %s", getIpaddress());
+
+	for (int i = 0; i < SETTING_COUNT; ++i) {
+		text_layer_set_text(layer[i], text[i]);
+	}
+}
+
+static void logSettings(char *action) {
+ APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration %s. Background: %s Direction: %d Length: %d IP address: %s", 
+		action, getBackground() ? "true" : "false", getDirection(), (int)getLength(), getIpaddress()); 
+}
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
-  // call autoconf_in_received_handler
-  autoconfig_in_received_handler(iter, context);
+	// Let Pebble Autoconfig handle received settings
+	autoconfig_in_received_handler(iter, context);
 
-  // here the new settings are available
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "in_received_handler select:%d slider:%d switch:%d string:%s", getMyselect(), (int)getMyslider(), getMyswitch(), getMystringconfig());
+	// Here the updated settings are available
+	logSettings("updated");
 
-  //update display
-  snprintf(select_string, sizeof(select_string), "select: %d", (int)getMyselect());
-  text_layer_set_text(select_layer,select_string);
-  snprintf(slider_string, sizeof(slider_string), "slider: %d", (int)getMyslider());
-  text_layer_set_text(slider_layer,slider_string);
-  snprintf(switch_string, sizeof(switch_string), "switch: %d", (int)getMyswitch());
-  text_layer_set_text(switch_layer,switch_string);
-  snprintf(string_string, sizeof(string_string), "string: %s", getMystringconfig());
-  text_layer_set_text(string_layer,string_string);
+	// Update display with new values
+	updateDisplay();
 }
 
 static void init(void) {
-  // call autoconfig init (load previous settings and register app message handlers)
-  autoconfig_init();
+	// Initialize Pebble Autoconfig to register App Message handlers and restores settings
+	autoconfig_init();
 
-  // here the previous settings are already loaded
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "init select:%d slider:%d switch:%d string:%s", getMyselect(), (int)getMyslider(), getMyswitch(), getMystringconfig());
+	// Here the restored or defaulted settings are available
+	logSettings("restored");
 
-  //override autoconfig in_received_handler (if something must be done when new settings arrive)
-  app_message_register_inbox_received(in_received_handler);
-  
-  window = window_create();
-  window_stack_push(window, true);
+	// Register our custom receive handler which in turn will call Pebble Autoconfigs receive handler
+	app_message_register_inbox_received(in_received_handler);
+	
+	window = window_create();
+	Layer *window_layer = window_get_root_layer(window);
+	GRect bounds = layer_get_frame(window_layer);
 
-  Layer *window_layer = window_get_root_layer(window);
-  GRect bounds = layer_get_frame(window_layer);
+	for (int i = 0; i < SETTING_COUNT; ++i) {
+		layer[i] = text_layer_create(GRect(10, 10 + i*35, bounds.size.w - 10, 28));
+		layer_add_child(window_layer, text_layer_get_layer(layer[i]));
+	}
 
-  select_layer = text_layer_create(GRect(0, 10, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(select_layer));
+	updateDisplay();
 
-  slider_layer = text_layer_create(GRect(0, 50, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(slider_layer));
-
-  switch_layer = text_layer_create(GRect(0, 90, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(switch_layer));
-
-  string_layer = text_layer_create(GRect(0, 130, bounds.size.w /* width */, 28 /* height */));
-  layer_add_child(window_layer, text_layer_get_layer(string_layer));
-
-  snprintf(select_string, sizeof(select_string), "select: %d", (int)getMyselect());
-  text_layer_set_text(select_layer,select_string);
-  snprintf(slider_string, sizeof(slider_string), "slider: %d", (int)getMyslider());
-  text_layer_set_text(slider_layer,slider_string);
-  snprintf(switch_string, sizeof(switch_string), "switch: %d", (int)getMyswitch());
-  text_layer_set_text(switch_layer,switch_string);
-  snprintf(string_string, sizeof(string_string), "string: %s", getMystringconfig());
-  text_layer_set_text(string_layer,string_string);
+	window_stack_push(window, true);
 }
 
 static void deinit(void) {
-  text_layer_destroy(select_layer);
-  text_layer_destroy(slider_layer);
-  text_layer_destroy(switch_layer);
-  text_layer_destroy(string_layer);
-  window_destroy(window);
+	for (int i = 0; i < SETTING_COUNT; ++i) {
+		text_layer_destroy(layer[i]);
+	}
 
-  // call autoconfig deinit
-  autoconfig_deinit();
+	window_destroy(window);
+
+	// Let Pebble Autoconfig write settings to Pebbles persistant memory
+	autoconfig_deinit();
 }
 
 int main(void) {
-  init();
-  app_event_loop();
-  deinit();
+	init();
+	app_event_loop();
+	deinit();
 }

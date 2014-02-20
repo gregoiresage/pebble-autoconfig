@@ -9,9 +9,10 @@
 	<script src="http://code.jquery.com/mobile/1.4.1/jquery.mobile-1.4.1.min.js"></script>
 	<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 	<style type="text/css">
+	{% if 'items' in preferences %}
 	{%- for item in preferences['items']: %}
 	{%- if item['type'] == 'boolean' %}
-	{%- set width = item['on-text']|length|max(item['off-text']|length) %}
+	{%- set width = item['on-text']|length|max(item['off-text']|length) + 2 %}
 	{%- if width > 5 %}
 	.{{ item['name'] }}-size-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
 		text-indent: -{{ width - 2.475 }}em;
@@ -34,23 +35,25 @@
 				
 		.ui-field-contain .{{ item['name'] }}-size-flipswitch.ui-flipswitch.ui-flipswitch-active {
 			padding-left: {{ width - 1.875 }}em;
- 			width: 1.875em;
- 		}
+			width: 1.875em;
+		}
 	}
 	{%- endif %}
 	{%- endif %}
 	{%- endfor %}
+	{%- endif %}
 	</style>
 </head>
 
 <body>
 	<div data-role="page" id="configuration">
 		<div data-role="header" id="header">
-			<button id="b-cancel" data-icon="back" data-iconpos="left" data-inline="true" data-mini="true">Cancel</button>
+			<button id="b-cancel" data-icon="delete" data-iconpos="left" data-inline="true" data-mini="true">Cancel</button>
 			<h1>{{longName}}</h1>
 		</div>
-		<div data-role="content">
+		<div role="main" class="ui-content">
 			<form id="configuration-form">
+				{% if 'items' in preferences %}
 				{%- for item in preferences['items']: %}
 				<div class="ui-field-contain">
 					<label for="{{ item['name'] }}">{{ item['title'] }}</label>
@@ -69,9 +72,13 @@
 					{%- endif %}
 				</div>
 				{%- endfor %}
+				{%- endif %}
 				
 				<button id="b-submit" data-theme="b" data-icon="check" data-iconpos="right">Save</button>
 			</form>
+		</div>
+		<div data-role="footer" id="footer" data-position="fixed">
+			<h2>Powered by Pebble Autoconfig</h2>
 		</div>
 	</div>
 	<script type="text/javascript">	 
@@ -80,32 +87,31 @@
 			try {
 				dictionary = JSON.parse(localStorage['{{shortName}}']);
 			} catch(e) {
-				dictionary = {
-					{%- for item in preferences['items']: %}
-					{%- if item['type'] == 'boolean' %}
-					"{{ item['name'] }}" : {{ item['default']|lower }},
-					{%- else %}
-					"{{ item['name'] }}" : "{{ item['default'] }}",
-					{%- endif %}
-					{%- endfor %}
-				};
+				dictionary = {};
 			}
+			{% if 'items' in preferences %}
 			{% for item in preferences['items']: %}
-			if('{{ item['name'] }}' in dictionary) {
-				{%- if item['type'] == 'enum' %}
-				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).selectmenu('refresh');
-				{%- elif item['type'] == 'integer' %}
-				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
-				{%- elif item['type'] == 'boolean' %}
-				$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'])).flipswitch( "refresh" );
-				{%- elif item['type'] == 'string' %}
-				$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
-				$.validator.addMethod("{{ item['name'] }}", function(value, element) {
-					return this.optional(element) || /{{ item['pattern'] }}/i.test(value);
-				}, "Text field is invalid.");
-			{%- endif %}
+			if(!dictionary.hasOwnProperty('{{ item['name'] }}')) {
+				{%- if item['type'] == 'boolean' %}
+				dictionary['{{ item['name'] }}'] = {{ item['default']|lower }};
+				{%- else %}
+				dictionary['{{ item['name'] }}'] = '{{ item['default'] }}';
+				{%- endif %}
 			}
+			{%- if item['type'] == 'enum' %}
+			$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).selectmenu('refresh');
+			{%- elif item['type'] == 'integer' %}
+			$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}'].toString()).slider('refresh');
+			{%- elif item['type'] == 'boolean' %}
+			$('#{{ item['name'] }}').prop('checked', (dictionary['{{ item['name'] }}'])).flipswitch( "refresh" );
+			{%- elif item['type'] == 'string' %}
+			$('#{{ item['name'] }}').val(dictionary['{{ item['name'] }}']);
+			$.validator.addMethod("{{ item['name'] }}", function(value, element) {
+				return this.optional(element) || /{{ item['pattern'] }}/i.test(value);
+			}, "Text field is invalid.");
+			{%- endif %}
 			{%- endfor %}
+			{%- endif %}
 		});
 		
 		// Handle different UI on i-devices
@@ -119,11 +125,13 @@
 		
 		$("#configuration-form").validate({
 			rules: {
+				{% if 'items' in preferences %}
 				{%- for item in preferences['items']: -%}
 				{% if item['type'] == 'string' %}
 				{{ item['name'] }}: "required {{ item['name'] }}",
 				{% endif %}
 				{%- endfor %}
+				{% endif %}
 			},
 			errorPlacement: function(error, element) {
 				error.insertAfter( element.parent() );
@@ -136,6 +144,7 @@
 			}
 			
 			var dictionary = {};
+			{% if 'items' in preferences %}
 			{%- for item in preferences['items']: %}
 			{%- if item['type'] == 'string' %}
 			dictionary['{{ item['name'] }}'] = $('#{{ item['name'] }}').val();
@@ -145,6 +154,7 @@
 			dictionary['{{ item['name'] }}'] = parseInt($('#{{ item['name'] }}').val());
 			{%- endif %}
 			{%- endfor %}
+			{% endif %}
 			localStorage['{{shortName}}'] = JSON.stringify(dictionary);
 
 			var location = "pebblejs://close#" + encodeURIComponent(localStorage['{{shortName}}']);
