@@ -21,8 +21,8 @@ static void updateDisplay() {
 }
 
 static void logSettings(char *action) {
- APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration %s. Background: %d Direction: %d Length: %d IP address: %s", 
-		action, getBackground(), getDirection(), (int)getLength(), getIpaddress()); 
+ APP_LOG(APP_LOG_LEVEL_DEBUG, "Configuration %s. Background: %s Direction: %d Length: %d IP address: %s", 
+		action, getBackground() ? "true" : "false", getDirection(), (int)getLength(), getIpaddress()); 
 }
 
 static void in_received_handler(DictionaryIterator *iter, void *context) {
