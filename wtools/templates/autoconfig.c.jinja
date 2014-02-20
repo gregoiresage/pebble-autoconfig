@@ -36,28 +36,6 @@ void set{{ item['name']|cvarname | capitalize}}(int32_t value){_{{ item['name']|
 {% endfor %}
 {% endif -%}
 
-static int32_t get_tuple_value(Tuple *tuple) {
-	if (tuple->type ==  TUPLE_INT){
-		if (tuple->length == 1) {
-			return tuple->value->int8;
-		}
-		if (tuple->length == 2) {
-			return tuple->value->int16;
-		}
-		return tuple->value->int32;
-	}
-	if (tuple->type ==  TUPLE_UINT){
-		if (tuple->length == 1) {
-			return tuple->value->uint8;
-		}
-		if (tuple->length == 2) {
-			return tuple->value->uint16;
-		}
-		return tuple->value->uint32;
-	}
-	return 0;
-}
-
 void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 	Tuple *tuple = NULL;
 	{% if 'items' in preferences %}
