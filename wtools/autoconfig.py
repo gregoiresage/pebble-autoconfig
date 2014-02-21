@@ -68,7 +68,7 @@ def process_autoconfig(self, node):
 	appinfo_content=open('appinfo.json')
 	appinfo_json=json.load(appinfo_content,object_pairs_hook=collections.OrderedDict)
 
-	out = self.bld.path.find_or_declare([str(out)])
+	out = self.bld.path.get_bld().make_node([str(out)])
 
 	tsk = self.create_task('autoconfig', [node], [out])
 	tsk.appinfo = appinfo_json
