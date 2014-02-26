@@ -7,6 +7,9 @@
 	<style type="text/css" media="screen">
 		body {padding: 1em; margin: 0; font-size: 1em;}
 		body * {margin: 0; padding: 0; font-family: "Lucida Grande", helvetica, sans-serif;}
+
+		#header, #footer {background-color: #eeeeee; text-align: center; padding-bottom: 0.5em}
+
 		button {padding: 1em; margin: 0.5em; font-size: 1em;}
 		.user-form .field { padding: 4px; margin:1px; }
 		.user-form .field label { display:inline-block; width:140px; margin-left:5px; }
@@ -52,6 +55,33 @@
 	</div>
 	<script type="text/javascript">
 		(function (byId) {
+			byId('save').addEventListener('click', function (event) {
+				var dictionary = {};
+				{% if 'items' in preferences %}
+				{%- for item in preferences['items']: %}
+				{%- if item['type'] == 'string' %}
+				dictionary['{{ item['name'] }}'] = document.getElementById('{{ item['name'] }}').value;
+				{%- elif item['type'] == 'boolean' %}
+				dictionary['{{ item['name'] }}'] = (document.getElementById('{{ item['name'] }}').checked ? 1 : 0);
+				{%- else %}
+				dictionary['{{ item['name'] }}'] = parseInt(document.getElementById('{{ item['name'] }}').value);
+				{%- endif %}
+				{%- endfor %}
+				{% endif %}
+				localStorage['{{shortName}}'] = JSON.stringify(dictionary);
+
+				document.getElementById("footer-text").innerHTML = "Saved";
+				console.log('Save clicked');
+
+				location.href = "pebblejs://close#" + encodeURIComponent(localStorage['{{shortName}}']);
+			});
+
+			byId('cancel').addEventListener('click', function (event) {
+				document.getElementById("footer-text").innerHTML = "Canceled";
+				console.log('Cancel clicked');
+				location.href = 'pebblejs://close#';
+			});
+
 			var dictionary;
 			try {
 				dictionary = JSON.parse(localStorage['{{shortName}}']);
@@ -59,16 +89,6 @@
 				dictionary = {};
 			}
 			console.log(dictionary);
-
-			byId('save').addEventListener('click', function (event) {
-				document.getElementById("footer-text").innerHTML = "Saved";
-				console.log('Save clicked');
-			});
-			byId('cancel').addEventListener('click', function (event) {
-				document.getElementById("footer-text").innerHTML = "Canceled";
-				console.log('Cancel clicked');
-				location.href = 'pebblejs://close#';
-			});
 
 			{% if 'items' in preferences %}
 			{% for item in preferences['items']: %}
