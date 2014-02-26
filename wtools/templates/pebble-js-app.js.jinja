@@ -13,11 +13,19 @@ Pebble.addEventListener("ready", function(e) {
   {% endif %}
 });
 
+{% if 'embeded' in preferences and preferences['embeded'] == true -%}
+{% macro embed() %}{% include "build/embed.html" %}{% endmacro %}
+var config_html={{ embed()|embed_html  }}
+
+{% endif -%}
+
 Pebble.addEventListener("showConfiguration", function (e) {
-    Pebble.openURL("{{ preferences['url'] }}");
+  {% if 'embeded' in preferences and preferences['embeded'] == true -%}
+  Pebble.openURL('data:text/html,' + encodeURIComponent(config_html + '<!--.html'));
+  {%- else -%}
+  Pebble.openURL("{{ preferences['url'] }}");
+  {%- endif %}
 });
-
-
 
 Pebble.addEventListener("webviewclosed", function(e) {
   {% if 'items' in preferences %}

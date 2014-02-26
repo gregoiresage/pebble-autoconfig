@@ -15,7 +15,12 @@ import re
 def cvarname(name):
 	"""Convert a string to a valid c variable name (remove space,commas,slashes/...)."""
 	return re.sub(r'[^\w\s]', '_', name)
-filters = {'max' : max, 'cvarname' : cvarname}
+
+def embed_html(text):
+	"""Remove new lines and tabs"""
+	return "'" + text.replace('\n', '').replace('\t', '').replace('\\', r'\\').replace("'", "\\'") + "';"
+
+filters = {'max' : max, 'cvarname' : cvarname, 'embed_html' : embed_html}
 
 class autoconfig(Task.Task):
 	color   = 'PINK'
