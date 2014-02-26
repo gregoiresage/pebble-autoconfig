@@ -14,7 +14,7 @@ Pebble.addEventListener("ready", function(e) {
 });
 
 {% if 'embeded' in preferences and preferences['embeded'] == true -%}
-{% macro embed() %}{% include "build/embed.html" %}{% endmacro %}
+{% macro embed() %}{% include "embed.html.jinja" %}{% endmacro %}
 var config_html={{ embed()|embed_html  }}
 
 {% endif -%}
