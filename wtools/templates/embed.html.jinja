@@ -38,13 +38,14 @@
 					{%- elif item['type'] == 'integer' %}
 					<input type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
 					{%- elif item['type'] == 'boolean' %}
-					<label class="switch-light switch-candy switch-candy-blue" onclick="">
-						<input class="input-switch" type="checkbox" name="{{ item['name'] }}" class="onoffswitch-checkbox" id="{{ item['name'] }}">
+					<label class="checkbox toggle android" onclick="">
+						<input type="checkbox" name="{{ item['name'] }}" id="{{ item['name'] }}">
 						<span>
 							<span>{{ item['off-text'] }}</span>
 							<span>{{ item['on-text'] }}</span>
 						</span>
-						<a></a>
+
+						<a class="slide-button"></a>
 					</label>
 					{%- elif item['type'] == 'string' %}
 					<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}" required>
@@ -79,7 +80,8 @@
 		var dictionary = {};
 
 		document.getElementById('save').addEventListener('click', function (event) {
-			log("Save clicked");
+			log("Save clicked, form not validated");
+
 			{% if 'items' in preferences %}
 			{%- for item in preferences['items']: %}
 			{%- if item['type'] == 'string' %}
