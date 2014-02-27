@@ -16,7 +16,7 @@
 		#header {padding: 0.5em}
 		#footer {position: relative; margin-top: -50px; height: 50px; clear:both;}
 		button {padding: 0.8em; margin: 0.5em; font-size: 1em; font-weight: bold; width: 40%; display: inline-block;}
-		#save {background-color: #dddddd; float: right; }
+		#save {float: right; }
 		#cancel {}
 
 		.user-form .field { padding: 4px; margin:1px; }
@@ -55,16 +55,15 @@
 				{%- endif %}
 			</form>
 			<button id="cancel">Cancel</button>
-			<button id="save" form="form" type="submit">Save</button>
+			<button id="save">Save</button>
 		</div>
 	</div>
 	<div data-role="footer" id="footer" data-position="fixed">
 		<h2 id="footer-text">Powered by Pebble Autoconfig</h2>
 	</div>
 	<script type="text/javascript">
-		(function (byId) {
-			byId('save').addEventListener('click', function (event) {
-				var dictionary = {};
+			var dictionary = {};
+			document.getElementById('save').addEventListener('click', function (event) {
 				{% if 'items' in preferences %}
 				{%- for item in preferences['items']: %}
 				{%- if item['type'] == 'string' %}
@@ -76,21 +75,20 @@
 				{%- endif %}
 				{%- endfor %}
 				{% endif %}
-				localStorage['{{shortName}}'] = JSON.stringify(dictionary);
 
-				document.getElementById("footer-text").innerHTML = "Saved";
+				/* localStorage['{{shortName}}'] = JSON.stringify(dictionary); */
+
+				document.getElementById("footer-text").innerHTML = "Save";
 				console.log('Save clicked');
-
-				location.href = "pebblejs://close#" + encodeURIComponent(localStorage['{{shortName}}']);
+				location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(dictionary));
 			});
 
-			byId('cancel').addEventListener('click', function (event) {
+			document.getElementById('cancel').addEventListener('click', function (event) {
 				document.getElementById("footer-text").innerHTML = "Canceled";
 				console.log('Cancel clicked');
 				location.href = 'pebblejs://close#';
 			});
 
-			var dictionary;
 			try {
 				dictionary = JSON.parse(localStorage['{{shortName}}']);
 			} catch(e) {
@@ -118,7 +116,6 @@
 			{%- endif %}
 			{%- endfor %}
 			{%- endif %}
-		})(document.getElementById.bind(document));
 	</script>
 </body>
 </html>
