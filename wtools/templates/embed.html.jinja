@@ -5,12 +5,20 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css" media="screen">
-		body {padding: 1em; margin: 0; font-size: 1em;}
+		html, body {height: 100%;}
+		body {margin: 0; font-size: 1em;}
 		body * {margin: 0; padding: 0; font-family: "Lucida Grande", helvetica, sans-serif;}
+		h1 {font-size: 1.8em;}
+		h2 {font-size: 1em}
+		#wrap {min-height: 100%; }
+		#content {overflow:auto; padding-bottom: 50px; padding: 1em; }
+		#header, #footer {background-color: #eeeeee; text-align: center; }
+		#header {padding: 0.5em}
+		#footer {position: relative; margin-top: -50px; height: 50px; clear:both;}
+		button {padding: 0.8em; margin: 0.5em; font-size: 1em; font-weight: bold; width: 40%; display: inline-block;}
+		#save {background-color: #dddddd; float: right; }
+		#cancel {}
 
-		#header, #footer {background-color: #eeeeee; text-align: center; padding-bottom: 0.5em}
-
-		button {padding: 1em; margin: 0.5em; font-size: 1em;}
 		.user-form .field { padding: 4px; margin:1px; }
 		.user-form .field label { display:inline-block; width:140px; margin-left:5px; }
 		.user-form .field input { display:inline-block; }
@@ -19,7 +27,7 @@
 </head>
 
 <body>
-	<div data-role="page" id="configuration">
+	<div data-role="page" id="wrap">
 		<div data-role="header" id="header">
 			<h1>{{longName}}</h1>
 		</div>
@@ -49,9 +57,9 @@
 			<button id="cancel">Cancel</button>
 			<button id="save" form="form" type="submit">Save</button>
 		</div>
-		<div data-role="footer" id="footer" data-position="fixed">
-			<h2 id="footer-text">Powered by Pebble Autoconfig</h2>
-		</div>
+	</div>
+	<div data-role="footer" id="footer" data-position="fixed">
+		<h2 id="footer-text">Powered by Pebble Autoconfig</h2>
 	</div>
 	<script type="text/javascript">
 		(function (byId) {
