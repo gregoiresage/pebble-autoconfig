@@ -573,7 +573,8 @@ aside {
 	</div>
 	<script type="text/javascript">
 		if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
-			$("#header").remove();
+			var element = document.getElementById("header");
+			element.parentNode.removeChild(element);
 		}
 
 		function log (text) {
