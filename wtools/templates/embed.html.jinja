@@ -56,14 +56,34 @@
 			</form>
 			<button id="cancel">Cancel</button>
 			<button id="save">Save</button>
+			<div id="logdiv"></div>
 		</div>
 	</div>
 	<div data-role="footer" id="footer" data-position="fixed">
 		<h2 id="footer-text">Powered by Pebble Autoconfig</h2>
 	</div>
 	<script type="text/javascript">
+			function supports_html5_storage() {
+			  try {
+			    return 'localStorage' in window && window['localStorage'] !== null;
+			  } catch (e) {
+			  	log(e);
+			    return false;
+			  }
+			}
+
+			function log (text) {
+				logdiv.innerHTML = logdiv.innerHTML + "<br>" + text;
+				console.log(text);
+			}
+
+			var logdiv = document.getElementById("logdiv");
+
+			log("localStorage supported: " +supports_html5_storage());
+
 			var dictionary = {};
 			document.getElementById('save').addEventListener('click', function (event) {
+				log("Save clicked");
 				{% if 'items' in preferences %}
 				{%- for item in preferences['items']: %}
 				{%- if item['type'] == 'string' %}
@@ -76,17 +96,17 @@
 				{%- endfor %}
 				{% endif %}
 
-				/* localStorage['{{shortName}}'] = JSON.stringify(dictionary); */
-
-				document.getElementById("footer-text").innerHTML = "Save";
-				console.log('Save clicked');
+				log("Set localStorage");
+				localStorage['{{shortName}}'] = JSON.stringify(dictionary);
+				log("After localStorage set");
 				location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(dictionary));
+				log("After location change");
 			});
 
 			document.getElementById('cancel').addEventListener('click', function (event) {
-				document.getElementById("footer-text").innerHTML = "Canceled";
-				console.log('Cancel clicked');
+				log("Cancel clicked");
 				location.href = 'pebblejs://close#';
+				log("After location change");
 			});
 
 			try {
