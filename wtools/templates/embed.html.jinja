@@ -35,7 +35,7 @@
 							</select>
 						</div>
 						{%- elif item['type'] == 'integer' %}
-						<input type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required data-required-message="{{ item['title'] }} is required" >
+						<input type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
 						{%- elif item['type'] == 'boolean' %}
 						<label class="checkbox toggle android" onclick="">
 							<input type="checkbox" name="{{ item['name'] }}" id="{{ item['name'] }}">
@@ -47,7 +47,7 @@
 							<a class="slide-button"></a>
 						</label>
 						{%- elif item['type'] == 'string' %}
-						<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}" required data-required-message="{{ item['title'] }} is required" >
+						<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}">
 						{%- endif %}
 					</div>
 					<p class="error"></p>
