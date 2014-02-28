@@ -28,12 +28,12 @@ form.addEventListener( "invalid", function( event ) {
 }, true );
 
 /* checkValidity() always returns true in Android Webkit, this check works */
-function checkValidityAndroid(form) {
-	var inputs = form.querySelectorAll( "input" );
+HTMLFormElement.prototype.checkValidityAndroid=function() {
+	var inputs = this.querySelectorAll( "input" );
 	for ( var i = 0; i < inputs.length; i++ ) {
 		if(!inputs[i].validity.valid) {
 			return false;
 		}
 	}
 	return true;
-}
+};
