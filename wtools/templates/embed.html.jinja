@@ -5,13 +5,21 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css" media="screen">
-	{% include "embed/css/pure/0.4.2/base-min.css" %}
-	{% include "embed/css/pure/0.4.2/buttons-min.css" %}
-	{% include "embed/css/pure/0.4.2/forms-min.css" %}
-	{% include "embed/css/css-toggle-switch/1.1.1/toggle-switch.css" %}
-	{% include "embed/css/pebble-autoconfig.css" %}
-	/* Test area */
-    button {width: 49%}
+		{% include "embed/css/pure/0.4.2/base-min.css" %}
+		{% include "embed/css/pure/0.4.2/buttons-min.css" %}
+		{% include "embed/css/pure/0.4.2/forms-min.css" %}
+		{% include "embed/css/css-toggle-switch/1.1.1/toggle-switch.css" %}
+		{% include "embed/css/pebble-autoconfig.css" %}
+		/* Test area */
+		button {width: 49%}
+
+		.invalid {
+			background: red;
+			color: white;
+		}
+		.error {
+			color: red;
+		}
 	</style>
 </head>
 
@@ -21,44 +29,47 @@
 			<h1>{{longName}}</h1>
 		</div>
 		<div id="content" class="content">
+			<div id="formStatus"></div>
+
 			<form id="form" class="pure-form pure-form-stacked">
 				<fieldset>
-				{% if 'items' in preferences %}
-				{%- for item in preferences['items']: %}
-				<div class="pure-control-group">
-					<label for="{{ item['name'] }}">{{ item['title'] }}</label>
-					{%- if item['type'] == 'enum' %}
-					<div class="select-box">
-					<select name="{{ item['name'] }}" id="{{ item['name'] }}">
-					{%- for key, choice in item['choices'].iteritems() %}
-						<option value="{{loop.index0 }}">{{ key }}</option>
-					{%- endfor %}
-					</select>
-					</div>
-					{%- elif item['type'] == 'integer' %}
-					<input type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
-					{%- elif item['type'] == 'boolean' %}
-					<label class="checkbox toggle android" onclick="">
-						<input type="checkbox" name="{{ item['name'] }}" id="{{ item['name'] }}">
-						<span>
-							<span>{{ item['off-text'] }}</span>
-							<span>{{ item['on-text'] }}</span>
-						</span>
+					{% if 'items' in preferences %}
+					{%- for item in preferences['items']: %}
+					<div class="pure-control-group">
+						<label for="{{ item['name'] }}">{{ item['title'] }}</label>
+						{%- if item['type'] == 'enum' %}
+						<div class="select-box">
+							<select name="{{ item['name'] }}" id="{{ item['name'] }}">
+								{%- for key, choice in item['choices'].iteritems() %}
+								<option value="{{loop.index0 }}">{{ key }}</option>
+								{%- endfor %}
+							</select>
+						</div>
+						{%- elif item['type'] == 'integer' %}
+						<input type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
+						{%- elif item['type'] == 'boolean' %}
+						<label class="checkbox toggle android" onclick="">
+							<input type="checkbox" name="{{ item['name'] }}" id="{{ item['name'] }}">
+							<span>
+								<span>{{ item['off-text'] }}</span>
+								<span>{{ item['on-text'] }}</span>
+							</span>
 
-						<a class="slide-button"></a>
-					</label>
-					{%- elif item['type'] == 'string' %}
-					<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}" required>
+							<a class="slide-button"></a>
+						</label>
+						{%- elif item['type'] == 'string' %}
+						<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}" required>
+						{%- endif %}
+					</div>
+					<p class="error"></p>
+					{%- endfor %}
 					{%- endif %}
-				</div>
-				{%- endfor %}
-				{%- endif %}
 				</fieldset>
 
 			</form>
 
-			<button id="save" class="pure-button pure-button-primary" type="submit">Save</button>
-			<button id="cancel" class="pure-button button-warning">Cancel</button>		
+			<button id="save" class="pure-button pure-button-primary" type="submit" form="form">Save</button>
+			<button id="cancel" class="pure-button">Cancel</button>		
 			<div id="logdiv"></div>
 		</div>
 		<div class="footer l-box is-center" id="footer">
@@ -73,58 +84,125 @@
 
 		function log (text) {
 			var logdiv = document.getElementById("logdiv");
-			logdiv.innerHTML = logdiv.innerHTML + "<br>" + text;
+			logdiv.innerHTML = text + "<br>" + logdiv.innerHTML;
 			console.log(text);
+		}
+		log("90");
+		function supportsValidity(){
+			var i = document.createElement('input');
+			return typeof i.validity === 'object'
 		}
 
 		var dictionary = {};
 
-		document.getElementById('save').addEventListener('click', function (event) {
-			log("Save clicked, form not validated");
-
-			{% if 'items' in preferences %}
-			{%- for item in preferences['items']: %}
-			{%- if item['type'] == 'string' %}
-			dictionary['{{ item['name'] }}'] = document.getElementById('{{ item['name'] }}').value;
-			{%- elif item['type'] == 'boolean' %}
-			dictionary['{{ item['name'] }}'] = (document.getElementById('{{ item['name'] }}').checked ? 1 : 0);
-			{%- else %}
-			dictionary['{{ item['name'] }}'] = parseInt(document.getElementById('{{ item['name'] }}').value);
-			{%- endif %}
-			{%- endfor %}
-			{% endif %}
-
-			location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(dictionary));
-		});
-
-		document.getElementById('cancel').addEventListener('click', function (event) {
-			log("Cancel clicked");
-			location.href = 'pebblejs://close#';
-		});
-
-		dictionary = REPLACED_AT_RUNTIME;
-		console.log(dictionary);
-
-		{% if 'items' in preferences %}
-		{% for item in preferences['items']: %}
-		if(!dictionary.hasOwnProperty('{{ item['name'] }}')) {
-			{%- if item['type'] == 'boolean' %}
-			dictionary['{{ item['name'] }}'] = {{ item['default']|lower }};
-			{%- else %}
-			dictionary['{{ item['name'] }}'] = '{{ item['default'] }}';
-			{%- endif %}
+		log("97");
+		function checkValidityAndroid(form) {
+			var inputs = form.querySelectorAll( "input" );
+			for ( var i = 0; i < inputs.length; i++ ) {
+				if(!inputs[i].validity.valid) {
+					return false;
+				}
+			}
+			return true;
 		}
-		{%- if item['type'] == 'enum' %}
-		document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'].toString();
-		{%- elif item['type'] == 'integer' %}
-		document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'].toString();
+
+			/*
+			Four options for validation
+			*/
+		log("110");
+		function validate() {
+			var errorNode = this.parentNode.querySelector( ".error" ),
+			span = document.createElement( "span" );
+			
+			this.classList.remove( "invalid" );
+			if ( errorNode ) {
+				errorNode.parentNode.removeChild( errorNode );
+			}
+
+			if ( !this.validity.valid ) {
+				this.classList.add( "invalid" );
+				this.parentNode.appendChild( span );
+				span.classList.add( "error" );
+				span.innerHTML = this.getAttribute(
+					this.validity.valueMissing ? "data-required-message" : "data-type-message" );
+			}
+		};
+
+
+
+	var form = document.querySelector( "form" ),
+	inputs = form.querySelectorAll( "input" );
+
+	for ( var i = 0; i < inputs.length; i++ ) {
+		inputs[ i ].addEventListener( "blur", validate );
+		inputs[ i ].addEventListener( "invalid", validate );
+	};
+log("136");
+	/* Turn off the bubbles */
+	form.addEventListener( "invalid", function( event ) {
+		event.preventDefault();
+	}, true );
+
+	function send_to_phone() {
+		{% if 'items' in preferences %}
+		{%- for item in preferences['items']: %}
+		{%- if item['type'] == 'string' %}
+		dictionary['{{ item['name'] }}'] = document.getElementById('{{ item['name'] }}').value;
 		{%- elif item['type'] == 'boolean' %}
-		document.getElementById('{{ item['name'] }}').checked = dictionary['{{ item['name'] }}'];
-		{%- elif item['type'] == 'string' %}
-		document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'];
+		dictionary['{{ item['name'] }}'] = (document.getElementById('{{ item['name'] }}').checked ? 1 : 0);
+		{%- else %}
+		dictionary['{{ item['name'] }}'] = parseInt(document.getElementById('{{ item['name'] }}').value);
 		{%- endif %}
 		{%- endfor %}
+		{% endif %}
+
+		location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(dictionary));
+	}
+
+	/* Support: Safari, iOS Safari, default Android browser */
+	document.querySelector( "form" ).addEventListener( "submit", function( event ) {
+		if ( this.checkValidity() && checkValidityAndroid(this)) {
+			/*alert( "Successful submission" );*/
+			event.preventDefault();
+			send_to_phone();
+		} else {
+			event.preventDefault();
+		}
+	});
+
+	document.getElementById('cancel').addEventListener('click', function (event) {
+		log("Cancel clicked");
+		location.href = 'pebblejs://close#';
+	});
+
+	try {
+		dictionary = REPLACED_AT_RUNTIME;
+	} catch(e) {
+		dictionary = {}
+	}
+	log( "User-agent header sent: " + navigator.userAgent );
+	log("supportsValidity: " +supportsValidity());
+
+	{% if 'items' in preferences %}
+	{% for item in preferences['items']: %}
+	if(!dictionary.hasOwnProperty('{{ item['name'] }}')) {
+		{%- if item['type'] == 'boolean' %}
+		dictionary['{{ item['name'] }}'] = {{ item['default']|lower }};
+		{%- else %}
+		dictionary['{{ item['name'] }}'] = '{{ item['default'] }}';
 		{%- endif %}
-	</script>
+	}
+	{%- if item['type'] == 'enum' %}
+	document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'].toString();
+	{%- elif item['type'] == 'integer' %}
+	document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'].toString();
+	{%- elif item['type'] == 'boolean' %}
+	document.getElementById('{{ item['name'] }}').checked = dictionary['{{ item['name'] }}'];
+	{%- elif item['type'] == 'string' %}
+	document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'];
+	{%- endif %}
+	{%- endfor %}
+	{%- endif %}
+</script>
 </body>
 </html>
