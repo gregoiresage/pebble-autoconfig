@@ -195,3 +195,13 @@ aside {
 .error {
     color: #ee5f5b;
 }
+
+/* --------------------------
+ * Radio button
+ * --------------------------
+*/
+
+.pure-form .pure-radio {
+	margin: 0.5em 1em;
+	display: inline-block;
+}

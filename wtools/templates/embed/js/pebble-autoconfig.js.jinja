@@ -16,13 +16,14 @@ log("User-agent: " + navigator.userAgent );
 var dictionary = {};
 
 document.querySelector( "form" ).addEventListener( "submit", function( event ) {
+	log("Save clicked");
 	if ( this.checkValidity() && this.checkValidityAndroid()) {
 		{%- if 'items' in preferences %}
 		{%- for item in preferences['items']: %}
 		{%- if item['type'] == 'string' %}
 		dictionary['{{ item['name'] }}'] = document.getElementById('{{ item['name'] }}').value;
 		{%- elif item['type'] == 'boolean' %}
-		dictionary['{{ item['name'] }}'] = (document.getElementById('{{ item['name'] }}').checked ? 1 : 0);
+		dictionary['{{ item['name'] }}'] = (document.getElementById('{{ item['name'] }}-on').checked ? 1 : 0);
 		{%- else %}
 		dictionary['{{ item['name'] }}'] = parseInt(document.getElementById('{{ item['name'] }}').value);
 		{%- endif %}
@@ -59,7 +60,11 @@ document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'
 {%- elif item['type'] == 'integer' %}
 document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'].toString();
 {%- elif item['type'] == 'boolean' %}
-document.getElementById('{{ item['name'] }}').checked = dictionary['{{ item['name'] }}'];
+if (dictionary['{{ item['name'] }}']) {
+	document.getElementById('{{ item['name'] }}-on').checked = true;
+} else {
+	document.getElementById('{{ item['name'] }}-off').checked = true;	
+}
 {%- elif item['type'] == 'string' %}
 document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'];
 {%- endif %}

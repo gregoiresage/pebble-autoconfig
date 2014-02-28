@@ -8,10 +8,10 @@
 {% include "embed/css/pure/0.4.2/base-min.css" %}
 {% include "embed/css/pure/0.4.2/buttons-min.css" %}
 {% include "embed/css/pure/0.4.2/forms-min.css" %}
-{% include "embed/css/css-toggle-switch/1.1.1/toggle-switch.css" %}
 {% include "embed/css/pebble-autoconfig.css" %}
 		/* Test area */
 		button {width: 49%}
+		.form-inline {display: inline-block; float: left;}
 	</style>
 </head>
 <body>
@@ -37,14 +37,13 @@
 						{%- elif item['type'] == 'integer' %}
 						<input type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
 						{%- elif item['type'] == 'boolean' %}
-						<label class="checkbox toggle android" onclick="">
-							<input type="checkbox" name="{{ item['name'] }}" id="{{ item['name'] }}">
-							<span>
-								<span>{{ item['off-text'] }}</span>
-								<span>{{ item['on-text'] }}</span>
-							</span>
-
-							<a class="slide-button"></a>
+						<label for="{{ item['name'] }}-off" class="pure-radio">
+							<input id="{{ item['name'] }}-off" type="radio" name="{{ item['name'] }}" value="0">
+							{{ item['off-text'] }}
+						</label>
+						<label for="{{ item['name'] }}-on" class="pure-radio">
+							<input id="{{ item['name'] }}-on" type="radio" name="{{ item['name'] }}" value="1">
+							{{ item['on-text'] }}
 						</label>
 						{%- elif item['type'] == 'string' %}
 						<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}">
@@ -58,9 +57,7 @@
 				<button id="save" class="pure-button pure-button-primary" type="submit" form="form">Save</button>
 				<button id="cancel" class="pure-button">Cancel</button>
 			</form>
-			{%- if preferences["debug"] %}
 			<div id="logdiv"></div>
-			{%- endif %}
 		</div>
 		<div class="footer l-box is-center" id="footer">
 			<span id="footer-text">Powered by Pebble Autoconfig</span>
