@@ -9,12 +9,15 @@ function log (text) {
 	console.log(text);
 }
 
+{%- if preferences["debug"] %}
 log("User-agent: " + navigator.userAgent );
+{%- endif %}
+
 var dictionary = {};
 
 document.querySelector( "form" ).addEventListener( "submit", function( event ) {
-	if ( this.checkValidity() && checkValidityAndroid(this)) {
-		{% if 'items' in preferences %}
+	if ( this.checkValidity() && this.checkValidityAndroid()) {
+		{%- if 'items' in preferences %}
 		{%- for item in preferences['items']: %}
 		{%- if item['type'] == 'string' %}
 		dictionary['{{ item['name'] }}'] = document.getElementById('{{ item['name'] }}').value;
@@ -24,7 +27,7 @@ document.querySelector( "form" ).addEventListener( "submit", function( event ) {
 		dictionary['{{ item['name'] }}'] = parseInt(document.getElementById('{{ item['name'] }}').value);
 		{%- endif %}
 		{%- endfor %}
-		{% endif %}
+		{%- endif %}
 
 		location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(dictionary));
 	}
@@ -42,8 +45,8 @@ try {
 	dictionary = {}
 }
 
-{% if 'items' in preferences %}
-{% for item in preferences['items']: %}
+{% if 'items' in preferences -%}
+{%- for item in preferences['items']: %}
 if(!dictionary.hasOwnProperty('{{ item['name'] }}')) {
 	{%- if item['type'] == 'boolean' %}
 	dictionary['{{ item['name'] }}'] = {{ item['default']|lower }};
