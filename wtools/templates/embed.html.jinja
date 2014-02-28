@@ -58,8 +58,9 @@
 				<button id="save" class="pure-button pure-button-primary" type="submit" form="form">Save</button>
 				<button id="cancel" class="pure-button">Cancel</button>
 			</form>
-	
+			{%- if preferences["debug"] %}
 			<div id="logdiv"></div>
+			{%- endif %}
 		</div>
 		<div class="footer l-box is-center" id="footer">
 			<span id="footer-text">Powered by Pebble Autoconfig</span>
