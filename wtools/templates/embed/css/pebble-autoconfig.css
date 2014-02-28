@@ -182,3 +182,16 @@ aside {
 .is-center {
 	text-align: center;
 }
+
+/* --------------------------
+ * Error Display
+ * --------------------------
+*/
+
+.invalid {
+	color:#b94a48;
+	border-color:#ee5f5b.
+}
+.error {
+    color: #ee5f5b;
+}

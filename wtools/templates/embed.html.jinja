@@ -12,25 +12,14 @@
 		{% include "embed/css/pebble-autoconfig.css" %}
 		/* Test area */
 		button {width: 49%}
-
-		.invalid {
-			background: red;
-			color: white;
-		}
-		.error {
-			color: red;
-		}
 	</style>
 </head>
-
 <body>
 	<div id="main">
 		<div class="header" id="header">
 			<h1>{{longName}}</h1>
 		</div>
 		<div id="content" class="content">
-			<div id="formStatus"></div>
-
 			<form id="form" class="pure-form pure-form-stacked">
 				<fieldset>
 					{% if 'items' in preferences %}
@@ -46,7 +35,7 @@
 							</select>
 						</div>
 						{%- elif item['type'] == 'integer' %}
-						<input type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
+						<input type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required data-required-message="{{ item['title'] }} is required" >
 						{%- elif item['type'] == 'boolean' %}
 						<label class="checkbox toggle android" onclick="">
 							<input type="checkbox" name="{{ item['name'] }}" id="{{ item['name'] }}">
@@ -58,7 +47,7 @@
 							<a class="slide-button"></a>
 						</label>
 						{%- elif item['type'] == 'string' %}
-						<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}" required>
+						<input type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}" required data-required-message="{{ item['title'] }} is required" >
 						{%- endif %}
 					</div>
 					<p class="error"></p>
@@ -66,10 +55,10 @@
 					{%- endif %}
 				</fieldset>
 
+				<button id="save" class="pure-button pure-button-primary" type="submit" form="form">Save</button>
+				<button id="cancel" class="pure-button">Cancel</button>
 			</form>
-
-			<button id="save" class="pure-button pure-button-primary" type="submit" form="form">Save</button>
-			<button id="cancel" class="pure-button">Cancel</button>		
+	
 			<div id="logdiv"></div>
 		</div>
 		<div class="footer l-box is-center" id="footer">
@@ -77,132 +66,8 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-		if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
-			var element = document.getElementById("header");
-			element.parentNode.removeChild(element);
-		}
-
-		function log (text) {
-			var logdiv = document.getElementById("logdiv");
-			logdiv.innerHTML = text + "<br>" + logdiv.innerHTML;
-			console.log(text);
-		}
-		log("90");
-		function supportsValidity(){
-			var i = document.createElement('input');
-			return typeof i.validity === 'object'
-		}
-
-		var dictionary = {};
-
-		log("97");
-		function checkValidityAndroid(form) {
-			var inputs = form.querySelectorAll( "input" );
-			for ( var i = 0; i < inputs.length; i++ ) {
-				if(!inputs[i].validity.valid) {
-					return false;
-				}
-			}
-			return true;
-		}
-
-			/*
-			Four options for validation
-			*/
-		log("110");
-		function validate() {
-			var errorNode = this.parentNode.querySelector( ".error" ),
-			span = document.createElement( "span" );
-			
-			this.classList.remove( "invalid" );
-			if ( errorNode ) {
-				errorNode.parentNode.removeChild( errorNode );
-			}
-
-			if ( !this.validity.valid ) {
-				this.classList.add( "invalid" );
-				this.parentNode.appendChild( span );
-				span.classList.add( "error" );
-				span.innerHTML = this.getAttribute(
-					this.validity.valueMissing ? "data-required-message" : "data-type-message" );
-			}
-		};
-
-
-
-	var form = document.querySelector( "form" ),
-	inputs = form.querySelectorAll( "input" );
-
-	for ( var i = 0; i < inputs.length; i++ ) {
-		inputs[ i ].addEventListener( "blur", validate );
-		inputs[ i ].addEventListener( "invalid", validate );
-	};
-log("136");
-	/* Turn off the bubbles */
-	form.addEventListener( "invalid", function( event ) {
-		event.preventDefault();
-	}, true );
-
-	function send_to_phone() {
-		{% if 'items' in preferences %}
-		{%- for item in preferences['items']: %}
-		{%- if item['type'] == 'string' %}
-		dictionary['{{ item['name'] }}'] = document.getElementById('{{ item['name'] }}').value;
-		{%- elif item['type'] == 'boolean' %}
-		dictionary['{{ item['name'] }}'] = (document.getElementById('{{ item['name'] }}').checked ? 1 : 0);
-		{%- else %}
-		dictionary['{{ item['name'] }}'] = parseInt(document.getElementById('{{ item['name'] }}').value);
-		{%- endif %}
-		{%- endfor %}
-		{% endif %}
-
-		location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(dictionary));
-	}
-
-	/* Support: Safari, iOS Safari, default Android browser */
-	document.querySelector( "form" ).addEventListener( "submit", function( event ) {
-		if ( this.checkValidity() && checkValidityAndroid(this)) {
-			/*alert( "Successful submission" );*/
-			event.preventDefault();
-			send_to_phone();
-		} else {
-			event.preventDefault();
-		}
-	});
-
-	document.getElementById('cancel').addEventListener('click', function (event) {
-		log("Cancel clicked");
-		location.href = 'pebblejs://close#';
-	});
-
-	try {
-		dictionary = REPLACED_AT_RUNTIME;
-	} catch(e) {
-		dictionary = {}
-	}
-	log( "User-agent header sent: " + navigator.userAgent );
-	log("supportsValidity: " +supportsValidity());
-
-	{% if 'items' in preferences %}
-	{% for item in preferences['items']: %}
-	if(!dictionary.hasOwnProperty('{{ item['name'] }}')) {
-		{%- if item['type'] == 'boolean' %}
-		dictionary['{{ item['name'] }}'] = {{ item['default']|lower }};
-		{%- else %}
-		dictionary['{{ item['name'] }}'] = '{{ item['default'] }}';
-		{%- endif %}
-	}
-	{%- if item['type'] == 'enum' %}
-	document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'].toString();
-	{%- elif item['type'] == 'integer' %}
-	document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'].toString();
-	{%- elif item['type'] == 'boolean' %}
-	document.getElementById('{{ item['name'] }}').checked = dictionary['{{ item['name'] }}'];
-	{%- elif item['type'] == 'string' %}
-	document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'] }}'];
-	{%- endif %}
-	{%- endfor %}
-	{%- endif %}
-</script>
+		{% include "embed/js/validation.js" %}
+		{% include "embed/js/pebble-autoconfig.js" %}
+	</script>
 </body>
 </html>
