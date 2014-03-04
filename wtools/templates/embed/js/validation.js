@@ -11,7 +11,7 @@ function validate() {
 		this.classList.add( "invalid" );
 		this.parentNode.appendChild( span );
 		span.classList.add( "error" );
-		span.innerHTML = this.validationMessage;
+		span.innerHTML = this.validationMessage != "" ? this.validationMessage : "Please match the requested format.";
 	}
 };
 
