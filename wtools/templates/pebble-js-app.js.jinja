@@ -13,14 +13,14 @@ Pebble.addEventListener("ready", function(e) {
   {% endif %}
 });
 
-{% if 'embeded' in preferences and preferences['embeded'] == true -%}
+{% if 'embedded' in preferences and preferences['embedded'] == true -%}
 {% macro embed() %}{% include "embed.html.jinja" %}{% endmacro %}
 var config_html={{ embed()|embed_html  }}
 
 {% endif -%}
 
 Pebble.addEventListener("showConfiguration", function (e) {
-  {% if 'embeded' in preferences and preferences['embeded'] == true -%}
+  {% if 'embedded' in preferences and preferences['embedded'] == true -%}
   var html = config_html.replace("REPLACED_AT_RUNTIME", window.localStorage['{{shortName}}']);
   Pebble.openURL('data:text/html,' + encodeURIComponent(html + '<!--.html'));
   {%- else -%}
