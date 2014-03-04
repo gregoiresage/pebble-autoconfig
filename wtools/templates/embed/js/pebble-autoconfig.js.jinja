@@ -4,14 +4,14 @@ if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
 }
 
 function log (text) {
+	{%- if preferences["debug"] %}
 	var logdiv = document.getElementById("logdiv");
 	logdiv.innerHTML = text + "<br>" + logdiv.innerHTML;
 	console.log(text);
+	{%- endif %}
 }
 
-{%- if preferences["debug"] %}
 log("User-agent: " + navigator.userAgent );
-{%- endif %}
 
 var dictionary = {};
 
