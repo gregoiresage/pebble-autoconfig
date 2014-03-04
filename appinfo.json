@@ -21,14 +21,13 @@
 				"media": []
 		},
 		"preferences": {
-				"embeded": false,
-				"debug": false,
+				"embeded": true,
+				"debug": true,
 				"url": "http://pebble-autoconfig.googlecode.com/git/html/index.html",
 				"items": [
 						{
 								"name": "background",
 								"title": "Background color",
-								"subtitle": "something",
 								"type": "boolean",
 								"off-text": "White",
 								"on-text": "Black",
@@ -37,6 +36,7 @@
 						{
 								"name": "direction",
 								"title": "Direction",
+								"subtitle": "Where should we head?",
 								"type": "enum",
 								"choices": {
 										"NORTH": "North",
@@ -49,6 +49,7 @@
 						{
 								"name": "length",
 								"title": "Length",
+								"subtitle": "Between 0 and 100",
 								"type": "integer",
 								"min": 0,
 								"max": 100,
