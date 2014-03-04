@@ -12,11 +12,11 @@
 	</style>
 </head>
 <body>
-	<div id="main">
-		<div class="header" id="header">
+	<div class="wrapper">
+		<header class="header" id="header">
 			<h1>{{longName}}</h1>
-		</div>
-		<div id="content" class="content">
+		</header>
+		<article id="content" class="content">
 			<form id="form" class="pure-form pure-form-stacked">
 				<fieldset>
 					{% if 'items' in preferences %}
@@ -55,11 +55,12 @@
 				<div class="clear"></div>
 			</form>
 			<div id="log"></div>
-		</div>
-		<div class="footer l-box is-center" id="footer">
-			<span id="footer-text">Powered by Pebble Autoconfig</span>
-		</div>
+			<div class="push"></div>
+		</article>
 	</div>
+	<footer class="footer l-box is-center" id="footer">
+		<span id="footer-text">Powered by Pebble Autoconfig</span>
+	</footer>
 	<script type="text/javascript">
 {% include "embed/js/validation.js" %}
 {% include "embed/js/pebble-autoconfig.js.jinja" %}

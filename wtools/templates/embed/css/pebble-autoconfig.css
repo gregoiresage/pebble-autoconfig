@@ -179,7 +179,6 @@ label {
 .footer {
 	font-size: 87.5%;
 	border-top: 1px solid #eee;
-	margin-top: 3.4286em;
 	padding: 1.1429em;
 	background: rgb(250, 250, 250);
 }
@@ -187,6 +186,24 @@ label {
 
 .is-center {
 	text-align: center;
+}
+
+/* Sticky footer: http://ryanfait.com/html5-sticky-footer/ */
+
+* {
+	margin: 0;
+}
+html, body {
+	height: 100%;
+}
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -55px; /* the bottom margin is the negative value of the footer's height */
+}
+footer, .push {
+	height: 55px; /* '.push' must be the same height as 'footer' */
 }
 
 /* --------------------------
