@@ -5,7 +5,7 @@ if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
 
 function log (text) {
 	{%- if preferences["debug"] %}
-	var logdiv = document.getElementById("logdiv");
+	var logdiv = document.getElementById("log");
 	logdiv.innerHTML = text + "<br>" + logdiv.innerHTML;
 	console.log(text);
 	{%- endif %}

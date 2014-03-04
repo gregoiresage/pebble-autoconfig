@@ -9,9 +9,6 @@
 {% include "embed/css/pure/0.4.2/buttons-min.css" %}
 {% include "embed/css/pure/0.4.2/forms-min.css" %}
 {% include "embed/css/pebble-autoconfig.css" %}
-		/* Test area */
-		button {width: 49%}
-		.form-inline {display: inline-block; float: left;}
 	</style>
 </head>
 <body>
@@ -25,15 +22,14 @@
 					{% if 'items' in preferences %}
 					{%- for item in preferences['items']: %}
 					<div class="pure-control-group">
-						<label for="{{ item['name'] }}">{{ item['title'] }}</label>
+						<h4 for="{{ item['name'] }}">{{ item['title'] }}</h4>
+						<div class="subtitle">{{ item['subtitle']}}</div>
 						{%- if item['type'] == 'enum' %}
-						<div class="select-box">
-							<select class="pure-input-1" name="{{ item['name'] }}" id="{{ item['name'] }}">
-								{%- for key, choice in item['choices'].iteritems() %}
-								<option value="{{loop.index0 }}">{{ key }}</option>
-								{%- endfor %}
-							</select>
-						</div>
+						<select class="pure-input-1" name="{{ item['name'] }}" id="{{ item['name'] }}">
+							{%- for key, choice in item['choices'].iteritems() %}
+							<option value="{{loop.index0 }}">{{ key }}</option>
+							{%- endfor %}
+						</select>
 						{%- elif item['type'] == 'integer' %}
 						<input class="pure-input-1" type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
 						{%- elif item['type'] == 'boolean' %}
@@ -49,15 +45,16 @@
 						<input class="pure-input-1" type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}">
 						{%- endif %}
 					</div>
-					<p class="error"></p>
 					{%- endfor %}
 					{%- endif %}
 				</fieldset>
-
-				<button id="save" class="pure-button pure-button-primary" type="submit" form="form">Save</button>
-				<button id="cancel" class="pure-button">Cancel</button>
+				<div class="buttons">
+					<button id="save" class="pure-button pure-button-primary" type="submit" form="form">Save</button>
+					<button id="cancel" class="pure-button">Cancel</button>
+				</div>
+				<div class="clear"></div>
 			</form>
-			<div id="logdiv"></div>
+			<div id="log"></div>
 		</div>
 		<div class="footer l-box is-center" id="footer">
 			<span id="footer-text">Powered by Pebble Autoconfig</span>

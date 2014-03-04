@@ -30,6 +30,7 @@ h3 {
 }
 h4 {
 	font-size: 1.125em;
+	margin: 0.5em 0 0 0;
 }
 
 a {
@@ -54,9 +55,14 @@ aside {
 	border-radius: 3px;
 	color: #fff;
 }
-	aside a, aside a:visited {
-		color: rgb(169, 226, 255);
-	}
+
+aside a, aside a:visited {
+	color: rgb(169, 226, 255);
+}
+
+label {
+	font-weight:bold;
+}
 
 
 /* --------------------------
@@ -201,6 +207,8 @@ aside {
  * --------------------------
 */
 
+.form-inline {display: inline-block; float: left;}
+
 .pure-form .pure-radio {
 	margin: 0.5em 1em;
 	display: inline-block;
@@ -209,3 +217,24 @@ aside {
 input[type=checkbox], input[type=radio] {
 	margin-right: 1em;
 }
+
+/* --------------------------
+ * Radio button
+ * --------------------------
+*/
+
+button {width: 45%}
+
+@media only screen and (max-width :480px)
+{.pure-form button[type=submit]{margin:0}
+
+#save {float: left;}
+#cancel {float: right;}
+
+/* --------------------------
+ * Debug
+ * --------------------------
+*/
+#log {margin: 0.5em 0}
+
+div.clear {clear: both;}
