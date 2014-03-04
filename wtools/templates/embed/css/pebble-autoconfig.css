@@ -226,7 +226,7 @@ input[type=checkbox], input[type=radio] {
 button {width: 45%}
 
 @media only screen and (max-width :480px)
-{.pure-form button[type=submit]{margin:0}
+{.pure-form button[type=submit]{margin:0}}
 
 #save {float: left;}
 #cancel {float: right;}
