@@ -8,7 +8,8 @@
 {% include "embed/css/pure/0.4.2/base-min.css" %}
 {% include "embed/css/pure/0.4.2/buttons-min.css" %}
 {% include "embed/css/pure/0.4.2/forms-min.css" %}
-{% include "embed/css/pebble-autoconfig.css" %}
+{% macro pa_css() %}{% include "embed/css/pebble-autoconfig.css" %}{% endmacro %}
+{{ pa_css()|minify_css }}
 	</style>
 </head>
 <body>
@@ -62,8 +63,10 @@
 		<span id="footer-text">Powered by Pebble Autoconfig</span>
 	</footer>
 	<script type="text/javascript">
-{% include "embed/js/validation.js" %}
-{% include "embed/js/pebble-autoconfig.js.jinja" %}
+{% macro pa_val() %}{% include "embed/js/validation.js" %}{% endmacro %}
+{{ pa_val()|minify_js }}
+{% macro pa_js() %}{% include "embed/js/pebble-autoconfig.js.jinja" %}{% endmacro %}
+{{ pa_js()|minify_js }}
 	</script>
 </body>
 </html>

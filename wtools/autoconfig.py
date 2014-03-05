@@ -2,7 +2,10 @@
 # encoding: utf-8
 
 import os
+import re
 import json
+import jsmin
+import cssmin
 import inspect
 import collections
 
@@ -10,17 +13,31 @@ from waflib import TaskGen, Task, Node
 from waflib.TaskGen import extension, before_method,feature
 from waflib.Configure import conf
 
+def remove_comments(text):
+	"""Remove C-style /*comments*/ from a string."""
+
+	p = r'/\*[^*]*\*+([^/*][^*]*\*+)*/|("(\\.|[^"\\])*"|\'(\\.|[^\'\\])*\'|.[^/"\'\\]*)'
+	return ''.join(m.group(2) for m in re.finditer(p, text, re.M|re.S) if m.group(2))
+
 # jinja2 filter
-import re
+
 def cvarname(name):
 	"""Convert a string to a valid c variable name (remove space,commas,slashes/...)."""
 	return re.sub(r'[^\w\s]', '_', name)
 
 def embed_html(text):
-	"""Remove new lines and tabs"""
-	return "'" + text.replace('\n', '').replace('\t', '').replace('\\', r'\\').replace("'", "\\'") + "';"
+	"""Remove new lines, tabs and comments"""
+	return "'" + remove_comments(text.replace('\n', '').replace('\t', '').replace('\\', r'\\').replace("'", "\\'")) + "';"
 
-filters = {'max' : max, 'cvarname' : cvarname, 'embed_html' : embed_html}
+def minify_css(text):
+	"""Minify CSS"""
+	return cssmin.cssmin(text)
+
+def minify_js(text):
+	"""Minify JS"""
+	return jsmin.jsmin(text)
+
+filters = {'max' : max, 'cvarname' : cvarname, 'embed_html' : embed_html, 'minify_css' : minify_css, 'minify_js': minify_js}
 
 class autoconfig(Task.Task):
 	color   = 'PINK'
@@ -65,7 +82,7 @@ def build(bld):
 			bld.path.find_node('appinfo.json'))
 			
 @extension('.jinja')
-def process_autoconfig(self, node):	
+def process_autoconfig(self, node): 
 	out = node.change_ext('')
 
 	out = Node.split_path(out.abspath())[-1]
