@@ -89,8 +89,23 @@ def fprocess_autoconfig(self):
 	for src in self.path.ant_glob([jinjapath]):
 		self.process_autoconfig(src)
 
+class mergejs(Task.Task):
+	color   = 'CYAN'
+
+	def run(self):
+		all_js = "\n".join([node.read() for node in self.inputs])
+		f = open(self.outputs[0].abspath(), 'w')
+		f.write(all_js)
+		f.close()
+
+@feature('merjejs')
+def fprocess_mergejs(self):
+	out_js = self.bld.path.find_or_declare(['pebble-js-app.js'])
+	src_js = self.path.ant_glob('src/**/*.js')
+	generated_js = self.bld.path.find_or_declare(['autoconfig.js'])
+	self.create_task('mergejs', src_js + [generated_js], [out_js])
 
 @conf
 def pbl_autoconfprogram(self,*k,**kw):
-	kw['features']='c cprogram autoconf'
+	kw['features']='c cprogram autoconf merjejs'
 	return self(*k,**kw)
