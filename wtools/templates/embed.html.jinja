@@ -43,7 +43,10 @@
 							{{ item['on-text'] }}
 						</label>
 						{%- elif item['type'] == 'string' %}
-						<input class="pure-input-1" type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" pattern="{{ item['pattern'] }}">
+						<input class="pure-input-1" type="text" name="{{ item['name'] }}" id="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" 
+						{%- if item['pattern'] %} pattern="{{ item['pattern'] }}">
+						{%- else %}>
+						{%- endif %}
 						{%- endif %}
 					</div>
 					{%- endfor %}
