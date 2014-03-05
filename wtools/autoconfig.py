@@ -98,7 +98,7 @@ class mergejs(Task.Task):
 		f.write(all_js)
 		f.close()
 
-@feature('merjejs')
+@feature('mergejs')
 def fprocess_mergejs(self):
 	out_js = self.bld.path.find_or_declare(['pebble-js-app.js'])
 	src_js = self.path.ant_glob('src/**/*.js')
@@ -107,5 +107,5 @@ def fprocess_mergejs(self):
 
 @conf
 def pbl_autoconfprogram(self,*k,**kw):
-	kw['features']='c cprogram autoconf merjejs'
+	kw['features']='c cprogram autoconf mergejs'
 	return self(*k,**kw)
