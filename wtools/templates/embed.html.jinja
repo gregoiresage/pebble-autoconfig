@@ -28,7 +28,7 @@
 						{%- if item['type'] == 'enum' %}
 						<select class="pure-input-1" name="{{ item['name'] }}" id="{{ item['name'] }}">
 							{%- for key, choice in item['choices'].iteritems() %}
-							<option value="{{loop.index0 }}">{{ key }}</option>
+							<option value="{{loop.index0 }}">{{ choice }}</option>
 							{%- endfor %}
 						</select>
 						{%- elif item['type'] == 'integer' %}
