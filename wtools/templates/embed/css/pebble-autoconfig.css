@@ -236,7 +236,17 @@ input[type=checkbox], input[type=radio] {
 }
 
 /* --------------------------
- * Radio button
+ * Select
+ * --------------------------
+*/
+
+/* Fix select being to low in Android Webkit. Removes arrows */
+select {
+	-webkit-appearance: listbox;
+}
+
+/* --------------------------
+ * Button
  * --------------------------
 */
 
