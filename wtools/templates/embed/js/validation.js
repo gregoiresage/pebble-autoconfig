@@ -1,3 +1,7 @@
+/* --------------------------
+ * Validation
+ * --------------------------
+*/
 function validate() {
 	var parent = findParentByClassName(this, "pure-control-group");
 	var errorNode = parent.querySelector( ".error" ),
