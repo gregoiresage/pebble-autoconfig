@@ -4,6 +4,12 @@
 
 #define SETTING_COUNT 4
 
+// Key values for AppMessage Dictionary
+enum {
+	PING_KEY = 100,	
+	PONG_KEY = 101
+};
+
 static Window *window;
 
 static TextLayer *layer[SETTING_COUNT];
@@ -34,6 +40,25 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
 
 	// Update display with new values
 	updateDisplay();
+
+	Tuple *tuple = dict_find(iter, PONG_KEY);
+	if(tuple) {
+		APP_LOG(APP_LOG_LEVEL_DEBUG, "Received pong: %s", tuple->value->cstring); 
+	}
+}
+
+static void select_single_click_handler(ClickRecognizerRef recognizer, void *window) {
+	//send ping
+	DictionaryIterator *iter;
+	app_message_outbox_begin(&iter);
+	// dict_write_uint8(iter, PING_KEY, 0x1);
+	dict_write_cstring(iter, PING_KEY, "Knock, knock!");
+	dict_write_end(iter);
+  	app_message_outbox_send();
+}
+
+static void click_config_provider(void *context) {
+	window_single_click_subscribe(BUTTON_ID_SELECT, (ClickHandler)select_single_click_handler);
 }
 
 static void init(void) {
@@ -56,6 +81,9 @@ static void init(void) {
 	}
 
 	updateDisplay();
+
+	// Attach our desired button functionality
+	window_set_click_config_provider(window, (ClickConfigProvider) click_config_provider);
 
 	window_stack_push(window, true);
 }

@@ -15,7 +15,9 @@
 		"background": 0,
 		"direction": 1,
 		"length": 2,
-		"ipaddress": 3
+		"ipaddress": 3,
+		"ping" : 100,
+		"pong" : 101
 	},
 	"resources": {
 		"media": []
