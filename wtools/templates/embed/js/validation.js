@@ -1,7 +1,8 @@
 function validate() {
-	var errorNode = this.parentNode.querySelector( ".error" ),
+	var parent = findParentByClassName(this, "pure-control-group");
+	var errorNode = parent.querySelector( ".error" ),
 	span = document.createElement( "span" );
-	
+
 	this.classList.remove( "invalid" );
 	if ( errorNode ) {
 		errorNode.parentNode.removeChild( errorNode );
@@ -9,7 +10,7 @@ function validate() {
 
 	if ( !this.validity.valid ) {
 		this.classList.add( "invalid" );
-		this.parentNode.appendChild( span );
+		parent.appendChild( span );
 		span.classList.add( "error" );
 		span.innerHTML = this.validationMessage != "" ? this.validationMessage : "Please match the requested format.";
 	}

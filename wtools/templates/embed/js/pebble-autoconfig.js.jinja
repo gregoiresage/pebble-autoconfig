@@ -1,6 +1,23 @@
+/* --------------------------
+ * Helpers
+ * --------------------------
+*/
+
 if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
 	var element = document.getElementById("header");
 	element.parentNode.removeChild(element);
+}
+
+function findParentByClassName(node, className) {
+	if (node.classList.contains(className)) {
+		return node;
+	} else {
+		if (node.parentNode != null) {
+			return findParentByClassName(node.parentNode, className);
+		} else {
+			return null;
+		}
+	}
 }
 
 function log (text) {
@@ -10,6 +27,28 @@ function log (text) {
 	console.log(text);
 	{%- endif %}
 }
+
+/* --------------------------
+ * Number + Range
+ * --------------------------
+*/
+
+document.querySelector('input[type="number"]').addEventListener('blur', function (event) {
+	var parent = findParentByClassName(this, "pure-g");
+	var node = parent.querySelector('input[type="range"]');
+	node.value = this.value;
+});
+
+document.querySelector('input[type="range"]').addEventListener('change', function (event) {
+	var parent = findParentByClassName(this, "pure-g");
+	var node = parent.querySelector('input[type="number"]');
+	node.value = this.value;
+});
+
+/* --------------------------
+ * Pebble Autoconfig
+ * --------------------------
+*/
 
 log("User-agent: " + navigator.userAgent );
 
@@ -70,3 +109,14 @@ document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'
 {%- endif %}
 {%- endfor %}
 {%- endif %}
+
+
+/* Initialise all range sliders */
+
+var numberElements = document.querySelectorAll('input[type="number"]');
+
+for ( var i = 0; i < numberElements.length; i++ ) {
+	var parent = findParentByClassName(numberElements[i], "pure-g");
+	var node = parent.querySelector('input[type="range"]');
+	node.value = numberElements[i].value;
+}

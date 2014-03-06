@@ -8,6 +8,7 @@
 {% include "embed/css/pure/0.4.2/base-min.css" %}
 {% include "embed/css/pure/0.4.2/buttons-min.css" %}
 {% include "embed/css/pure/0.4.2/forms-min.css" %}
+{% include "embed/css/pure/0.4.2/grid-custom-min.css" %}
 {% macro pa_css() %}{% include "embed/css/pebble-autoconfig.css" %}{% endmacro %}
 {{ pa_css()|minify_css }}
 	</style>
@@ -32,7 +33,18 @@
 							{%- endfor %}
 						</select>
 						{%- elif item['type'] == 'integer' %}
-						<input class="pure-input-1" type="number" name="{{ item['name'] }}" id="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
+						<div class="pure-g">
+							<div class="pure-u-1-4">
+								<div class="l-box">
+									<input type="number" id="{{ item['name'] }}" class="pure-input-1" name="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
+								</div>
+							</div>
+							<div class="pure-u-3-4">
+								<div class="l-box">
+									<input type="range" id="{{ item['name'] }}_range" class="pure-input-1" min="{{item['min']}}" max="{{item['max']}}">
+								</div>
+							</div>
+						</div>
 						{%- elif item['type'] == 'boolean' %}
 						<label for="{{ item['name'] }}-off" class="pure-radio">
 							<input id="{{ item['name'] }}-off" type="radio" name="{{ item['name'] }}" value="0">
