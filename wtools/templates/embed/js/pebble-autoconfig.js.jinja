@@ -4,7 +4,7 @@
 */
 
 if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
-	var element = document.getElementById("header");
+	var element = document.querySelector("header");
 	element.parentNode.removeChild(element);
 }
 

@@ -42,24 +42,6 @@ a:visited {
 	color: #265778; /* block-normal-text-normal */
 }
 
-dt {
-	font-weight: bold;
-}
-dd {
-	margin: 0 0 10px 0;
-}
-
-aside {
-	background: #1f8dd6; /* same color as selected state on site menu */
-	padding: 0.3em 1em;
-	border-radius: 3px;
-	color: #fff;
-}
-
-aside a, aside a:visited {
-	color: rgb(169, 226, 255);
-}
-
 label {
 	font-weight:bold;
 }
@@ -70,20 +52,6 @@ label {
  * --------------------------
 */
 
-/* Navigation Push Styles */
-#layout {
-	position: relative;
-	padding-left: 0;
-}
-#layout.active {
-	position: relative;
-	left: 160px;
-}
-#layout.active #menu {
-	left: 160px;
-	width: 160px;
-}
-
 /* Apply the .box class on the immediate parent of any grid element (pure-u-*) to apply some padding. */
 .l-box {
 	padding: 1em;
@@ -93,7 +61,7 @@ label {
 	margin-left: auto;
 	margin-right: auto;
 }
-.content .l-wrap {
+article .l-wrap {
 	margin-left: -1em;
 	margin-right: -1em;
 }
@@ -104,21 +72,21 @@ label {
  * --------------------------
 */
 
-.header {
-	 font-family: "omnes-pro", sans-serif;
-	 max-width: 768px;
-	 margin: 0 auto;
-	 padding: 1em;
-	 text-align: center;
-	 border-bottom: 1px solid #eee;
-	 background: #fff;
- }
-.header h1 {
+header {
+	font-family: "omnes-pro", sans-serif;
+	max-width: 768px;
+	margin: 0 auto;
+	padding: 1em;
+	text-align: center;
+	border-bottom: 1px solid #eee;
+	background: #fff;
+}
+header h1 {
 	font-size: 200%;
 	font-weight: 100;
 	margin: 0;
 }
- .header h2 {
+header h2 {
 	font-size: 125%;
 	font-weight: 100;
 	line-height: 1.5;
@@ -127,13 +95,13 @@ label {
 }
 
 
- /* --------------------------
-  * Content Module Styles
-  * --------------------------
- */
+/* --------------------------
+ * Content Module Styles
+ * --------------------------
+*/
 
 /* The content div is placed as a wrapper around all the docs */
-.content {
+article {
 	margin-left: auto;
 	margin-right: auto;
 	padding-left: 1em;
@@ -141,42 +109,12 @@ label {
 	max-width: 768px;
 }
 
-.content .content-subhead {
-	margin: 2em 0 1em 0;
-	font-weight: 300;
-	color: #888;
-	position: relative;
-}
-
-.content .content-spaced {
-	line-height: 1.8;
-}
-
-.content .content-quote {
-	font-family: "Georgia", serif;
-	color: #666;
-	font-style: italic;
-	line-height: 1.8;
-	border-left: 5px solid #ddd;
-	padding-left: 1.5em;
-}
-
-.content-link {
-	position: absolute;
-	top: 0;
-	right: 0;
-	display: block;
-	height: 100%;
-	width: 20px;
-	background-size: 20px 20px;
-}
-
- /* --------------------------
+/* --------------------------
  * Footer Module Styles
  * --------------------------
 */
 
-.footer {
+footer {
 	font-size: 87.5%;
 	border-top: 1px solid #eee;
 	padding: 1.1429em;
