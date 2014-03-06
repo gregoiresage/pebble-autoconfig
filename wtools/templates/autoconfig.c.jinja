@@ -52,7 +52,7 @@ void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 
 void autoconfig_init(){
 	app_message_register_inbox_received(autoconfig_in_received_handler);
-	app_message_open(app_message_inbox_size_maximum(), 0);
+	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 
 	{% if 'items' in preferences %}
 	{% for item in preferences['items']: -%}
