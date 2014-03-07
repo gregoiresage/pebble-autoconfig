@@ -9,14 +9,14 @@
 {% endif %}
 	<style type="text/css" media="screen">
 {% if 'embedded' in preferences and preferences['embedded'] == true -%}
-{% include "embed/css/pure/0.4.2/base-min.css" %}
-{% include "embed/css/pure/0.4.2/buttons-min.css" %}
-{% include "embed/css/pure/0.4.2/forms-min.css" %}
-{% include "embed/css/pure/0.4.2/grid-custom-min.css" %}
-{% macro pa_css() %}{% include "embed/css/pebble-autoconfig.css" %}{% endmacro %}
+{% include "resources/css/pure/0.4.2/base-min.css" %}
+{% include "resources/css/pure/0.4.2/buttons-min.css" %}
+{% include "resources/css/pure/0.4.2/forms-min.css" %}
+{% include "resources/css/pure/0.4.2/grid-custom-min.css" %}
+{% macro pa_css() %}{% include "resources/css/pebble-autoconfig.css" %}{% endmacro %}
 {{ pa_css()|minify_css }}
 {% else -%}
-{% include "embed/css/pebble-autoconfig.css" %}
+{% include "resources/css/pebble-autoconfig.css" %}
 {%- endif %}
 	</style>
 </head>
@@ -92,16 +92,16 @@
 	</footer>
 	<script type="text/javascript">
 {% if 'embedded' in preferences and preferences['embedded'] == true %}
-{% macro pa_val() %}{% include "embed/js/validation.js" %}{% endmacro %}
+{% macro pa_val() %}{% include "resources/js/validation.js" %}{% endmacro %}
 {{ pa_val()|minify_js }}
-{% macro pa_pc() %}{% include "embed/js/pconfig.js.jinja" %}{% endmacro %}
+{% macro pa_pc() %}{% include "resources/js/pconfig.js.jinja" %}{% endmacro %}
 {{ pa_pc()|minify_js }}
-{% macro pa_js() %}{% include "embed/js/pebble-autoconfig.js.jinja" %}{% endmacro %}
+{% macro pa_js() %}{% include "resources/js/pebble-autoconfig.js.jinja" %}{% endmacro %}
 {{ pa_js()|minify_js }}
 {% else -%}
-{% include "embed/js/validation.js" %}
-{% include "embed/js/pconfig.js.jinja" %}
-{% include "embed/js/pebble-autoconfig.js.jinja" %}
+{% include "resources/js/validation.js" %}
+{% include "resources/js/pconfig.js.jinja" %}
+{% include "resources/js/pebble-autoconfig.js.jinja" %}
 {%- endif %}
 	</script>
 </body>
