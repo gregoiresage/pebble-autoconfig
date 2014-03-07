@@ -67,7 +67,13 @@ var PConfig = function () {
 			var field = document.getElementById(key);
 			if (document.contains(field)) {
 				if (field.type == "radio") {
-					field.checked = params[key] == 1 ? true : false;
+					var radios = document.getElementsByName(field.name);
+					for (var i = 0; i < radios.length; i++) {
+						if(radios[i].value == params[key]) {
+							radios[i].checked = true;
+						}
+					};
+					
 				} else {
 					field.value = decodeURIComponent(params[key]);
 				}
