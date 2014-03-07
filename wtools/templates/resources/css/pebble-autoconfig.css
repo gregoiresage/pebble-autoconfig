@@ -121,11 +121,6 @@ footer {
 	background: rgb(250, 250, 250);
 }
 
-
-.is-center {
-	text-align: center;
-}
-
 /* Sticky footer: http://ryanfait.com/html5-sticky-footer/ */
 
 * {
@@ -227,9 +222,21 @@ button {width: 45%}
 #cancel {float: right;}
 
 /* --------------------------
- * Debug
+ * Styles
  * --------------------------
 */
-#log {margin: 0.5em 0}
+#log {
+	margin: 0.5em 0
+}
 
-div.clear {clear: both;}
+#description {
+	padding-top: 1em;
+}
+
+.is-center {
+	text-align: center;
+}
+
+div.clear {
+	clear: both;
+}

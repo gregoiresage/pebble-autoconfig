@@ -26,9 +26,12 @@
 			<h1>{{longName}}</h1>
 		</header>
 		<article>
+			{% if 'description' in preferences -%}
+			<div id="description">{{ preferences['description'] }}</div>
+			{%- endif %}
 			<form class="pure-form pure-form-stacked">
 				<fieldset>
-					{% if 'items' in preferences %}
+					{%- if 'items' in preferences %}
 					{%- for item in preferences['items']: %}
 					<div class="pure-control-group">
 						<h4>{{ item['title'] }}</h4>
