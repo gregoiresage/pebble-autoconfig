@@ -23,9 +23,9 @@
 		"media": []
 	},
 	"preferences": {
-		"embedded": true,
+		"embedded": false,
 		"debug": true,
-		"url": "http://pebble-autoconfig.googlecode.com/git/html/index.html",
+		"url": "http://192.168.0.20/html5/embed.html",
 		"items": [
 			{
 				"name": "background",
