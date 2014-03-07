@@ -12,7 +12,7 @@ var PConfig = function () {
 		var bits = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/g, function (match, key, value) {
 			params[key] = value;
 		});
-		console.log(params);
+		log("URL parameters: " + JSON.stringify(params, null, 1));
 		return params;
 	};
 	this.getFormFields = function () {
@@ -50,7 +50,7 @@ var PConfig = function () {
 
 			values[fields[i]] = value;
 		}
-		console.log(values);
+		log("Response data: " + JSON.stringify(values, null, 1));
 		return values;
 	};
 	this.setFormValues = function () {
