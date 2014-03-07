@@ -39,11 +39,14 @@
 							<option value="{{loop.index0 }}">{{ choice }}</option>
 							{%- endfor %}
 						</select>
+						<script type="text/javascript">
+						document.querySelector("#{{ item['name'] }}").value = {{item['default']}};
+						</script>
 						{%- elif item['type'] == 'integer' %}
 						<div class="pure-g">
 							<div class="pure-u-1-4">
 								<div class="l-box">
-									<input id="{{ item['name'] }}" class="pure-input-1" type="number" name="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" required>
+									<input id="{{ item['name'] }}" class="pure-input-1" type="number" name="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" value="{{item['default']}}" required>
 								</div>
 							</div>
 							<div class="pure-u-3-4">
@@ -54,15 +57,18 @@
 						</div>
 						{%- elif item['type'] == 'boolean' %}
 						<label for="{{ item['name'] }}-off" class="pure-radio">
-							<input id="{{ item['name'] }}-off" type="radio" name="{{ item['name'] }}" value="0" checked data-exclude>
+							<input id="{{ item['name'] }}-off" type="radio" name="{{ item['name'] }}" value="0" data-exclude checked>
 							{{ item['off-text'] }}
 						</label>
 						<label for="{{ item['name'] }}" class="pure-radio">
 							<input id="{{ item['name'] }}" type="radio" name="{{ item['name'] }}" value="1">
 							{{ item['on-text'] }}
 						</label>
+						<script type="text/javascript">
+						document.querySelector("#{{ item['name'] }}").checked = {{item['default']|lower}};
+						</script>
 						{%- elif item['type'] == 'string' %}
-						<input id="{{ item['name'] }}" class="pure-input-1" type="text" name="{{ item['name'] }}" value="" maxlength="{{ item['max-length'] }}" 
+						<input id="{{ item['name'] }}" class="pure-input-1" type="text" name="{{ item['name'] }}" value="{{ item['default'] }}" maxlength="{{ item['max-length'] }}" 
 						{%- if item['pattern'] %} pattern="{{ item['pattern'] }}" required>
 						{%- else %}>
 						{%- endif %}

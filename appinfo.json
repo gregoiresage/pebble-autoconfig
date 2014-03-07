@@ -33,7 +33,7 @@
 				"type": "boolean",
 				"off-text": "White",
 				"on-text": "Black",
-				"default": false
+				"default": true
 			},
 			{
 				"name": "direction",
@@ -46,7 +46,7 @@
 					"SOUTH": "South",
 					"WEST": "West"
 				},
-				"default": 0
+				"default": 2
 			},
 			{
 				"name": "length",
