@@ -91,15 +91,17 @@ document.querySelector( "form" ).addEventListener( "submit", function( event ) {
 document.getElementById("save").addEventListener("click", function (event) {
 	log("Save clicked");
 	var form = document.querySelector("form");
-	if ( form.checkValidity() && form.checkValidityAndroid()) {
+	if (form.checkValidity() && form.checkValidityAndroid()) {
 		location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(PConfig.getFormValues()));
 	}
 	event.preventDefault();
 });
 
 document.getElementById('cancel').addEventListener('click', function (event) {
+	event.preventDefault();
 	log("Cancel clicked");
 	location.href = 'pebblejs://close#';
+	
 });
 
 /*
