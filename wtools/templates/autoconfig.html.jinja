@@ -35,7 +35,7 @@
 					{%- for item in preferences['items']: %}
 					<div class="pure-control-group">
 						<h4>{{ item['title'] }}</h4>
-						<div class="subtitle">{{ item['subtitle']}}</div>
+						<div class="description">{{ item['description']}}</div>
 						{%- if item['type'] == 'enum' %}
 						<select id="{{ item['name'] }}" class="pure-input-1" name="{{ item['name'] }}">
 							{%- for key, choice in item['choices'].iteritems() %}

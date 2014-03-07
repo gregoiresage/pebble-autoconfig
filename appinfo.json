@@ -39,7 +39,7 @@
 			{
 				"name": "direction",
 				"title": "Direction",
-				"subtitle": "Where should we head?",
+				"description": "Where should we head?",
 				"type": "enum",
 				"choices": {
 					"NORTH": "North",
@@ -52,7 +52,7 @@
 			{
 				"name": "length",
 				"title": "Length",
-				"subtitle": "Between 0 and 100",
+				"description": "Between 0 and 100",
 				"type": "integer",
 				"min": 0,
 				"max": 100,
