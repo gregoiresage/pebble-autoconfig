@@ -24,14 +24,12 @@ Pebble.addEventListener("showConfiguration", function (e) {
   var html = config_html.replace("REPLACED_AT_RUNTIME", window.localStorage['{{shortName}}']);
   Pebble.openURL('data:text/html,' + encodeURIComponent(html + '<!--.html'));
   {%- else -%}
-  var url = "{{ preferences['url'] }}";
+  var url = "{{ preferences['url'] }}?";
 
   var settings = JSON.parse(localStorage['pebble-autoconfig']);
-  console.log(settings);
   for (var key in settings) {
     if (settings.hasOwnProperty(key)) {
-      url += i == 0 ? "?" : "&";
-      url += encodeURIComponent(key) + "=" + encodeURIComponent(settings[key]);
+      url += encodeURIComponent(key) + "=" + encodeURIComponent(settings[key]) + "&";
     }
   }
 
