@@ -65,7 +65,7 @@ var PConfig = function () {
 		{% endif %}
 		for (key in params) {
 			var field = document.getElementById(key);
-			if (document.contains(field)) {
+			if (document.getElementById(field.id) != null) {
 				if (field.type == "radio") {
 					var radios = document.getElementsByName(field.name);
 					for (var i = 0; i < radios.length; i++) {
