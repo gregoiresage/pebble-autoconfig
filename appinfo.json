@@ -24,7 +24,7 @@
 	},
 	"preferences": {
 		"embedded": true,
-		"debug": false,
+		"debug": true,
 		"url": "http://pebble-autoconfig.googlecode.com/git/html/index.html",
 		"items": [
 			{

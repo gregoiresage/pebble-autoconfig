@@ -1,4 +1,19 @@
 /* --------------------------
+ * Initialize
+ * --------------------------
+*/
+PConfig.init();
+
+/* Initialize all range sliders */
+var numberElements = document.querySelectorAll('input[type="number"]');
+
+for ( var i = 0; i < numberElements.length; i++ ) {
+	var parent = findParentByClassName(numberElements[i], "pure-g");
+	var node = parent.querySelector('input[type="range"]');
+	node.value = numberElements[i].value;
+}
+
+/* --------------------------
  * Helpers
  * --------------------------
 */
@@ -52,8 +67,7 @@ document.querySelector('input[type="range"]').addEventListener('change', functio
 
 log("User-agent: " + navigator.userAgent );
 
-var dictionary = {};
-
+/*
 document.querySelector( "form" ).addEventListener( "submit", function( event ) {
 	log("Save clicked");
 	if ( this.checkValidity() && this.checkValidityAndroid()) {
@@ -73,12 +87,22 @@ document.querySelector( "form" ).addEventListener( "submit", function( event ) {
 	}
 	event.preventDefault();
 });
+*/
+document.getElementById("save").addEventListener("click", function (event) {
+	log("Save clicked");
+	var form = document.querySelector("form");
+	if ( form.checkValidity() && form.checkValidityAndroid()) {
+		location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(PConfig.getFormValues()));
+	}
+	event.preventDefault();
+});
 
 document.getElementById('cancel').addEventListener('click', function (event) {
 	log("Cancel clicked");
 	location.href = 'pebblejs://close#';
 });
 
+/*
 try {
 	dictionary = REPLACED_AT_RUNTIME;
 } catch(e) {
@@ -109,14 +133,4 @@ document.getElementById('{{ item['name'] }}').value = dictionary['{{ item['name'
 {%- endif %}
 {%- endfor %}
 {%- endif %}
-
-
-/* Initialise all range sliders */
-
-var numberElements = document.querySelectorAll('input[type="number"]');
-
-for ( var i = 0; i < numberElements.length; i++ ) {
-	var parent = findParentByClassName(numberElements[i], "pure-g");
-	var node = parent.querySelector('input[type="range"]');
-	node.value = numberElements[i].value;
-}
+*/

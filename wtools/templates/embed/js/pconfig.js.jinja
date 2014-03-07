@@ -1,0 +1,76 @@
+/**
+ * This is a modified version of PConfig
+ * PConfig is copyright (c) 2013 Matthew Congrove (http://github.com/mcongrove)
+ */
+var PConfig = function () {
+	this.init = function () {
+		this.setFormValues();
+	};
+	this.getUrlParams = function () {
+		var params = {};
+		var bits = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/g, function (match, key, value) {
+			params[key] = value;
+		});
+		return params;
+	};
+	this.getFormFields = function () {
+		var field_ids = [];
+		var fields_input = document.getElementsByTagName("input");
+		var fields_select = document.getElementsByTagName("select");
+		var fields_textarea = document.getElementsByTagName("textarea");
+		for (var i = 0, x = fields_input.length; i < x; i++) {
+			if (fields_input[i].type != "submit" && fields_input[i].type != "reset" && !fields_input[i].hasAttribute("data-exclude")) {
+				field_ids.push(fields_input[i].id);
+			}
+		}
+		for (var i = 0, x = fields_select.length; i < x; i++) {
+			field_ids.push(fields_select[i].id);
+		}
+		for (var i = 0, x = fields_textarea.length; i < x; i++) {
+			field_ids.push(fields_textarea[i].id);
+		}
+		return field_ids;
+	};
+	this.getFormValues = function () {
+		var fields = this.getFormFields();
+		var values = {};
+		for (var i = 0, x = fields.length; i < x; i++) {
+			var field = document.getElementById(fields[i]);
+			if (field.type == "radio") {
+				var value = field.checked ? 1 : 0;
+			} else {
+				var value = field.value;
+			}
+
+			if (field.type == "number" || field.type == "select-one") {
+				value = parseInt(value);
+			}
+
+			values[fields[i]] = value;
+		}
+		console.log(values);
+		return values;
+	};
+	this.setFormValues = function () {
+		{% if 'embedded' in preferences and preferences['embedded'] == true %}
+		try {
+			var params = REPLACED_AT_RUNTIME;
+		} catch(e) {
+			var params = {}
+		}
+		{% else %}
+		var params = this.getUrlParams();
+		{% endif %}
+		for (key in params) {
+			var field = document.getElementById(key);
+			if (document.contains(field)) {
+				if (field.type == "radio") {
+					field.checked = params[key] == 1 ? true : false;
+				} else {
+					field.value = decodeURIComponent(params[key]);
+				}
+			}
+		}
+	};
+};
+PConfig = new PConfig();

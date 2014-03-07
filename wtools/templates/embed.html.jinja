@@ -4,13 +4,20 @@
 	<title>{{longName}}</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+{% if 'embedded' not in preferences or preferences['embedded'] == false -%}
+	<link rel="stylesheet" href="http://yui.yahooapis.com/combo?pure/0.4.2/base-min.css&pure/0.4.2/buttons-min.css&pure/0.4.2/forms-min.css&pure/0.4.2/grids-min.css">
+{% endif %}
 	<style type="text/css" media="screen">
+{% if 'embedded' in preferences and preferences['embedded'] == true -%}
 {% include "embed/css/pure/0.4.2/base-min.css" %}
 {% include "embed/css/pure/0.4.2/buttons-min.css" %}
 {% include "embed/css/pure/0.4.2/forms-min.css" %}
 {% include "embed/css/pure/0.4.2/grid-custom-min.css" %}
 {% macro pa_css() %}{% include "embed/css/pebble-autoconfig.css" %}{% endmacro %}
 {{ pa_css()|minify_css }}
+{% else -%}
+{% include "embed/css/pebble-autoconfig.css" %}
+{%- endif %}
 	</style>
 </head>
 <body>
@@ -41,17 +48,17 @@
 							</div>
 							<div class="pure-u-3-4">
 								<div class="l-box">
-									<input class="pure-input-1" type="range" min="{{item['min']}}" max="{{item['max']}}">
+									<input class="pure-input-1" type="range" min="{{item['min']}}" max="{{item['max']}}" data-exclude>
 								</div>
 							</div>
 						</div>
 						{%- elif item['type'] == 'boolean' %}
 						<label for="{{ item['name'] }}-off" class="pure-radio">
-							<input id="{{ item['name'] }}-off" type="radio" name="{{ item['name'] }}" value="0">
+							<input id="{{ item['name'] }}-off" type="radio" name="{{ item['name'] }}" value="0" checked data-exclude>
 							{{ item['off-text'] }}
 						</label>
-						<label for="{{ item['name'] }}-on" class="pure-radio">
-							<input id="{{ item['name'] }}-on" type="radio" name="{{ item['name'] }}" value="1">
+						<label for="{{ item['name'] }}" class="pure-radio">
+							<input id="{{ item['name'] }}" type="radio" name="{{ item['name'] }}" value="1">
 							{{ item['on-text'] }}
 						</label>
 						{%- elif item['type'] == 'string' %}
@@ -78,10 +85,18 @@
 		Powered by Pebble Autoconfig
 	</footer>
 	<script type="text/javascript">
+{% if 'embedded' in preferences and preferences['embedded'] == true %}
 {% macro pa_val() %}{% include "embed/js/validation.js" %}{% endmacro %}
 {{ pa_val()|minify_js }}
+{% macro pa_pc() %}{% include "embed/js/pconfig.js.jinja" %}{% endmacro %}
+{{ pa_pc()|minify_js }}
 {% macro pa_js() %}{% include "embed/js/pebble-autoconfig.js.jinja" %}{% endmacro %}
 {{ pa_js()|minify_js }}
+{% else -%}
+{% include "embed/js/validation.js" %}
+{% include "embed/js/pconfig.js.jinja" %}
+{% include "embed/js/pebble-autoconfig.js.jinja" %}
+{%- endif %}
 	</script>
 </body>
 </html>
