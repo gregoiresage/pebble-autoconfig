@@ -8,7 +8,6 @@ var PConfig = function () {
 	};
 	this.getUrlParams = function () {
 		var params = {};
-		console.log(window.location.href);
 		var bits = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/g, function (match, key, value) {
 			params[key] = value;
 		});
@@ -58,7 +57,7 @@ var PConfig = function () {
 		try {
 			var params = REPLACED_AT_RUNTIME;
 		} catch(e) {
-			var params = {}
+			var params = {};
 		}
 		{% else %}
 		var params = this.getUrlParams();
