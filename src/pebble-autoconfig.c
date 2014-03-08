@@ -41,6 +41,7 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
 	// Update display with new values
 	updateDisplay();
 
+	// App Messages can be received while using Pebble Autoconfig
 	Tuple *tuple = dict_find(iter, PONG_KEY);
 	if(tuple) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Received pong: %s", tuple->value->cstring); 
@@ -48,10 +49,9 @@ static void in_received_handler(DictionaryIterator *iter, void *context) {
 }
 
 static void select_single_click_handler(ClickRecognizerRef recognizer, void *window) {
-	//send ping
+	// App Messages can be sent while using Pebble Autoconfig
 	DictionaryIterator *iter;
 	app_message_outbox_begin(&iter);
-	// dict_write_uint8(iter, PING_KEY, 0x1);
 	dict_write_cstring(iter, PING_KEY, "Knock, knock!");
 	dict_write_end(iter);
   	app_message_outbox_send();
