@@ -48,17 +48,19 @@ function log (text) {
  * --------------------------
 */
 
-document.querySelector('input[type="number"]').addEventListener('blur', function (event) {
-	var parent = findParentByClassName(this, "pure-g");
-	var node = parent.querySelector('input[type="range"]');
-	node.value = this.value;
-});
+if(document.querySelector('input[type="number"]') != null) {
+	document.querySelector('input[type="number"]').addEventListener('blur', function (event) {
+		var parent = findParentByClassName(this, "pure-g");
+		var node = parent.querySelector('input[type="range"]');
+		node.value = this.value;
+	});
 
-document.querySelector('input[type="range"]').addEventListener('change', function (event) {
-	var parent = findParentByClassName(this, "pure-g");
-	var node = parent.querySelector('input[type="number"]');
-	node.value = this.value;
-});
+	document.querySelector('input[type="range"]').addEventListener('change', function (event) {
+		var parent = findParentByClassName(this, "pure-g");
+		var node = parent.querySelector('input[type="number"]');
+		node.value = this.value;
+	});
+}
 
 /* --------------------------
  * Buttons
