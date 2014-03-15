@@ -26,7 +26,7 @@ Pebble.addEventListener("showConfiguration", function (e) {
   {%- else -%}
   var url = "{{ preferences['url'] }}?";
 
-  var settings = JSON.parse(localStorage['pebble-autoconfig']);
+  var settings = JSON.parse(localStorage['{{shortName}}']);
   for (var key in settings) {
     if (settings.hasOwnProperty(key)) {
       url += encodeURIComponent(key) + "=" + encodeURIComponent(settings[key]) + "&";
