@@ -3,8 +3,8 @@
 	"shortName": "pebble-autoconfig",
 	"longName": "Pebble Autoconfig",
 	"companyName": "Team Pebble Autoconfig",
-	"versionCode": 3,
-	"versionLabel": "1.1.1",
+	"versionCode": 5,
+	"versionLabel": "1.2.0",
 	"watchapp": {
 		"watchface": false
 	},
