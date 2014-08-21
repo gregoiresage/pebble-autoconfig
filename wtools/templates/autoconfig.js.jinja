@@ -21,7 +21,7 @@ var config_html={{ embed()|embed_html  }}
 
 Pebble.addEventListener("showConfiguration", function (e) {
   {% if 'embedded' in preferences and preferences['embedded'] == true -%}
-  var html = config_html.replace("REPLACED_AT_RUNTIME", window.localStorage['{{shortName}}']);
+  var html = config_html.replace("REPLACED_AT_RUNTIME", localStorage['{{shortName}}']);
   Pebble.openURL('data:text/html,' + encodeURIComponent(html + '<!--.html'));
   {%- else -%}
   var url = "{{ preferences['url'] }}?";
