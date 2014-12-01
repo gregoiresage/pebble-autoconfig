@@ -1,16 +1,20 @@
+var autoconfigSettings = null;
+
 Pebble.addEventListener("ready", function(e) {
   {% if 'items' in preferences %}
-  var settings;
   try {
-    settings = JSON.parse(localStorage['{{shortName}}']);
-    Pebble.sendAppMessageWithSizeCheck(settings);
+    autoconfigSettings = JSON.parse(localStorage['{{shortName}}']);
+    MessageQueue.sendAppMessage(autoconfigSettings);
   }
   catch(e) {
     // the dicitonary was never stored, the watchapp uses its default values
-    settings = {};
-    localStorage['{{shortName}}'] = JSON.stringify(settings);
+    autoconfigSettings = {};
+    localStorage['{{shortName}}'] = JSON.stringify(autoconfigSettings);
   }
   {% endif %}
+  if(typeof autoconfigReady == 'function'){
+    autoconfigReady();
+  }
 });
 
 {% if 'embedded' in preferences and preferences['embedded'] == true -%}
@@ -20,16 +24,18 @@ var config_html={{ embed()|embed_html  }}
 {% endif -%}
 
 Pebble.addEventListener("showConfiguration", function (e) {
+  if(typeof autoconfigShowConfiguration == 'function'){
+    autoconfigShowConfiguration();
+  }
   {% if 'embedded' in preferences and preferences['embedded'] == true -%}
   var html = config_html.replace("REPLACED_AT_RUNTIME", localStorage['{{shortName}}']);
   Pebble.openURL('data:text/html,' + encodeURIComponent(html + '<!--.html'));
   {%- else -%}
   var url = "{{ preferences['url'] }}?";
 
-  var settings = JSON.parse(localStorage['{{shortName}}']);
-  for (var key in settings) {
-    if (settings.hasOwnProperty(key)) {
-      url += encodeURIComponent(key) + "=" + encodeURIComponent(settings[key]) + "&";
+  for (var key in autoconfigSettings) {
+    if (autoconfigSettings.hasOwnProperty(key)) {
+      url += encodeURIComponent(key) + "=" + encodeURIComponent(autoconfigSettings[key]) + "&";
     }
   }
 
@@ -43,89 +49,16 @@ Pebble.addEventListener("webviewclosed", function(e) {
   {% if 'items' in preferences %}
     if ((typeof e.response === 'string') && (e.response.length > 0)) {
         var newSettings = decodeURIComponent(e.response);
-        var newSettingsDictionary = JSON.parse(newSettings);
+        autoconfigSettings = JSON.parse(newSettings);
 
-        var diffSettings = diff(newSettingsDictionary, JSON.parse(localStorage['{{shortName}}']));
-        
         localStorage['{{shortName}}'] = newSettings;
-        Pebble.sendAppMessageWithSizeCheck(diffSettings);
+        MessageQueue.sendAppMessage(autoconfigSettings);
     }
   {% endif %}
+
+  if(typeof autoconfigWebviewclosed == 'function'){
+    autoconfigWebviewclosed();
+  }
 });
 
-
-Pebble.sendAppMessageWithSizeCheck = function(message) {
-  if( Object.keys(message).length > 0){
-    var size = 1;
-    var partialDict = {};
-    for(var key in message)
-    {
-      if (size + 7 + sizeOfObject(message[key]) < 124) {
-        partialDict[key] = message[key];
-        size += 7 + sizeOfObject(message[key]);
-        delete message[key];
-      }
-      else {
-        // send the partial dictionary
-        if( Object.keys(partialDict).length > 0){
-          Pebble.sendAppMessageWithRetry(partialDict, 5, 
-            function(e) {
-              //send the remaining values in the initial dictionnary
-              Pebble.sendAppMessageWithSizeCheck(message);
-            }, 
-            0);
-        }
-        return;
-      }
-    }
-    Pebble.sendAppMessageWithRetry(partialDict, 5, 0, 0);
-  }
-};
-
-/* Convenient function to automatically retry messages. */
-/* from http://forums.getpebble.com/discussion/comment/83060/#Comment_83060 */
-Pebble.sendAppMessageWithRetry = function(message, retryCount, successCb, failedCb) {
-  var retry = 0;
-  var success = function(e) {
-    if (typeof successCb == "function") {
-      successCb(e);
-    }
-  };
-  var failed = function(e) {
-    console.log("Failed sending message: " + JSON.stringify(message) + " - Error: " + JSON.stringify(e) + " - Retrying...");
-    retry++;
-    if (retry < retryCount) {
-      Pebble.sendAppMessage(message, success, failed);
-    }
-    else {
-      if (typeof failedCb == "function") {
-        failedCb(e);
-      }
-    }
-  };
-  Pebble.sendAppMessage(message, success, failed);
-};
-
-function sizeOfObject( value ) {
-    var bytes = 0;
-
-    if ( typeof value === 'string' ) {
-        bytes = value.length;
-    }
-    else if ( typeof value === 'number' ) {
-        bytes = 4;
-    }
-    
-    return bytes;
-}
-
-function diff(obj1, obj2) {
-    var result = {};
-    for(var key in obj1)
-    {
-        if (!obj2.hasOwnProperty(key) || obj2[key] !== obj1[key]) {
-            result[key] = obj1[key];
-        }
-    }
-    return result;
-}
+var MessageQueue=function(){var RETRY_MAX=5;var queue=[];var sending=false;var timer=null;return{reset:reset,sendAppMessage:sendAppMessage,size:size};function reset(){queue=[];sending=false}function sendAppMessage(message,ack,nack){if(!isValidMessage(message)){return false}queue.push({message:message,ack:ack||null,nack:nack||null,attempts:0});setTimeout(function(){sendNextMessage()},1);return true}function size(){return queue.length}function isValidMessage(message){if(message!==Object(message)){return false}var keys=Object.keys(message);if(!keys.length){return false}for(var k=0;k<keys.length;k+=1){var validKey=/^[0-9a-zA-Z-_]*$/.test(keys[k]);if(!validKey){return false}var value=message[keys[k]];if(!validValue(value)){return false}}return true;function validValue(value){switch(typeof value){case"string":return true;case"number":return true;case"object":if(toString.call(value)=="[object Array]"){return true}}return false}}function sendNextMessage(){if(sending){return}var message=queue.shift();if(!message){return}message.attempts+=1;sending=true;Pebble.sendAppMessage(message.message,ack,nack);timer=setTimeout(function(){timeout()},1e3);function ack(){clearTimeout(timer);setTimeout(function(){sending=false;sendNextMessage()},200);if(message.ack){message.ack.apply(null,arguments)}}function nack(){clearTimeout(timer);if(message.attempts<RETRY_MAX){queue.unshift(message);setTimeout(function(){sending=false;sendNextMessage()},200*message.attempts)}else{if(message.nack){message.nack.apply(null,arguments)}}}function timeout(){setTimeout(function(){sending=false;sendNextMessage()},1e3);if(message.ack){message.ack.apply(null,arguments)}}}}();
