@@ -1,8 +1,8 @@
 #include <pebble.h>
 #include "autoconfig.h"
 
-{% set persitantDataSize = 0 %}
-{% if 'items' in preferences %}
+{%- set persitantDataSize = 0 %}
+{%- if 'items' in preferences %}
 {% for item in preferences['items'] -%}
 {% if item['type'] == 'boolean' %}
 bool _{{ item['name']|cvarname }};
@@ -15,13 +15,13 @@ void set{{ item['name']|cvarname | capitalize }}(bool value){_{{ item['name']|cv
 void set{{ item['name']|cvarname | capitalize }}({{ item['name']|cvarname|capitalize }}Value value){_{{ item['name']|cvarname }} = value;}
 {% set persitantDataSize = persitantDataSize + 4 + 4 %}
 {% elif item['type'] == 'string' %}
-char _{{ item['name']|cvarname }}[{{item['max-length']}}]; 
+char _{{ item['name']|cvarname }}[{{item['max-length'] + 1}}]; 
 {%- if (item['max-length']|int) > (124 - 1 - 7) %}
 // Generated error for string size overflow
 #error : The length of strings cannot exceed {{ 124 - 1 - 7}} bytes but your string '{{item['name']}}' is {{ item['max-length'] }} bytes long
-{% endif -%}
+{% endif %}
 char* get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
-void set{{ item['name']|cvarname | capitalize }}(char* value){strncpy(_{{ item['name']|cvarname }}, value, {{ item['max-length'] }});}
+void set{{ item['name']|cvarname | capitalize }}(char* value){strncpy(_{{ item['name']|cvarname }}, value, {{ item['max-length'] + 1 }});}
 {% set persitantDataSize = persitantDataSize + 4 + 1 * (item['max-length']|int) %}
 {% else %}
 int32_t _{{ item['name']|cvarname }};
@@ -75,20 +75,22 @@ void autoconfig_init(){
 		{%- endif %}
 	}
 	{%- endif %}
-
-	{% endfor %}
+	{%- endfor %}
 	{%- endif %}
 }
 
 void autoconfig_deinit(){
-	{% if 'items' in preferences %}
+	{%- if 'items' in preferences %}
 	{%- for item in preferences['items']: -%}
 	{%- if item['type'] == 'string' %}
-	persist_write_string({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
+	char tmp_{{ item['name']|cvarname }}[{{item['max-length'] + 1}}]; 
+	persist_read_string({{ item['name']|cvarname|upper }}_PKEY, tmp_{{ item['name']|cvarname }}, {{item['max-length'] + 1}});
+	if(memcmp(_{{ item['name']|cvarname }}, tmp_{{ item['name']|cvarname }}, {{item['max-length'] + 1}}) != 0)
+		persist_write_string({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
 	{%- elif item['type'] == 'boolean' %}
-	persist_write_bool({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
+	persist_read_bool({{ item['name']|cvarname|upper }}_PKEY) != _{{ item['name']|cvarname }} ? persist_write_bool({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}) : false;
 	{%- else %}
-	persist_write_int({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
+	persist_read_int({{ item['name']|cvarname|upper }}_PKEY) != _{{ item['name']|cvarname }} ? persist_write_int({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}) : false;
 	{%- endif %}
 	{%- endfor %}
 	{%- endif %}
