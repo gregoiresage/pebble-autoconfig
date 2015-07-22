@@ -27,6 +27,12 @@
 	</div>
 	{%- endif %}
 
+	<div class="item-container">
+		<div class="button-container">
+			<input type="submit" class="item-button" value="SAVE" id="save-top">
+		</div>
+	</div>
+
 	{%- for section in preferences['sections']: %}
 	<div class="item-container">
 	  <div class="item-container-header">{{ section['name'] }}</div>
@@ -90,7 +96,7 @@
 
 	<div class="item-container">
 		<div class="button-container">
-			<input type="submit" class="item-button" value="SAVE" id="save">
+			<input type="submit" class="item-button" value="SAVE" id="save-bottom">
 		</div>
 	</div>
 

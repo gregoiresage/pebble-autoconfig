@@ -144,12 +144,14 @@ function colorToText(iColor){
 /* --------------------------
  * Buttons
  * --------------------------
-*/
+ */
 
-document.getElementById("save").addEventListener("click", function (event) {
+document.getElementById("save-top").addEventListener("click", function (event) {
 	location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(PConfig.getFormValues()));
 });
-
+document.getElementById("save-bottom").addEventListener("click", function (event) {
+	location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(PConfig.getFormValues()));
+});
 
 /*
  * Remove config page header on iOS
@@ -157,5 +159,3 @@ document.getElementById("save").addEventListener("click", function (event) {
 if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
 	document.getElementById("app-header").remove();
 }
-
-
