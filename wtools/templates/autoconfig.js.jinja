@@ -22,14 +22,13 @@ Pebble.addEventListener("showConfiguration", function (e) {
     autoconfigShowConfiguration();
   }
   {% macro embed() %}{% include "autoconfig2.html.jinja" %}{% endmacro %}
-  console.log(localStorage['{{shortName}}']);
   var config_html={{ embed()|embed_html  }}
   var config_html = config_html.replace("REPLACED_AT_RUNTIME", localStorage['{{shortName}}']);
   Pebble.openURL('data:text/html,' + encodeURIComponent(config_html + '<!--.html'));
 });
 
 Pebble.addEventListener("webviewclosed", function(e) {
-  console.log(e.response);
+  console.log("Configuration : " + e.response);
   if ((typeof e.response === 'string') && (e.response.length > 0)) {
       var newSettings = decodeURIComponent(e.response);
       autoconfigSettings = JSON.parse(newSettings);
