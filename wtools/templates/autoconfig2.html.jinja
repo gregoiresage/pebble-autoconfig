@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{longName}}</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style type="text/css" media="screen">
+		{% include "resources/slate-0.0.1/lib/sass/main.scss" %}
+	</style>
+</head>
+<body>
+	{% if 'description' in preferences -%}
+	<div class="item-container">
+	  <div class="item-container-content">
+	    <div class="item">
+	      	{{ preferences['description'] }}
+	    </div>
+	  </div>
+	</div>
+	{%- endif %}
+
+	{%- for section in preferences['sections']: %}
+	<div class="item-container">
+	  <div class="item-container-header">{{ section['name'] }}</div>
+	  <div class="item-container-content">
+		{% if 'description' in section -%}
+			<div class="item">
+	      		{{ section['description'] }}
+	    	</div>
+		{%- endif %}
+		{%- for item in section['items']: %}
+	  	{%- if item['type'] == 'enum' %}
+	  	<label class="item">
+		  {{ item['title'] }}
+		  <select id="{{ item['name'] }}" name="{{ item['name'] }}" dir='rtl' class="item-select">
+		  	{%- for key, choice in item['choices'].iteritems() %}
+			<option class="item-select-option" value="{{loop.index0 }}">{{ choice }}</option>
+			{%- endfor %}
+		  </select>
+		  <script type="text/javascript">
+		  document.querySelector("#{{ item['name'] }}").value = {{item['default']}};
+		  </script>
+		</label>
+	  	{%- elif item['type'] == 'integer' %}
+	  	<label class="item">
+		  <input type="number" class="item-slider" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}" min="{{item['min']}}" max="{{item['max']}}">
+		  <div class="item-input-wrapper item-slider-text">
+		    <input type="text" class="item-input" name="{{ item['name'] }}" value="{{item['default']}}">
+		  </div>
+		</label>
+	  	{%- elif item['type'] == 'boolean' %}
+	  	<label class="item">
+		  {{ item['title'] }}
+		  <input type="checkbox" class="item-checkbox" id="{{ item['name'] }}" name="{{ item['name'] }}">
+		</label>
+		<script type="text/javascript">
+		document.querySelector("#{{ item['name'] }}").checked = {{item['default']|lower}};
+		</script>
+	  	{%- elif item['type'] == 'string' %}
+	  	<label class="item">
+	  	  {{ item['title'] }}
+		  <div class="item-input-wrapper">
+		    <input type="text" class="item-input" id="{{ item['name'] }}" name="{{ item['name'] }}" placeholder="{{ item['default'] }}" value="{{ item['default'] }}">
+		  </div>
+		</label>
+		{%- elif item['type'] == 'color' %}
+	  	<label class="item">
+	  		{{ item['title'] }}
+	  		<input type="text" class="item-color item-color-sunny" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{ item['default'] }}">
+	  	</label>
+	  	{%- else %}
+		{%- endif %}
+		{% if 'description' in item -%}
+		<div class="item-container-footer">
+			<div class="description">{{ item['description']}}</div>
+		</div>
+		{%- endif %}
+		{%- endfor %}
+	  </div>  
+	</div>
+	{%- endfor %}
+
+	<div class="item-container">
+		<div class="button-container">
+			<input type="submit" class="item-button" value="SAVE" id="save">
+		</div>
+	</div>
+
+	<div class="item-container">
+	  <div class="item-container-footer"><center>Powered by <a href="https://github.com/gregoiresage/pebble-autoconfig">Pebble Autoconfig</a> and <a href="https://github.com/pebble/slate">Slate</a></center></div>
+	</div>
+
+	<script type="text/javascript">
+{% macro pa_slate() %}{% include "resources/slate-0.0.1/lib/js/main.js" %}{% endmacro %}
+{{ pa_slate()|minify_js }}
+{% macro pa_pc() %}{% include "resources/js/pconfig.js.jinja" %}{% endmacro %}
+{{ pa_pc()|minify_js }}
+{% macro pa_js() %}{% include "resources/js/pebble-autoconfig.js.jinja" %}{% endmacro %}
+{{ pa_js()|minify_js }}
+	</script>
+</body>
+</html>

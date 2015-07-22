@@ -3,8 +3,8 @@
 
 #include <pebble.h>
 
-{% if 'items' in preferences %}
-{% for item in preferences['items']: %}
+{% for section in preferences['sections']: -%}
+{% for item in section['items']: -%}
 {%- if item['type'] == 'enum' %}
 typedef enum {
 {%- for key, choice in item['choices'].iteritems(): %}
@@ -19,11 +19,13 @@ typedef enum {
 bool get{{ item['name']|cvarname|capitalize }}();
 {%- elif item['type'] == 'string' %}
 char* get{{ item['name']|cvarname|capitalize }}();
+{%- elif item['type'] == 'color' %}
+GColor get{{ item['name']|cvarname|capitalize }}();
 {%- else %}
 int32_t get{{ item['name']|cvarname|capitalize }}();
 {%- endif %}
 {% endfor %}
-{%- endif %}
+{% endfor %}
 
 void autoconfig_in_received_handler(DictionaryIterator *iter, void *context); 
 

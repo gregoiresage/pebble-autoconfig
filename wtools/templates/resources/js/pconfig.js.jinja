@@ -6,29 +6,17 @@ var PConfig = function () {
 	this.init = function () {
 		this.setFormValues();
 	};
-	this.getUrlParams = function () {
-		var params = {};
-		var bits = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/g, function (match, key, value) {
-			params[key] = value;
-		});
-		log("URL parameters: " + JSON.stringify(params, null, 1));
-		return params;
-	};
 	this.getFormFields = function () {
 		var field_ids = [];
 		var fields_input = document.getElementsByTagName("input");
 		var fields_select = document.getElementsByTagName("select");
-		var fields_textarea = document.getElementsByTagName("textarea");
 		for (var i = 0, x = fields_input.length; i < x; i++) {
-			if (fields_input[i].type != "submit" && fields_input[i].type != "reset" && !fields_input[i].hasAttribute("data-exclude")) {
+			if (fields_input[i].type != "submit") {
 				field_ids.push(fields_input[i].id);
 			}
 		}
 		for (var i = 0, x = fields_select.length; i < x; i++) {
 			field_ids.push(fields_select[i].id);
-		}
-		for (var i = 0, x = fields_textarea.length; i < x; i++) {
-			field_ids.push(fields_textarea[i].id);
 		}
 		return field_ids;
 	};
@@ -37,42 +25,42 @@ var PConfig = function () {
 		var values = {};
 		for (var i = 0, x = fields.length; i < x; i++) {
 			var field = document.getElementById(fields[i]);
-			if (field.type == "radio") {
-				var value = field.checked ? 1 : 0;
+			var value = 0;
+			if (field.type == "radio" || field.type == "checkbox") {
+				value = field.checked ? 1 : 0;
 			} else {
-				var value = field.value;
+				value = field.value;
 			}
 
 			if (field.type == "number" || field.type == "select-one") {
 				value = parseInt(value);
 			}
 
+			console.log(field.type + " "+ field.className);
+
+			if (field.className.indexOf("item-color") === 0) {
+				value = textToColor(value);
+			}
+
 			values[fields[i]] = value;
 		}
-		log("Response data: " + JSON.stringify(values, null, 1));
+		console.log("Response data: " + JSON.stringify(values, null, 1));
 		return values;
 	};
 	this.setFormValues = function () {
-		{% if 'embedded' in preferences and preferences['embedded'] == true %}
 		try {
 			var params = REPLACED_AT_RUNTIME;
 		} catch(e) {
 			var params = {};
 		}
-		{% else %}
-		var params = this.getUrlParams();
-		{% endif %}
 		for (key in params) {
 			var field = document.getElementById(key);
 			if (field != null) {
-				if (field.type == "radio") {
-					var radios = document.getElementsByName(field.name);
-					for (var i = 0; i < radios.length; i++) {
-						if(radios[i].value == params[key]) {
-							radios[i].checked = true;
-						}
-					};
-					
+				if (field.type == "checkbox") {
+					field.checked = params[key] == 1;
+				} 
+				else if (field.className.indexOf("item-color") === 0) {
+					field.value = colorToText(params[key]);
 				} else {
 					field.value = decodeURIComponent(params[key]);
 				}

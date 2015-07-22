@@ -17,44 +17,25 @@ Pebble.addEventListener("ready", function(e) {
   }
 });
 
-{% if 'embedded' in preferences and preferences['embedded'] == true -%}
-{% macro embed() %}{% include "autoconfig.html.jinja" %}{% endmacro %}
-var config_html={{ embed()|embed_html  }}
-
-{% endif -%}
-
 Pebble.addEventListener("showConfiguration", function (e) {
   if(typeof autoconfigShowConfiguration == 'function'){
     autoconfigShowConfiguration();
   }
-  {% if 'embedded' in preferences and preferences['embedded'] == true -%}
-  var html = config_html.replace("REPLACED_AT_RUNTIME", localStorage['{{shortName}}']);
-  Pebble.openURL('data:text/html,' + encodeURIComponent(html + '<!--.html'));
-  {%- else -%}
-  var url = "{{ preferences['url'] }}?";
-
-  for (var key in autoconfigSettings) {
-    if (autoconfigSettings.hasOwnProperty(key)) {
-      url += encodeURIComponent(key) + "=" + encodeURIComponent(autoconfigSettings[key]) + "&";
-    }
-  }
-
-  console.log("Hosted URL: " + url);
-
-  Pebble.openURL(url);
-  {%- endif %}
+  {% macro embed() %}{% include "autoconfig2.html.jinja" %}{% endmacro %}
+  console.log(localStorage['{{shortName}}']);
+  var config_html={{ embed()|embed_html  }}
+  var config_html = config_html.replace("REPLACED_AT_RUNTIME", localStorage['{{shortName}}']);
+  Pebble.openURL('data:text/html,' + encodeURIComponent(config_html + '<!--.html'));
 });
 
 Pebble.addEventListener("webviewclosed", function(e) {
-  {% if 'items' in preferences %}
-    if ((typeof e.response === 'string') && (e.response.length > 0)) {
-        var newSettings = decodeURIComponent(e.response);
-        autoconfigSettings = JSON.parse(newSettings);
-
-        localStorage['{{shortName}}'] = newSettings;
-        MessageQueue.sendAppMessage(autoconfigSettings);
-    }
-  {% endif %}
+  console.log(e.response);
+  if ((typeof e.response === 'string') && (e.response.length > 0)) {
+      var newSettings = decodeURIComponent(e.response);
+      autoconfigSettings = JSON.parse(newSettings);
+      localStorage['{{shortName}}'] = newSettings;
+      MessageQueue.sendAppMessage(autoconfigSettings);
+  }
 
   if(typeof autoconfigWebviewclosed == 'function'){
     autoconfigWebviewclosed();
