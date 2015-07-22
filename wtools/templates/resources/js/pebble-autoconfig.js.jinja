@@ -149,3 +149,13 @@ function colorToText(iColor){
 document.getElementById("save").addEventListener("click", function (event) {
 	location.href = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(PConfig.getFormValues()));
 });
+
+
+/*
+ * Remove config page header on iOS
+ */
+if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
+	document.getElementById("app-header").remove();
+}
+
+
