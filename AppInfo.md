@@ -91,7 +91,7 @@ Print some debug information, including user-agent, to JavaScript console and a 
 ```
 
 ### url ###
-When a project with Pebble Autoconfig enabled is built, a HTML file with the name _index.html_ will be generated. The file contains UI and code to display and send configuration to the Pebble Watch.
+When a project with Pebble Autoconfig enabled is built, a HTML file with the name _autoconfig.html_ will be generated. The file contains UI and code to display and send configuration to the Pebble Watch.
 
 This file must be uploaded to a public host of your choice. Set the url property to the full address of this file.
 
