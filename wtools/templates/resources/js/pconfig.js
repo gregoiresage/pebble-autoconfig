@@ -11,7 +11,7 @@ var PConfig = function () {
 		var fields_input = document.getElementsByTagName("input");
 		var fields_select = document.getElementsByTagName("select");
 		for (var i = 0, x = fields_input.length; i < x; i++) {
-			if (fields_input[i].type != "submit") {
+			if (fields_input[i].id && fields_input[i].type != "submit") {
 				field_ids.push(fields_input[i].id);
 			}
 		}
@@ -32,7 +32,7 @@ var PConfig = function () {
 				value = field.value;
 			}
 
-			if (field.type == "number" || field.type == "select-one") {
+			if (field.type == "number" || field.type == "range" ||field.type == "select-one") {
 				value = parseInt(value);
 			}
 

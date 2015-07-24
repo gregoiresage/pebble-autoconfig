@@ -1,17 +1,15 @@
 var autoconfigSettings = null;
 
 Pebble.addEventListener("ready", function(e) {
-  {% if 'items' in preferences %}
   try {
     autoconfigSettings = JSON.parse(localStorage['{{shortName}}']);
     MessageQueue.sendAppMessage(autoconfigSettings);
   }
   catch(e) {
-    // the dicitonary was never stored, the watchapp uses its default values
+    // the dictionary was never stored, the watchapp uses its default values
     autoconfigSettings = {};
     localStorage['{{shortName}}'] = JSON.stringify(autoconfigSettings);
   }
-  {% endif %}
   if(typeof autoconfigReady == 'function'){
     autoconfigReady();
   }
@@ -21,7 +19,7 @@ Pebble.addEventListener("showConfiguration", function (e) {
   if(typeof autoconfigShowConfiguration == 'function'){
     autoconfigShowConfiguration();
   }
-  {% macro embed() %}{% include "autoconfig2.html.jinja" %}{% endmacro %}
+  {% macro embed() %}{% include "autoconfig.html.jinja" %}{% endmacro %}
   var config_html={{ embed()|embed_html  }}
   var config_html = config_html.replace("REPLACED_AT_RUNTIME", localStorage['{{shortName}}']);
   Pebble.openURL('data:text/html,' + encodeURIComponent(config_html + '<!--.html'));

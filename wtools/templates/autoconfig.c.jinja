@@ -1,9 +1,7 @@
 #include <pebble.h>
 #include "autoconfig.h"
 
-{%- set persitantDataSize = 0 %}
-{% for section in preferences['sections'] -%}
-{% for item in section['items'] -%}
+{% macro item_accessors_code(item) -%}
 {% if item['type'] == 'boolean' %}
 bool _{{ item['name']|cvarname }};
 bool get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
@@ -16,12 +14,11 @@ void set{{ item['name']|cvarname | capitalize }}({{ item['name']|cvarname|capita
 {% set persitantDataSize = persitantDataSize + 4 + 4 %}
 {% elif item['type'] == 'string' %}
 char _{{ item['name']|cvarname }}[{{item['max-length'] + 1}}]; 
-{%- if (item['max-length']|int) > (124 - 1 - 7) %}
-// Generated error for string size overflow
-#error : The length of strings cannot exceed {{ 124 - 1 - 7}} bytes but your string '{{item['name']}}' is {{ item['max-length'] }} bytes long
-{% endif %}
 char* get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
-void set{{ item['name']|cvarname | capitalize }}(char* value){strncpy(_{{ item['name']|cvarname }}, value, {{ item['max-length'] + 1 }});}
+void set{{ item['name']|cvarname | capitalize }}(char* value){
+	memset(_{{ item['name']|cvarname }}, 0, {{ item['max-length'] + 1 }});
+	strncpy(_{{ item['name']|cvarname }}, value, {{ item['max-length'] }});
+}
 {% set persitantDataSize = persitantDataSize + 4 + 1 * (item['max-length']|int) %}
 {% elif item['type'] == 'color' %}
 GColor _{{ item['name']|cvarname }};
@@ -41,13 +38,23 @@ void set{{ item['name']|cvarname | capitalize}}(int32_t value){_{{ item['name']|
 // Generated error for persistant data size overflow
 #error : The size of all persisted values cannot exceed 4KB but your parameters require {{ persitantDataSize }}B
 {% endif -%}
-{% endfor %}
-{% endfor %}
+{%- endmacro %}
 
-void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
-	Tuple *tuple = NULL;
-	{% for section in preferences['sections']: -%}
-	{% for item in section['items']: -%}
+{%- set persitantDataSize = 0 %}
+{%- if 'items' in preferences %}
+{% for item in preferences['items'] -%}
+{{ item_accessors_code(item) }}
+{% endfor %}
+{%- endif %}
+{%- if 'sections' in preferences %}
+{% for section in preferences['sections'] -%}
+{% for item in section['items'] -%}
+{{ item_accessors_code(item) }}
+{% endfor %}
+{% endfor %}
+{%- endif %}
+
+{% macro item_autoconfig_in_received_handler(item) -%}
 	tuple = dict_find(iter, {{ item['name']|cvarname|upper }}_PKEY);
 	{%- if item['type'] == 'string' %}
 	tuple ? set{{ item['name']|cvarname | capitalize }}(tuple->value->cstring) : false;
@@ -58,16 +65,25 @@ void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 	{%- else %}
 	tuple ? set{{ item['name']|cvarname | capitalize }}(tuple->value->int32) : false;
 	{%- endif %}
+{%- endmacro %}
+
+void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
+	Tuple *tuple = NULL;
+	{%- if 'items' in preferences %}
+	{% for item in preferences['items'] -%}
+	{{ item_autoconfig_in_received_handler(item) }}
+	{% endfor %}
+	{%- endif %}
+	{%- if 'sections' in preferences %}
+	{% for section in preferences['sections'] -%}
+	{% for item in section['items'] -%}
+	{{ item_autoconfig_in_received_handler(item) }}
 	{% endfor %}
 	{% endfor %}
+	{%- endif %}
 }
 
-void autoconfig_init(){
-	app_message_register_inbox_received(autoconfig_in_received_handler);
-	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
-
-	{% for section in preferences['sections']: -%}
-	{% for item in section['items']: -%}
+{% macro item_autoconfig_init(item) -%}
 	if (persist_exists({{ item['name']|cvarname|upper }}_PKEY)) {
 		{%- if item['type'] == 'string' %}
 		persist_read_string({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}, {{item['max-length'] + 1}});
@@ -95,13 +111,27 @@ void autoconfig_init(){
 		{%- endif %}
 	}
 	{%- endif %}
+{%- endmacro %}
+
+void autoconfig_init(){
+	app_message_register_inbox_received(autoconfig_in_received_handler);
+	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+
+	{%- if 'items' in preferences %}
+	{% for item in preferences['items'] -%}
+	{{ item_autoconfig_init(item) }}
+	{% endfor %}
+	{%- endif %}
+	{%- if 'sections' in preferences %}
+	{% for section in preferences['sections'] -%}
+	{% for item in section['items'] -%}
+	{{ item_autoconfig_init(item) }}
 	{% endfor %}
 	{% endfor %}
+	{%- endif %}
 }
 
-void autoconfig_deinit(){
-	{% for section in preferences['sections']: -%}
-	{% for item in section['items']: -%}
+{% macro item_autoconfig_deinit(item) -%}
 	{%- if item['type'] == 'string' %}
 	char tmp_{{ item['name']|cvarname }}[{{item['max-length'] + 1}}]; 
 	persist_read_string({{ item['name']|cvarname|upper }}_PKEY, tmp_{{ item['name']|cvarname }}, {{item['max-length'] + 1}});
@@ -116,6 +146,19 @@ void autoconfig_deinit(){
 	{%- else %}
 	persist_read_int({{ item['name']|cvarname|upper }}_PKEY) != _{{ item['name']|cvarname }} ? persist_write_int({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}) : false;
 	{%- endif %}
-	{%- endfor %}
-	{%- endfor %}
+{%- endmacro %}
+
+void autoconfig_deinit(){
+	{%- if 'items' in preferences %}
+	{% for item in preferences['items'] -%}
+	{{ item_autoconfig_deinit(item) }}
+	{% endfor %}
+	{%- endif %}
+	{%- if 'sections' in preferences %}
+	{% for section in preferences['sections'] -%}
+	{% for item in section['items'] -%}
+	{{ item_autoconfig_deinit(item) }}
+	{% endfor %}
+	{% endfor %}
+	{%- endif %}
 }

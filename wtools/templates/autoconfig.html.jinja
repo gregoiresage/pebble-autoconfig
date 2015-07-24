@@ -4,108 +4,126 @@
 	<title>{{longName}}</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-{% if 'embedded' not in preferences or preferences['embedded'] == false -%}
-	<link rel="stylesheet" href="http://yui.yahooapis.com/combo?pure/0.4.2/base-min.css&pure/0.4.2/buttons-min.css&pure/0.4.2/forms-min.css&pure/0.4.2/grids-min.css">
-{% endif %}
 	<style type="text/css" media="screen">
-{% if 'embedded' in preferences and preferences['embedded'] == true -%}
-{% include "resources/css/pure/0.4.2/base-min.css" %}
-{% include "resources/css/pure/0.4.2/buttons-min.css" %}
-{% include "resources/css/pure/0.4.2/forms-min.css" %}
-{% include "resources/css/pure/0.4.2/grid-custom-min.css" %}
-{% macro pa_css() %}{% include "resources/css/pebble-autoconfig.css" %}{% endmacro %}
-{{ pa_css()|minify_css }}
-{% else -%}
-{% include "resources/css/pebble-autoconfig.css" %}
-{%- endif %}
+{% macro slate_css() %}{% include "resources/slate-0.0.1/lib/sass/main.scss" %}{% endmacro %}
+{{ slate_css()|minify_css }}
 	</style>
 </head>
 <body>
-	<div class="wrapper">
-		<header>
-			<h1>{{longName}}</h1>
-		</header>
-		<article>
-			{% if 'description' in preferences -%}
-			<div id="description">{{ preferences['description'] }}</div>
-			{%- endif %}
-			<form class="pure-form pure-form-stacked">
-				<fieldset>
-					{%- if 'items' in preferences %}
-					{%- for item in preferences['items']: %}
-					<div class="pure-control-group">
-						<h4>{{ item['title'] }}</h4>
-						<div class="description">{{ item['description']}}</div>
-						{%- if item['type'] == 'enum' %}
-						<select id="{{ item['name'] }}" class="pure-input-1" name="{{ item['name'] }}">
-							{%- for key, choice in item['choices'].iteritems() %}
-							<option value="{{loop.index0 }}">{{ choice }}</option>
-							{%- endfor %}
-						</select>
-						<script type="text/javascript">
-						document.querySelector("#{{ item['name'] }}").value = {{item['default']}};
-						</script>
-						{%- elif item['type'] == 'integer' %}
-						<div class="pure-g">
-							<div class="pure-u-1-4">
-								<div class="l-box">
-									<input id="{{ item['name'] }}" class="pure-input-1" type="number" name="{{ item['name'] }}" min="{{item['min']}}" max="{{item['max']}}" value="{{item['default']}}" required>
-								</div>
-							</div>
-							<div class="pure-u-3-4">
-								<div class="l-box">
-									<input class="pure-input-1" type="range" min="{{item['min']}}" max="{{item['max']}}" data-exclude>
-								</div>
-							</div>
-						</div>
-						{%- elif item['type'] == 'boolean' %}
-						<label for="{{ item['name'] }}-off" class="pure-radio">
-							<input id="{{ item['name'] }}-off" type="radio" name="{{ item['name'] }}" value="0" data-exclude checked>
-							{{ item['off-text'] }}
-						</label>
-						<label for="{{ item['name'] }}" class="pure-radio">
-							<input id="{{ item['name'] }}" type="radio" name="{{ item['name'] }}" value="1">
-							{{ item['on-text'] }}
-						</label>
-						<script type="text/javascript">
-						document.querySelector("#{{ item['name'] }}").checked = {{item['default']|lower}};
-						</script>
-						{%- elif item['type'] == 'string' %}
-						<input id="{{ item['name'] }}" class="pure-input-1" type="text" name="{{ item['name'] }}" value="{{ item['default'] }}" maxlength="{{ item['max-length'] }}" 
-						{%- if item['pattern'] %} pattern="{{ item['pattern'] }}" required>
-						{%- else %}>
-						{%- endif %}
-						{%- endif %}
-					</div>
-					{%- endfor %}
-					{%- endif %}
-				</fieldset>
-				<div class="buttons">
-					<button id="save" class="pure-button pure-button-primary" type="submit">Save</button>
-					<button id="cancel" class="pure-button" type="reset">Cancel</button>
-				</div>
-				<div class="clear"></div>
-			</form>
-			<div id="log"></div>
-			<div class="push"></div>
-		</article>
+	<div class="item-container" id="app-header" name="app-header">
+	  <div class="item-container-content">
+	    <div class="item">
+	    	<center><b>{{longName}}</b></center>
+	    </div>
+	  </div>
 	</div>
-	<footer class="l-box is-center">
-		Powered by Pebble Autoconfig
-	</footer>
+
+	{% if 'description' in preferences -%}
+	<div class="item-container">
+	  <div class="item-container-content">
+	    <div class="item">
+	      	{{ preferences['description'] }}
+	    </div>
+	  </div>
+	</div>
+	{%- endif %}
+
+	<div class="item-container">
+		<div class="button-container">
+			<input type="submit" class="item-button" value="SAVE" id="save-top">
+		</div>
+	</div>
+
+	{% macro item_html(item) -%}
+    {%- if item['type'] == 'enum' %}
+	<label class="item">
+	  {{ item['title'] }}
+	  <select id="{{ item['name'] }}" name="{{ item['name'] }}" dir='rtl' class="item-select">
+	  	{%- for key, choice in item['choices'].iteritems() %}
+		<option class="item-select-option" value="{{loop.index0 }}" {{ "selected" if item['default'] == loop.index0 }}>{{ choice }}</option>
+		{%- endfor %}
+	  </select>
+
+	</label>
+	{%- elif item['type'] == 'integer' %}
+	<label class="item">
+	  {{ item['title'] }}
+	  <input type="range" class="item-slider" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}" min="{{item['min']}}" max="{{item['max']}}">
+	  <div class="item-input-wrapper item-slider-text">
+	    <input type="text" class="item-input" name="{{ item['name'] }}" value="{{item['default']}}">
+	  </div>
+	</label>
+	{%- elif item['type'] == 'boolean' %}
+	<label class="item">
+	  {{ item['title'] }}
+	  <input type="checkbox" class="item-checkbox" id="{{ item['name'] }}" name="{{ item['name'] }}" {{ "checked" if item['default']|lower == "true" }}>
+	</label>
+	{%- elif item['type'] == 'string' %}
+	<label class="item">
+	  {{ item['title'] }}
+	  <div class="item-input-wrapper">
+	    <input type="text" class="item-input" id="{{ item['name'] }}" name="{{ item['name'] }}" placeholder="{{ item['default'] }}" value="{{ item['default'] }}">
+	  </div>
+	</label>
+	{%- elif item['type'] == 'color' %}
+	<label class="item">
+		{{ item['title'] }}
+		<input type="text" class="item-color item-color-sunny" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{ item['default'] }}">
+	</label>
+	{%- else %}
+	{%- endif %}
+	{% if 'description' in item -%}
+	<div class="item-container-footer">
+		<div class="description">{{ item['description']}}</div>
+	</div>
+	{%- endif %}
+	{%- endmacro %}
+
+	{%- if 'items' in preferences %}
+	<div class="item-container">
+	<div class="item-container-content">
+	{%- for item in preferences['items']: %}
+	{{ item_html(item) }}
+	{%- endfor %}
+	</div>  
+	</div>
+	{%- endif %}
+
+	{%- if 'sections' in preferences %}
+	{%- for section in preferences['sections']: %}
+	<div class="item-container">
+	  <div class="item-container-header">{{ section['name'] }}</div>
+	  <div class="item-container-content">
+		{% if 'description' in section -%}
+			<div class="item">
+	      		{{ section['description'] }}
+	    	</div>
+		{%- endif %}
+		{%- for item in section['items']: %}
+	  	{{ item_html(item) }}
+		{%- endfor %}
+	  </div>  
+	</div>
+	{%- endfor %}
+	{%- endif %}
+
+	<div class="item-container">
+		<div class="button-container">
+			<input type="submit" class="item-button" value="SAVE" id="save-bottom">
+		</div>
+	</div>
+
+	<div class="item-container">
+	  <div class="item-container-footer"><center>Powered by <a href="https://github.com/gregoiresage/pebble-autoconfig">Pebble Autoconfig</a> and <a href="https://github.com/pebble/slate">Slate</a></center></div>
+	</div>
+
 	<script type="text/javascript">
-{% if 'embedded' in preferences and preferences['embedded'] == true %}
-{% macro pa_val() %}{% include "resources/js/validation.js" %}{% endmacro %}
-{{ pa_val()|minify_js }}
-{% macro pa_pc() %}{% include "resources/js/pconfig.js.jinja" %}{% endmacro %}
+{% macro pa_slate() %}{% include "resources/slate-0.0.1/lib/js/main.js" %}{% endmacro %}
+{{ pa_slate()|minify_js }}
+{% macro pa_pc() %}{% include "resources/js/pconfig.js" %}{% endmacro %}
 {{ pa_pc()|minify_js }}
-{% macro pa_js() %}{% include "resources/js/pebble-autoconfig.js.jinja" %}{% endmacro %}
+{% macro pa_js() %}{% include "resources/js/pebble-autoconfig.js" %}{% endmacro %}
 {{ pa_js()|minify_js }}
-{% else -%}
-{% include "resources/js/validation.js" %}
-{% include "resources/js/pconfig.js.jinja" %}
-{% include "resources/js/pebble-autoconfig.js.jinja" %}
-{%- endif %}
 	</script>
 </body>
 </html>
