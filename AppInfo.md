@@ -65,7 +65,7 @@ The preference section is Pebble Autoconfig specific. All settings here will be 
 
 **Overview**
 | **Property** | **Required** | **Type** | **Description** |
-|:-------------|:-------------|:---------|:----------------|
+|-------------|-------------|---------|----------------|
 | **embedded** | no           | boolean  | Use embedded or hosted solution |
 | **debug**    | no           | boolean  | Enable debug logging in embedded mode |
 | **url**      | yes          | string   | The url of the hosted configuration page |
@@ -113,7 +113,7 @@ Common for all preferences are the following which are always required:
 #### Overview ####
 
 | **Property** | **Required** | **Type** | **Description** |
-|:-------------|:-------------|:---------|:----------------|
+|-------------|-------------|---------|----------------|
 | **name**     | yes          | string   | Must be same name as an appKey |
 | **title**    | yes          | string   | Title displayed in configuration page |
 | **description** | no           | string   | Description displayed in configuration page |
