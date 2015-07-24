@@ -64,6 +64,7 @@ The preference section is Pebble Autoconfig specific. All settings here will be 
 ```
 
 **Overview**
+
 | **Property** | **Required** | **Type** | **Description** |
 |-------------|-------------|---------|----------------|
 | **embedded** | no           | boolean  | Use embedded or hosted solution |
