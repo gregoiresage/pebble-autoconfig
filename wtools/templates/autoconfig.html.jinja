@@ -51,7 +51,7 @@
 	  </div>
 	{%- elif item['type'] == 'boolean' %}
 	  {{ item['title'] }}
-	  <input type="checkbox" class="item-checkbox" id="{{ item['name'] }}" name="{{ item['name'] }}" {{ "checked" if item['default']|lower == "true" }}>
+	  <input type="checkbox" class="item-toggle" id="{{ item['name'] }}" name="{{ item['name'] }}" {{ "checked" if item['default']|lower == "true" }}>
 	{%- elif item['type'] == 'string' %}
 	  {{ item['title'] }}
 	  <div class="item-input-wrapper">
