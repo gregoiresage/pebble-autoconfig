@@ -35,48 +35,37 @@
 	</div>
 
 	{% macro item_html(item) -%}
+	<label class="item {{ "item-subtitle-wrapper" if 'description' in item }}">
     {%- if item['type'] == 'enum' %}
-	<label class="item">
 	  {{ item['title'] }}
 	  <select id="{{ item['name'] }}" name="{{ item['name'] }}" dir='rtl' class="item-select">
 	  	{%- for key, choice in item['choices'].iteritems() %}
 		<option class="item-select-option" value="{{loop.index0 }}" {{ "selected" if item['default'] == loop.index0 }}>{{ choice }}</option>
 		{%- endfor %}
 	  </select>
-
-	</label>
 	{%- elif item['type'] == 'integer' %}
-	<label class="item">
 	  {{ item['title'] }}
 	  <input type="range" class="item-slider" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}" min="{{item['min']}}" max="{{item['max']}}">
 	  <div class="item-input-wrapper item-slider-text">
 	    <input type="text" class="item-input" name="{{ item['name'] }}" value="{{item['default']}}">
 	  </div>
-	</label>
 	{%- elif item['type'] == 'boolean' %}
-	<label class="item">
 	  {{ item['title'] }}
 	  <input type="checkbox" class="item-checkbox" id="{{ item['name'] }}" name="{{ item['name'] }}" {{ "checked" if item['default']|lower == "true" }}>
-	</label>
 	{%- elif item['type'] == 'string' %}
-	<label class="item">
 	  {{ item['title'] }}
 	  <div class="item-input-wrapper">
 	    <input type="text" class="item-input" id="{{ item['name'] }}" name="{{ item['name'] }}" placeholder="{{ item['default'] }}" value="{{ item['default'] }}">
 	  </div>
-	</label>
 	{%- elif item['type'] == 'color' %}
-	<label class="item">
 		{{ item['title'] }}
 		<input type="text" class="item-color item-color-sunny" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{ item['default'] }}">
-	</label>
 	{%- else %}
 	{%- endif %}
 	{% if 'description' in item -%}
-	<div class="item-container-footer">
-		<div class="description">{{ item['description']}}</div>
-	</div>
+		<div class="item-subtitle">{{ item['description']}}</div>
 	{%- endif %}
+	</label>
 	{%- endmacro %}
 
 	{%- if 'items' in preferences %}
