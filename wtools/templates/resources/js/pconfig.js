@@ -36,8 +36,6 @@ var PConfig = function () {
 				value = parseInt(value);
 			}
 
-			console.log(field.type + " "+ field.className);
-
 			if (field.className.indexOf("item-color") === 0) {
 				value = textToColor(value);
 			}
