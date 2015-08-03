@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css" media="screen">
-{% macro slate_css() %}{% include "resources/slate-0.0.1/lib/sass/main.scss" %}{% endmacro %}
+{% macro slate_css() %}{% include "resources/slate/dist/css/slate.min.css" %}{% endmacro %}
 {{ slate_css()|minify_css }}
 	</style>
 </head>
@@ -118,7 +118,7 @@
 	</div>
 
 	<script type="text/javascript">
-{% macro pa_slate() %}{% include "resources/slate-0.0.1/lib/js/main.js" %}{% endmacro %}
+{% macro pa_slate() %}{% include "resources/slate/dist/js/slate.min.js" %}{% endmacro %}
 {{ pa_slate()|minify_js }}
 {% macro pa_pc() %}{% include "resources/js/pconfig.js" %}{% endmacro %}
 {{ pa_pc()|minify_js }}
