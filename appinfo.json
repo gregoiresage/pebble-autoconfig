@@ -24,7 +24,6 @@
     "media": []
   },
   "preferences": {
-    "url": "http://wiki.pebble-autoconfig.googlecode.com/git/example/autoconfig.html",
     "description": "This page is used to configure your <strong>Pebble&nbsp;Watch</strong>. Fill in the form and press <em>Save</em> to transfer the settings to your watch.",
       "items" : [
         {
