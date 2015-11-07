@@ -36,34 +36,30 @@
 
 	{% macro item_html(item) -%}
 	<label class="item {{ "item-subtitle-wrapper" if 'description' in item }}">
+	{{ item['title'] }}
+	{% if 'description' in item -%}
+		<div class="item-subtitle">{{ item['description']}}</div>
+	{%- endif %}
     {%- if item['type'] == 'enum' %}
-	  {{ item['title'] }}
 	  <select id="{{ item['name'] }}" name="{{ item['name'] }}" dir='rtl' class="item-select">
 	  	{%- for key, choice in item['choices'].iteritems() %}
 		<option class="item-select-option" value="{{loop.index0 }}" {{ "selected" if item['default'] == loop.index0 }}>{{ choice }}</option>
 		{%- endfor %}
 	  </select>
 	{%- elif item['type'] == 'integer' %}
-	  {{ item['title'] }}
 	  <input type="range" class="item-slider" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}" min="{{item['min']}}" max="{{item['max']}}">
 	  <div class="item-input-wrapper item-slider-text">
 	    <input type="text" class="item-input" name="{{ item['name'] }}" value="{{item['default']}}">
 	  </div>
 	{%- elif item['type'] == 'boolean' %}
-	  {{ item['title'] }}
 	  <input type="checkbox" class="item-toggle" id="{{ item['name'] }}" name="{{ item['name'] }}" {{ "checked" if item['default']|lower == "true" }}>
 	{%- elif item['type'] == 'string' %}
-	  {{ item['title'] }}
 	  <div class="item-input-wrapper">
 	    <input type="text" class="item-input" id="{{ item['name'] }}" name="{{ item['name'] }}" placeholder="{{ item['default'] }}" value="{{ item['default'] }}">
 	  </div>
 	{%- elif item['type'] == 'color' %}
-		{{ item['title'] }}
 		<input type="text" class="item-color item-color-sunny" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{ item['default'] }}">
 	{%- else %}
-	{%- endif %}
-	{% if 'description' in item -%}
-		<div class="item-subtitle">{{ item['description']}}</div>
 	{%- endif %}
 	</label>
 	{%- endmacro %}
