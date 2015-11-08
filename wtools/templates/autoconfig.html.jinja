@@ -98,6 +98,12 @@
 		</div>
 	</div>
 
+	{%- if 'footer' in preferences %}
+	<div class="item-container">
+	{{ preferences['footer'] }}
+	</div>
+	{%- endif %}
+
 	<div class="item-container">
 	  <div class="item-container-footer"><center>Powered by <a href="https://github.com/gregoiresage/pebble-autoconfig">Pebble Autoconfig</a> and <a href="https://github.com/pebble/slate">Slate</a></center></div>
 	</div>
