@@ -49,7 +49,7 @@
 	{%- elif item['type'] == 'integer' %}
 	  <input type="range" class="item-slider" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}" min="{{item['min']}}" max="{{item['max']}}">
 	  <div class="item-input-wrapper item-slider-text">
-	    <input type="text" class="item-input" name="{{ item['name'] }}" value="{{item['default']}}">
+	    <input type="text" class="item-input" data-slider-id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}">
 	  </div>
 	{%- elif item['type'] == 'boolean' %}
 	  <input type="checkbox" class="item-toggle" id="{{ item['name'] }}" name="{{ item['name'] }}" {{ "checked" if item['default']|lower == "true" }}>

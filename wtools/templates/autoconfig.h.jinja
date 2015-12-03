@@ -40,7 +40,7 @@ int32_t get{{ item['name']|cvarname|capitalize }}();
 
 void autoconfig_in_received_handler(DictionaryIterator *iter, void *context); 
 
-void autoconfig_init();
+void autoconfig_init(const uint32_t size_inbound, const uint32_t size_outbound);
 
 void autoconfig_deinit();
 
