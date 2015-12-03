@@ -21,6 +21,8 @@ static void updateDisplay() {
 	snprintf(text[2], sizeof(text[2]), "Length: %d", (int)getLength());
 	snprintf(text[3], sizeof(text[3]), "IP address: %s", getIpaddress());
 
+	window_set_background_color(window,getMycolor());
+
 	for (int i = 0; i < SETTING_COUNT; ++i) {
 		text_layer_set_text(layer[i], text[i]);
 	}
@@ -77,6 +79,7 @@ static void init(void) {
 
 	for (int i = 0; i < SETTING_COUNT; ++i) {
 		layer[i] = text_layer_create(GRect(10, 10 + i*35, bounds.size.w - 10, 28));
+		text_layer_set_background_color(layer[i], GColorClear);
 		layer_add_child(window_layer, text_layer_get_layer(layer[i]));
 	}
 

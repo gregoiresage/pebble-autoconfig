@@ -1,9 +1,7 @@
 #include <pebble.h>
 #include "autoconfig.h"
 
-{%- set persitantDataSize = 0 %}
-{%- if 'items' in preferences %}
-{% for item in preferences['items'] -%}
+{% macro item_accessors_code(item) -%}
 {% if item['type'] == 'boolean' %}
 bool _{{ item['name']|cvarname }};
 bool get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
@@ -16,13 +14,20 @@ void set{{ item['name']|cvarname | capitalize }}({{ item['name']|cvarname|capita
 {% set persitantDataSize = persitantDataSize + 4 + 4 %}
 {% elif item['type'] == 'string' %}
 char _{{ item['name']|cvarname }}[{{item['max-length'] + 1}}]; 
-{%- if (item['max-length']|int) > (124 - 1 - 7) %}
-// Generated error for string size overflow
-#error : The length of strings cannot exceed {{ 124 - 1 - 7}} bytes but your string '{{item['name']}}' is {{ item['max-length'] }} bytes long
-{% endif %}
 char* get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
-void set{{ item['name']|cvarname | capitalize }}(char* value){strncpy(_{{ item['name']|cvarname }}, value, {{ item['max-length'] + 1 }});}
+void set{{ item['name']|cvarname | capitalize }}(char* value){
+	memset(_{{ item['name']|cvarname }}, 0, {{ item['max-length'] + 1 }});
+	strncpy(_{{ item['name']|cvarname }}, value, {{ item['max-length'] }});
+}
 {% set persitantDataSize = persitantDataSize + 4 + 1 * (item['max-length']|int) %}
+{% elif item['type'] == 'color' %}
+GColor _{{ item['name']|cvarname }};
+GColor get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
+void set{{ item['name']|cvarname | capitalize }}(uint8_t value){
+#ifdef PBL_COLOR
+	_{{ item['name']|cvarname }}.argb = value;
+#endif
+}
 {% else %}
 int32_t _{{ item['name']|cvarname }};
 int32_t get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
@@ -33,35 +38,62 @@ void set{{ item['name']|cvarname | capitalize}}(int32_t value){_{{ item['name']|
 // Generated error for persistant data size overflow
 #error : The size of all persisted values cannot exceed 4KB but your parameters require {{ persitantDataSize }}B
 {% endif -%}
-{% endfor %}
-{% endif -%}
+{%- endmacro %}
 
-void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
-	Tuple *tuple = NULL;
-	{% if 'items' in preferences %}
-	{% for item in preferences['items']: -%}
+{%- set persitantDataSize = 0 %}
+{%- if 'items' in preferences %}
+{% for item in preferences['items'] -%}
+{{ item_accessors_code(item) }}
+{% endfor %}
+{%- endif %}
+{%- if 'sections' in preferences %}
+{% for section in preferences['sections'] -%}
+{% for item in section['items'] -%}
+{{ item_accessors_code(item) }}
+{% endfor %}
+{% endfor %}
+{%- endif %}
+
+{% macro item_autoconfig_in_received_handler(item) -%}
 	tuple = dict_find(iter, {{ item['name']|cvarname|upper }}_PKEY);
 	{%- if item['type'] == 'string' %}
 	tuple ? set{{ item['name']|cvarname | capitalize }}(tuple->value->cstring) : false;
+	{%- elif item['type'] == 'color' %}
+#ifdef PBL_COLOR
+	tuple ? set{{ item['name']|cvarname | capitalize }}(tuple->value->int32) : false;
+#endif
 	{%- else %}
 	tuple ? set{{ item['name']|cvarname | capitalize }}(tuple->value->int32) : false;
 	{%- endif %}
+{%- endmacro %}
+
+void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
+	Tuple *tuple = NULL;
+	{%- if 'items' in preferences %}
+	{% for item in preferences['items'] -%}
+	{{ item_autoconfig_in_received_handler(item) }}
+	{% endfor %}
+	{%- endif %}
+	{%- if 'sections' in preferences %}
+	{% for section in preferences['sections'] -%}
+	{% for item in section['items'] -%}
+	{{ item_autoconfig_in_received_handler(item) }}
+	{% endfor %}
 	{% endfor %}
 	{%- endif %}
 }
 
-void autoconfig_init(){
-	app_message_register_inbox_received(autoconfig_in_received_handler);
-	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
-
-	{% if 'items' in preferences %}
-	{% for item in preferences['items']: -%}
+{% macro item_autoconfig_init(item) -%}
 	if (persist_exists({{ item['name']|cvarname|upper }}_PKEY)) {
 		{%- if item['type'] == 'string' %}
 		persist_read_string({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}, {{item['max-length'] + 1}});
 		set{{ item['name']|cvarname | capitalize }}(_{{ item['name']|cvarname }});
 		{%- elif item['type'] == 'boolean' %}
 		set{{ item['name']|cvarname | capitalize }}(persist_read_bool({{ item['name']|cvarname|upper }}_PKEY));
+		{%- elif item['type'] == 'color' %}
+#ifdef PBL_COLOR
+		set{{ item['name']|cvarname | capitalize }}(persist_read_int({{ item['name']|cvarname|upper }}_PKEY));
+#endif
 		{%- else %}
 		set{{ item['name']|cvarname | capitalize }}(persist_read_int({{ item['name']|cvarname|upper }}_PKEY));
 		{%- endif %}
@@ -70,18 +102,36 @@ void autoconfig_init(){
 	else {
 		{%- if item['type'] == 'string' %}
 		set{{ item['name']|cvarname | capitalize }}("{{item['default']}}");
+		{%- elif item['type'] == 'color' %}
+#ifdef PBL_COLOR
+		set{{ item['name']|cvarname | capitalize }}(GColorFromHEX({{item['default']}}).argb);
+#endif
 		{%- else %}
 		set{{ item['name']|cvarname | capitalize }}({{item['default']|lower}});
 		{%- endif %}
 	}
 	{%- endif %}
-	{%- endfor %}
+{%- endmacro %}
+
+void autoconfig_init(){
+	app_message_register_inbox_received(autoconfig_in_received_handler);
+	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+
+	{%- if 'items' in preferences %}
+	{% for item in preferences['items'] -%}
+	{{ item_autoconfig_init(item) }}
+	{% endfor %}
+	{%- endif %}
+	{%- if 'sections' in preferences %}
+	{% for section in preferences['sections'] -%}
+	{% for item in section['items'] -%}
+	{{ item_autoconfig_init(item) }}
+	{% endfor %}
+	{% endfor %}
 	{%- endif %}
 }
 
-void autoconfig_deinit(){
-	{%- if 'items' in preferences %}
-	{%- for item in preferences['items']: -%}
+{% macro item_autoconfig_deinit(item) -%}
 	{%- if item['type'] == 'string' %}
 	char tmp_{{ item['name']|cvarname }}[{{item['max-length'] + 1}}]; 
 	persist_read_string({{ item['name']|cvarname|upper }}_PKEY, tmp_{{ item['name']|cvarname }}, {{item['max-length'] + 1}});
@@ -89,9 +139,26 @@ void autoconfig_deinit(){
 		persist_write_string({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }});
 	{%- elif item['type'] == 'boolean' %}
 	persist_read_bool({{ item['name']|cvarname|upper }}_PKEY) != _{{ item['name']|cvarname }} ? persist_write_bool({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}) : false;
+	{%- elif item['type'] == 'color' %}
+#ifdef PBL_COLOR
+	persist_read_int({{ item['name']|cvarname|upper }}_PKEY) != _{{ item['name']|cvarname }}.argb ? persist_write_int({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}.argb) : false;
+#endif
 	{%- else %}
 	persist_read_int({{ item['name']|cvarname|upper }}_PKEY) != _{{ item['name']|cvarname }} ? persist_write_int({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}) : false;
 	{%- endif %}
-	{%- endfor %}
+{%- endmacro %}
+
+void autoconfig_deinit(){
+	{%- if 'items' in preferences %}
+	{% for item in preferences['items'] -%}
+	{{ item_autoconfig_deinit(item) }}
+	{% endfor %}
+	{%- endif %}
+	{%- if 'sections' in preferences %}
+	{% for section in preferences['sections'] -%}
+	{% for item in section['items'] -%}
+	{{ item_autoconfig_deinit(item) }}
+	{% endfor %}
+	{% endfor %}
 	{%- endif %}
 }

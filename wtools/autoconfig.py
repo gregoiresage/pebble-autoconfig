@@ -75,7 +75,7 @@ def configure(conf):
 
 def build(bld):
 	jinjapath = os.path.dirname(inspect.getfile(inspect.currentframe()))
-	jinjapath = os.path.join(jinjapath, 'templates/*.jinja')
+	jinjapath = os.path.join(jinjapath, 'templates/**/*.jinja')
 	for template in bld.path.ant_glob([jinjapath]):
 		bld.add_manual_dependency(
 			template,
