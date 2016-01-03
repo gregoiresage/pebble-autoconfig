@@ -24,7 +24,7 @@ void set{{ item['name']|cvarname | capitalize }}(char* value){
 GColor _{{ item['name']|cvarname }};
 GColor get{{ item['name']|cvarname| capitalize }}(){return _{{ item['name']|cvarname }};}
 void set{{ item['name']|cvarname | capitalize }}(uint8_t value){
-#ifdef PBL_COLOR
+#if defined(PBL_COLOR) || defined(PBL_SDK_3)
 	_{{ item['name']|cvarname }}.argb = value;
 #endif
 }
@@ -59,7 +59,7 @@ void set{{ item['name']|cvarname | capitalize}}(int32_t value){_{{ item['name']|
 	{%- if item['type'] == 'string' %}
 	tuple ? set{{ item['name']|cvarname | capitalize }}(tuple->value->cstring) : false;
 	{%- elif item['type'] == 'color' %}
-#ifdef PBL_COLOR
+#if defined(PBL_COLOR) || defined(PBL_SDK_3)
 	tuple ? set{{ item['name']|cvarname | capitalize }}(tuple->value->int32) : false;
 #endif
 	{%- else %}
@@ -91,7 +91,7 @@ void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 		{%- elif item['type'] == 'boolean' %}
 		set{{ item['name']|cvarname | capitalize }}(persist_read_bool({{ item['name']|cvarname|upper }}_PKEY));
 		{%- elif item['type'] == 'color' %}
-#ifdef PBL_COLOR
+#if defined(PBL_COLOR) || defined(PBL_SDK_3)
 		set{{ item['name']|cvarname | capitalize }}(persist_read_int({{ item['name']|cvarname|upper }}_PKEY));
 #endif
 		{%- else %}
@@ -103,7 +103,7 @@ void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 		{%- if item['type'] == 'string' %}
 		set{{ item['name']|cvarname | capitalize }}("{{item['default']}}");
 		{%- elif item['type'] == 'color' %}
-#ifdef PBL_COLOR
+#if defined(PBL_COLOR) || defined(PBL_SDK_3)
 		set{{ item['name']|cvarname | capitalize }}(GColorFromHEX({{item['default']}}).argb);
 #endif
 		{%- else %}
@@ -140,7 +140,7 @@ void autoconfig_init(const uint32_t size_inbound, const uint32_t size_outbound){
 	{%- elif item['type'] == 'boolean' %}
 	persist_read_bool({{ item['name']|cvarname|upper }}_PKEY) != _{{ item['name']|cvarname }} ? persist_write_bool({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}) : false;
 	{%- elif item['type'] == 'color' %}
-#ifdef PBL_COLOR
+#if defined(PBL_COLOR) || defined(PBL_SDK_3)
 	persist_read_int({{ item['name']|cvarname|upper }}_PKEY) != _{{ item['name']|cvarname }}.argb ? persist_write_int({{ item['name']|cvarname|upper }}_PKEY, _{{ item['name']|cvarname }}.argb) : false;
 #endif
 	{%- else %}
