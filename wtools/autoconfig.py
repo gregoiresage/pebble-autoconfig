@@ -1,13 +1,32 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import sys
 import os
 import re
 import json
-import jsmin
-import cssmin
 import inspect
 import collections
+
+try:
+	import jsmin
+	import cssmin
+	from jinja2 import Environment
+	from jinja2 import FileSystemLoader
+except ImportError:
+	message = '\nSome Python modules are missing, you probably forgot to patch your current sdk'
+	message += '\nPlease follow the instructions :\n\n'
+
+	path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+	message += '  Ubuntu : pip install --target=<***full_path_to_your_home***>/.pebble-sdk/SDKs/current/.env/lib/python2.7/site-packages/ -r ' + path + '/requirements.txt\n'
+	message += '  OSX    : pip install --target=/usr/local/Cellar/pebble-sdk/<***current_version***>/libexec/vendor/lib/python2.7/site-packages/ -r ' + path + '/requirements.txt\n'
+
+	message += '\n\nRelaunch the build and it should be okay !'
+	message += '\n\n'
+
+	print message
+	sys.exit(-1)
 
 from waflib import TaskGen, Task, Node
 from waflib.TaskGen import extension, before_method,feature
