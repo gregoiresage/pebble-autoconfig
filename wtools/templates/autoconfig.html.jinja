@@ -58,7 +58,7 @@
 	    <input type="text" class="item-input" id="{{ item['name'] }}" name="{{ item['name'] }}" placeholder="{{ item['default'] }}" value="{{ item['default'] }}">
 	  </div>
 	{%- elif item['type'] == 'color' %}
-		<input type="text" class="item-color item-color-sunny" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{ item['default'] }}">
+		<input type="text" class="item-color item-color-sunny" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{ item['default'] | gcolor_to_hex }}">
 	{%- else %}
 	{%- endif %}
 	</label>

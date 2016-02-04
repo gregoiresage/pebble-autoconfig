@@ -104,7 +104,7 @@ void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 		set{{ item['name']|cvarname | capitalize }}("{{item['default']}}");
 		{%- elif item['type'] == 'color' %}
 #if defined(PBL_COLOR) || defined(PBL_SDK_3)
-		set{{ item['name']|cvarname | capitalize }}(GColorFromHEX({{item['default']}}).argb);
+		set{{ item['name']|cvarname | capitalize }}({{item['default']}}.argb);
 #endif
 		{%- else %}
 		set{{ item['name']|cvarname | capitalize }}({{item['default']|lower}});
