@@ -65,7 +65,7 @@ static void click_config_provider(void *context) {
 
 static void init(void) {
 	// Initialize Pebble Autoconfig to register App Message handlers and restores settings
-	autoconfig_init(300, 0);
+	autoconfig_init(0, 0);
 
 	// Here the restored or defaulted settings are available
 	logSettings("restored");

@@ -104,7 +104,7 @@ void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 		set{{ item['name']|cvarname | capitalize }}("{{item['default']}}");
 		{%- elif item['type'] == 'color' %}
 #if defined(PBL_COLOR) || defined(PBL_SDK_3)
-		set{{ item['name']|cvarname | capitalize }}(GColorFromHEX({{item['default']}}).argb);
+		set{{ item['name']|cvarname | capitalize }}({{item['default']}}.argb);
 #endif
 		{%- else %}
 		set{{ item['name']|cvarname | capitalize }}({{item['default']|lower}});
@@ -113,9 +113,37 @@ void autoconfig_in_received_handler(DictionaryIterator *iter, void *context) {
 	{%- endif %}
 {%- endmacro %}
 
+{% macro item_dict_size(item) -%}
+	{%- if item['type'] == 'string' -%}
+		{{item['max-length'] + 1}}
+	{%- else -%}
+		4
+	{%- endif -%}
+{%- endmacro %}
+
 void autoconfig_init(const uint32_t size_inbound, const uint32_t size_outbound){
 	app_message_register_inbox_received(autoconfig_in_received_handler);
-	app_message_open(size_inbound, size_outbound);
+
+	if(size_inbound == 0) {
+		app_message_open(1
+		{%- if 'items' in preferences %}
+		{%- for item in preferences['items'] -%}
+		+7+{{ item_dict_size(item) }}
+		{%- endfor -%}
+		{%- endif -%}
+		{%- if 'sections' in preferences -%}
+		{%- for section in preferences['sections'] -%}
+		{%- for item in section['items'] -%}
+		+7+{{ item_dict_size(item) }}
+		{%- endfor -%}
+		{%- endfor -%}
+		{%- endif -%}
+		, size_outbound);
+	}
+	else {
+		app_message_open(size_inbound, size_outbound);
+	}
+	
 
 	{%- if 'items' in preferences %}
 	{% for item in preferences['items'] -%}

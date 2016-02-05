@@ -65,7 +65,7 @@
           "name": "mycolor",
           "title": "Color",
           "type": "color",
-          "default": "0x00FF00"
+          "default": "GColorScreaminGreen"
         }
       ]
   },
