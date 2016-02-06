@@ -21,7 +21,7 @@ static void updateDisplay() {
 	snprintf(text[2], sizeof(text[2]), "Length: %d", (int)getLength());
 	snprintf(text[3], sizeof(text[3]), "IP address: %s", getIpaddress());
 
-	window_set_background_color(window,getMycolor());
+	window_set_background_color(window, getBackground() ? getMycolor() : GColorWhite);
 
 	for (int i = 0; i < SETTING_COUNT; ++i) {
 		text_layer_set_text(layer[i], text[i]);

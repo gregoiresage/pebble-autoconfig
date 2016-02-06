@@ -41,24 +41,24 @@
 		<div class="item-subtitle">{{ item['description']}}</div>
 	{%- endif %}
     {%- if item['type'] == 'enum' %}
-	  <select id="{{ item['name'] }}" name="{{ item['name'] }}" dir='rtl' class="item-select">
+	  <select id="{{ item['name'] }}" name="{{ item['name'] }}" dir='rtl' class="item-select liveconfig">
 	  	{%- for key, choice in item['choices'].iteritems() %}
 		<option class="item-select-option" value="{{loop.index0 }}" {{ "selected" if item['default'] == loop.index0 }}>{{ choice }}</option>
 		{%- endfor %}
 	  </select>
 	{%- elif item['type'] == 'integer' %}
-	  <input type="range" class="item-slider" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}" min="{{item['min']}}" max="{{item['max']}}">
+	  <input type="range" class="item-slider liveconfig" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}" min="{{item['min']}}" max="{{item['max']}}">
 	  <div class="item-input-wrapper item-slider-text">
 	    <input type="text" class="item-input" data-slider-id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}">
 	  </div>
 	{%- elif item['type'] == 'boolean' %}
-	  <input type="checkbox" class="item-toggle" id="{{ item['name'] }}" name="{{ item['name'] }}" {{ "checked" if item['default']|lower == "true" }}>
+	  <input type="checkbox" class="item-toggle liveconfig" id="{{ item['name'] }}" name="{{ item['name'] }}" {{ "checked" if item['default']|lower == "true" }}>
 	{%- elif item['type'] == 'string' %}
 	  <div class="item-input-wrapper">
-	    <input type="text" class="item-input" id="{{ item['name'] }}" name="{{ item['name'] }}" placeholder="{{ item['default'] }}" value="{{ item['default'] }}">
+	    <input type="text" class="item-input liveconfig" id="{{ item['name'] }}" name="{{ item['name'] }}" placeholder="{{ item['default'] }}" value="{{ item['default'] }}">
 	  </div>
 	{%- elif item['type'] == 'color' %}
-		<input type="text" class="item-color item-color-sunny" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{ item['default'] | gcolor_to_hex }}">
+		<input type="text" class="item-color item-color-sunny liveconfig" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{ item['default'] | gcolor_to_hex }}">
 	{%- else %}
 	{%- endif %}
 	</label>
@@ -115,6 +115,10 @@
 {{ pa_pc()|minify_js }}
 {% macro pa_js() %}{% include "resources/js/pebble-autoconfig.js" %}{% endmacro %}
 {{ pa_js()|minify_js }}
+{%- if ('liveconfiguration' not in preferences) or preferences['liveconfiguration'] %}
+	{% macro lc_js() %}{% include "resources/js/liveconfig.js" %}{% endmacro %}
+	{{ lc_js()|minify_js }}
+{%- endif %}
 	</script>
 </body>
 </html>
