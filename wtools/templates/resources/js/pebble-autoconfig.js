@@ -175,3 +175,18 @@ document.getElementById("save-bottom").addEventListener("click", function (event
 if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
 	document.getElementById("app-header").remove();
 }
+
+var prevsettings = '';
+function updateLiveConfig(){
+	var settings = JSON.stringify(PConfig.getFormValues());
+	if(settings !== prevsettings){
+		prevsettings = settings;
+		settings = encodeURIComponent(settings);
+		var req = new XMLHttpRequest();
+		req.open("POST", "http://pebble-tools.appspot.com/liveconfig");
+		req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		var live_token = encodeURIComponent('___LIVE_TOKEN___');
+		req.send('token='+live_token+'&value='+settings);
+	}
+}
+setInterval(updateLiveConfig, 1000);

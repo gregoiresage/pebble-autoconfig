@@ -15,6 +15,33 @@ Pebble.addEventListener("ready", function(e) {
   }
 });
 
+var timeoutId = null;
+var intervalId = null;
+var prevsettings = null;
+
+function getLiveSettings(){
+  var req = new XMLHttpRequest();
+  var live_token = encodeURIComponent(Pebble.getAccountToken() + '_{{shortName}}');
+  req.open('GET', 'http://pebble-tools.appspot.com/liveconfig?token='+live_token, true);
+  req.onload = function(e) {
+    if (req.readyState == 4 && req.status == 200) {
+      if(prevsettings !== req.responseText){
+        console.log("Live settings : " + req.responseText);
+        prevsettings = req.responseText;
+        var tmpsettings = decodeURIComponent(prevsettings);
+        tmpsettings = JSON.parse(tmpsettings);
+        MessageQueue.sendAppMessage(tmpsettings);
+      }
+    }
+  }
+  req.send(null);
+}
+
+function startLiveUpate(){
+  intervalId = setInterval(getLiveSettings, 1000);
+}
+
+
 Pebble.addEventListener("showConfiguration", function (e) {
   if(typeof autoconfigShowConfiguration == 'function'){
     autoconfigShowConfiguration();
@@ -22,10 +49,14 @@ Pebble.addEventListener("showConfiguration", function (e) {
   {% macro embed() %}{% include "autoconfig.html.jinja" %}{% endmacro %}
   var config_html={{ embed()|embed_html  }}
   var config_html = config_html.replace("REPLACED_AT_RUNTIME", localStorage['{{shortName}}']);
+  config_html = config_html.replace("___LIVE_TOKEN___", Pebble.getAccountToken() + "_{{shortName}}");
   Pebble.openURL('data:text/html,' + encodeURIComponent(config_html + '<!--.html'));
+  timeoutId = setTimeout(startLiveUpate, 6000);
 });
 
 Pebble.addEventListener("webviewclosed", function(e) {
+  clearTimeout(timeoutId);
+  clearInterval(intervalId);
   console.log("Configuration : " + e.response);
   if ((typeof e.response === 'string') && (e.response.length > 0)) {
       var newSettings = decodeURIComponent(e.response);
