@@ -189,4 +189,3 @@ function updateLiveConfig(){
 		req.send('token='+live_token+'&value='+settings);
 	}
 }
-setInterval(updateLiveConfig, 1000);

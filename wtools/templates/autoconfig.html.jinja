@@ -115,6 +115,9 @@
 {{ pa_pc()|minify_js }}
 {% macro pa_js() %}{% include "resources/js/pebble-autoconfig.js" %}{% endmacro %}
 {{ pa_js()|minify_js }}
+{% if preferences['liveconfiguration'] -%}
+  		setInterval(updateLiveConfig, 1000);
+{%- endif %}
 	</script>
 </body>
 </html>

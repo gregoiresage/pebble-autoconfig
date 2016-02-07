@@ -25,49 +25,50 @@
   },
   "preferences": {
     "description": "This page is used to configure your <strong>Pebble&nbsp;Watch</strong>. Fill in the form and press <em>Save</em> to transfer the settings to your watch.",
-      "items" : [
-        {
-          "name": "background",
-          "title": "Colorized background",
-          "type": "boolean",
-          "default": true
+    "liveconfiguration": true,
+    "items" : [
+      {
+        "name": "background",
+        "title": "Colorized background",
+        "type": "boolean",
+        "default": true
+      },
+      {
+        "name": "direction",
+        "title": "Direction",
+        "description": "Where should we head?",
+        "type": "enum",
+        "choices": {
+          "NORTH": "North",
+          "EAST": "East",
+          "SOUTH": "South",
+          "WEST": "West"
         },
-        {
-          "name": "direction",
-          "title": "Direction",
-          "description": "Where should we head?",
-          "type": "enum",
-          "choices": {
-            "NORTH": "North",
-            "EAST": "East",
-            "SOUTH": "South",
-            "WEST": "West"
-          },
-          "default": 2
-        },
-        {
-          "name": "length",
-          "title": "Length",
-          "description": "Between 0 and 100",
-          "type": "integer",
-          "min": 0,
-          "max": 1000,
-          "default": 17
-        },
-        {
-          "name": "ipaddress",
-          "title": "IP address",
-          "type": "string",
-          "max-length": 15,
-          "default": "127.0.0.12"
-        },
-        {
-          "name": "mycolor",
-          "title": "Color",
-          "type": "color",
-          "default": "GColorScreaminGreen"
-        }
-      ]
+        "default": 2
+      },
+      {
+        "name": "length",
+        "title": "Length",
+        "description": "Between 0 and 100",
+        "type": "integer",
+        "min": 0,
+        "max": 1000,
+        "default": 17
+      },
+      {
+        "name": "ipaddress",
+        "title": "IP address",
+        "type": "string",
+        "max-length": 15,
+        "default": "127.0.0.12"
+      },
+      {
+        "name": "mycolor",
+        "title": "Color",
+        "type": "color",
+        "default": "GColorScreaminGreen"
+      }
+    ]
   },
   "targetPlatforms": [
     "aplite",
