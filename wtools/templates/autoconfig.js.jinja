@@ -21,7 +21,21 @@ Pebble.addEventListener("showConfiguration", function (e) {
   }
   {% macro embed() %}{% include "autoconfig.html.jinja" %}{% endmacro %}
   var config_html={{ embed()|embed_html  }}
-  var config_html = config_html.replace("REPLACED_AT_RUNTIME", localStorage['{{shortName}}']);
+  config_html = config_html.replace("REPLACED_AT_RUNTIME", localStorage['{{shortName}}']);
+{%- if ('liveconfiguration' not in preferences) or preferences['liveconfiguration'] %}
+  config_html = config_html.replace("___UUID___", "{{uuid}}");
+  config_html = config_html.replace("___TOKEN___", Pebble.getWatchToken());
+
+  var websocket = new WebSocket("wss://liveconfig.fletchto99.com/receive/{{uuid}}/"+Pebble.getWatchToken());
+  websocket.onmessage = function(message) {
+    var setting = JSON.parse(message.data);
+    var key = Object.keys(setting)[0];
+    var value = setting[key];
+    autoconfigSettings[key] = value;
+    localStorage['{{shortName}}'] = JSON.stringify(autoconfigSettings);
+    MessageQueue.sendAppMessage(setting);
+  };
+{% endif %}
   Pebble.openURL('data:text/html,' + encodeURIComponent(config_html + '<!--.html'));
 });
 
