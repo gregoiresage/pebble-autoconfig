@@ -47,7 +47,7 @@
 		{%- endfor %}
 	  </select>
 	{%- elif item['type'] == 'integer' %}
-	  <input type="range" class="item-slider liveconfig" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}" min="{{item['min']}}" max="{{item['max']}}">
+	  <input type="range" class="item-slider liveconfig" id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}" min="{{item['min']}}" max="{{item['max']}}" step="{{ item['step'] if 'step' in item else '1' }}">
 	  <div class="item-input-wrapper item-slider-text">
 	    <input type="text" class="item-input" data-slider-id="{{ item['name'] }}" name="{{ item['name'] }}" value="{{item['default']}}">
 	  </div>
