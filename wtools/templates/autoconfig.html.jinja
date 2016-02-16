@@ -30,7 +30,11 @@
 
 	<div class="item-container">
 		<div class="button-container">
+{%- if ('liveconfiguration' not in preferences) or preferences['liveconfiguration'] %}
+			<input type="submit" class="item-button" value="DONE" id="save-top">
+{%- else %}
 			<input type="submit" class="item-button" value="SAVE" id="save-top">
+{%- endif %}
 		</div>
 	</div>
 
@@ -94,7 +98,11 @@
 
 	<div class="item-container">
 		<div class="button-container">
+{%- if ('liveconfiguration' not in preferences) or preferences['liveconfiguration'] %}
+			<input type="submit" class="item-button" value="DONE" id="save-bottom">
+{%- else %}
 			<input type="submit" class="item-button" value="SAVE" id="save-bottom">
+{%- endif %}
 		</div>
 	</div>
 
