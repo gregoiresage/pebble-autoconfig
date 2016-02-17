@@ -7,7 +7,6 @@ import re
 import json
 import inspect
 import collections
-import pebble_image_routines
 
 try:
 	import jsmin
@@ -32,6 +31,24 @@ except ImportError:
 from waflib import TaskGen, Task, Node
 from waflib.TaskGen import extension, before_method,feature
 from waflib.Configure import conf
+
+def nearest_color_to_pebble64_palette(r, g, b, a):
+    """
+    match each rgba32 pixel to the nearest color in the 8 bit pebble palette
+    returns closest rgba32 color triplet (r, g, b, a)
+    """
+
+    a = ((a + 42) / 85) * 85  # fast nearest alpha for 2bit color range
+    # clear transparent pixels (makes image more compress-able)
+    # and required for greyscale tests
+    if a == 0:
+        r, g, b = (0, 0, 0)
+    else:
+        r = ((r + 42) / 85) * 85  # nearest for 2bit color range
+        g = ((g + 42) / 85) * 85  # nearest for 2bit color range
+        b = ((b + 42) / 85) * 85  # nearest for 2bit color range
+
+    return r, g, b, a
 
 def remove_comments(text):
 	"""Remove C-style /*comments*/ from a string."""
@@ -65,7 +82,7 @@ def gcolor_to_hex(text):
 	try:
 		# convert the hex value to the nearest pebble color
 		color = int(text, 0)
-		r,g,b,a = pebble_image_routines.nearest_color_to_pebble64_palette((color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF, 0xFF)
+		r,g,b,a = nearest_color_to_pebble64_palette((color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF, 0xFF)
 		text = "0x%0.2x%0.2x%0.2x" % (r,g,b)
 	except ValueError:
 		raise Exception('Unknow color format for %s' % text)
