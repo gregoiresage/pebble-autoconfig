@@ -175,5 +175,6 @@ def fprocess_mergejs(self):
 
 @conf
 def pbl_autoconfprogram(self,*k,**kw):
-	kw['features']='c cprogram cprogram_pebble_app autoconf mergejs'
+	kw['bin_type']='app'
+	kw['features']='c cprogram pebble_cprogram autoconf mergejs'
 	return self(*k,**kw)
